@@ -19,6 +19,7 @@ class AcceptedCorpus:
     artifact_path: Path
     retrieval_config: str
     manifest: dict[str, Any]
+    accepted_at: datetime
 
 
 @dataclass(frozen=True, slots=True)
@@ -192,6 +193,7 @@ def _accepted(row: sqlite3.Row) -> AcceptedCorpus:
         artifact_path=Path(row["artifact_path"]),
         retrieval_config=row["retrieval_config"],
         manifest=json.loads(row["manifest_json"]),
+        accepted_at=datetime.fromisoformat(row["accepted_at"]),
     )
 
 

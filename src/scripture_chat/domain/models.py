@@ -16,7 +16,10 @@ from pydantic import (
 
 from scripture_chat.domain.identifiers import BOOK_SLUG_SET, CanonicalReference
 
-Identifier = Annotated[str, StringConstraints(min_length=1, max_length=128, pattern=r"^[A-Za-z0-9._-]+$")]
+Identifier = Annotated[
+    str,
+    StringConstraints(min_length=1, max_length=128, pattern=r"^[A-Za-z0-9._-]+$"),
+]
 Sha256 = Annotated[str, StringConstraints(pattern=r"^[0-9a-f]{64}$")]
 
 
@@ -178,9 +181,7 @@ class EvidenceSearchRequest(SearchRequest):
             [EvidenceLane.LEXICAL],
             [EvidenceLane.LEXICAL, EvidenceLane.OFFICIAL],
         ):
-            raise ValueError(
-                'lanes must be ["lexical"] or ["lexical", "official"] in that order'
-            )
+            raise ValueError('lanes must be ["lexical"] or ["lexical", "official"] in that order')
         return lanes
 
 
@@ -279,6 +280,10 @@ class EvidenceResponse(StrictModel):
     retrieval_config: Identifier
     applied: dict[str, Any]
     completeness: Completeness
+
+
+class TraversalResponse(EvidenceResponse):
+    external_targets: list[ReferenceTarget] = Field(default_factory=list)
 
 
 class CorpusMetadata(StrictModel):

@@ -12,7 +12,13 @@ from scripture_chat.domain.errors import (
     CorpusUnavailableError,
     PassageNotFoundError,
 )
-from scripture_chat.domain.models import Passage
+from scripture_chat.domain.identifiers import CanonicalReference
+from scripture_chat.domain.models import (
+    Passage,
+    ReferenceEdge,
+    ReferenceTarget,
+    SearchFilters,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -20,6 +26,12 @@ class RepositorySearchHit:
     reference: str
     passage: Passage
     raw_score: float
+
+
+@dataclass(frozen=True, slots=True)
+class RepositorySearchPage:
+    hits: list[RepositorySearchHit]
+    has_more: bool
 
 
 class CorpusRepository:
@@ -95,6 +107,103 @@ class CorpusRepository:
         if row is None:
             raise PassageNotFoundError(str(passage_id))
         return _passage(row)
+
+    def get_context(self, reference: str, before: int, after: int) -> list[Passage]:
+        passage = self.get_passage(reference)
+        rows = self.connection.execute(
+            """SELECT reference, canonical_order, text, content_hash, source_spans_json
+               FROM passages
+               WHERE canonical_order BETWEEN ? AND ? AND canonical_order != ?
+               ORDER BY canonical_order""",
+            (
+                max(0, passage.canonical_order - before),
+                passage.canonical_order + after,
+                passage.canonical_order,
+            ),
+        ).fetchall()
+        return [_passage(row) for row in rows]
+
+    def search_lexical(
+        self,
+        query: str,
+        filters: SearchFilters | None,
+        after: tuple[float, int] | None,
+        limit: int,
+    ) -> RepositorySearchPage:
+        where = ["passages_fts MATCH ?"]
+        parameters: list[object] = [query]
+        if filters is not None and filters.books is not None:
+            placeholders = ", ".join("?" for _ in filters.books)
+            where.append(f"p.book IN ({placeholders})")
+            parameters.extend(filters.books)
+        if filters is not None and filters.reference_ranges is not None:
+            ranges = [self._range_bounds(value) for value in filters.reference_ranges]
+            where.append(
+                "(" + " OR ".join("p.canonical_order BETWEEN ? AND ?" for _ in ranges) + ")"
+            )
+            for start, end in ranges:
+                parameters.extend((start, end))
+        ranked_after = ""
+        if after is not None:
+            ranked_after = "WHERE raw_score > ? OR (raw_score = ? AND canonical_order > ?)"
+            parameters.extend((after[0], after[0], after[1]))
+        parameters.append(limit + 1)
+        rows = self.connection.execute(
+            f"""WITH ranked AS (
+                SELECT p.reference, p.canonical_order, p.text, p.content_hash,
+                       p.source_spans_json, bm25(passages_fts) AS raw_score
+                FROM passages_fts
+                JOIN passages p ON p.id = passages_fts.rowid
+                WHERE {" AND ".join(where)}
+            )
+            SELECT * FROM ranked
+            {ranked_after}
+            ORDER BY raw_score, canonical_order
+            LIMIT ?""",
+            parameters,
+        ).fetchall()
+        hits = [
+            RepositorySearchHit(
+                reference=row["reference"],
+                passage=_passage(row),
+                raw_score=float(row["raw_score"]),
+            )
+            for row in rows[:limit]
+        ]
+        return RepositorySearchPage(hits=hits, has_more=len(rows) > limit)
+
+    def all_edges(self) -> list[ReferenceEdge]:
+        rows = self.connection.execute(
+            """SELECT e.edge_id, p.reference AS origin_reference, e.origin_anchor,
+                      e.target_json, e.source_attribution
+               FROM reference_edges e
+               JOIN passages p ON p.id = e.origin_passage_id
+               ORDER BY p.canonical_order, e.edge_id"""
+        ).fetchall()
+        return [
+            ReferenceEdge(
+                edge_id=row["edge_id"],
+                origin_reference=row["origin_reference"],
+                origin_anchor=row["origin_anchor"],
+                target=ReferenceTarget.model_validate_json(row["target_json"]),
+                source_attribution=row["source_attribution"],
+            )
+            for row in rows
+        ]
+
+    def _range_bounds(self, value: str) -> tuple[int, int]:
+        reference = CanonicalReference.parse(value)
+        start = str(reference.passages()[0])
+        end = str(reference.passages()[-1])
+        rows = self.connection.execute(
+            """SELECT reference, canonical_order FROM passages
+               WHERE reference IN (?, ?)""",
+            (start, end),
+        ).fetchall()
+        orders = {row["reference"]: int(row["canonical_order"]) for row in rows}
+        if start not in orders or end not in orders:
+            raise ValueError(f"reference range is outside the corpus: {value}")
+        return orders[start], orders[end]
 
     def search_fts(self, query: str, limit: int) -> list[RepositorySearchHit]:
         rows = self.connection.execute(

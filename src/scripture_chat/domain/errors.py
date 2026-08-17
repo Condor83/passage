@@ -50,6 +50,15 @@ class PassageNotFoundError(ScriptureChatError):
         )
 
 
+class VersionUnavailableError(ScriptureChatError):
+    def __init__(self, corpus_version: str) -> None:
+        super().__init__(
+            ErrorCode.VERSION_UNAVAILABLE,
+            "corpus version is unavailable",
+            {"corpus_version": corpus_version},
+        )
+
+
 class CorpusUnavailableError(ScriptureChatError):
     def __init__(self, message: str = "no usable corpus is active") -> None:
         super().__init__(ErrorCode.CORPUS_UNAVAILABLE, message)
