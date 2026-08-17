@@ -4,6 +4,7 @@ import json
 import os
 import sqlite3
 import uuid
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -58,12 +59,13 @@ class ControlStore:
 
     def begin_attempt(self, build_key: str) -> str:
         attempt_id = uuid.uuid4().hex
-        self.connection.execute(
-            """INSERT INTO build_attempts(
-                attempt_id, build_key, state, created_at
-            ) VALUES (?, ?, 'building', ?)""",
-            (attempt_id, build_key, _now()),
-        )
+        with self.connection:
+            self.connection.execute(
+                """INSERT INTO build_attempts(
+                    attempt_id, build_key, state, created_at
+                ) VALUES (?, ?, 'building', ?)""",
+                (attempt_id, build_key, _now()),
+            )
         return attempt_id
 
     def finish_attempt(
@@ -74,12 +76,13 @@ class ControlStore:
         error_code: str | None = None,
         corpus_version: str | None = None,
     ) -> None:
-        self.connection.execute(
-            """UPDATE build_attempts
-               SET state = ?, error_code = ?, corpus_version = ?, finished_at = ?
-               WHERE attempt_id = ?""",
-            (state, error_code, corpus_version, _now(), attempt_id),
-        )
+        with self.connection:
+            self.connection.execute(
+                """UPDATE build_attempts
+                   SET state = ?, error_code = ?, corpus_version = ?, finished_at = ?
+                   WHERE attempt_id = ?""",
+                (state, error_code, corpus_version, _now(), attempt_id),
+            )
 
     def register_accepted(
         self,
@@ -93,11 +96,13 @@ class ControlStore:
         retrieval_config: str,
         manifest: dict[str, Any],
         config: dict[str, Any],
+        before_commit: Callable[[], None] | None = None,
     ) -> None:
         timestamp = _now()
         manifest_json = _json(manifest)
         config_json = _json(config)
-        with self.connection:
+        self.connection.execute("BEGIN IMMEDIATE")
+        try:
             self.connection.execute(
                 """INSERT INTO accepted_corpora(
                     corpus_version, build_key, artifact_digest, normalized_digest,
@@ -126,6 +131,13 @@ class ControlStore:
                    WHERE attempt_id = ?""",
                 (corpus_version, timestamp, attempt_id),
             )
+            if before_commit is not None:
+                before_commit()
+        except BaseException:
+            self.connection.rollback()
+            raise
+        else:
+            self.connection.commit()
 
     def find_by_build_key(self, build_key: str) -> AcceptedCorpus | None:
         row = self.connection.execute(
@@ -176,6 +188,12 @@ class ControlStore:
 
     def accepted_count(self) -> int:
         return int(self.connection.execute("SELECT count(*) FROM accepted_corpora").fetchone()[0])
+
+    def latest_accepted(self) -> AcceptedCorpus | None:
+        row = self.connection.execute(
+            "SELECT * FROM accepted_corpora ORDER BY accepted_at DESC LIMIT 1"
+        ).fetchone()
+        return _accepted(row) if row else None
 
     def _chmod_sidecars(self) -> None:
         for suffix in ("-wal", "-shm"):

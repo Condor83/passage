@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import StrEnum
 from typing import Any
@@ -14,6 +15,26 @@ class ErrorCode(StrEnum):
     CORPUS_UNAVAILABLE = "corpus_unavailable"
     CONFIG_UNAVAILABLE = "config_unavailable"
     INTERNAL_ERROR = "internal_error"
+
+
+_LIMIT_ERROR_TYPES = frozenset({"less_than_equal", "string_too_long", "too_long"})
+
+
+def is_limit_violation(error: Mapping[str, Any]) -> bool:
+    if error.get("type") in _LIMIT_ERROR_TYPES:
+        return True
+
+    location = tuple(error.get("loc", ()))
+    value = error.get("input")
+    if location and location[-1] == "books" and isinstance(value, list):
+        return len(value) > 15
+    if location and location[-1] == "reference_ranges" and isinstance(value, list):
+        return len(value) > 50
+    if isinstance(value, dict):
+        before = value.get("before", 3)
+        after = value.get("after", 3)
+        return isinstance(before, int) and isinstance(after, int) and before + after > 40
+    return False
 
 
 @dataclass(slots=True)

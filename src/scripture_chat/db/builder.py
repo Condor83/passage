@@ -143,8 +143,8 @@ class CorpusBuilder:
                 retrieval_config=retrieval_config,
                 manifest=manifest,
                 config=config,
+                before_commit=lambda: _fault(fault_at, "after_registration"),
             )
-            _fault(fault_at, "after_registration")
             return PublishedCorpus(
                 corpus_version=corpus_version,
                 retrieval_config=retrieval_config,
@@ -191,7 +191,9 @@ class CorpusBuilder:
                             _json([span.model_dump(mode="json") for span in passage.source_spans]),
                         ),
                     )
-                    passage_id = int(cursor.lastrowid)
+                    if cursor.lastrowid is None:
+                        raise RuntimeError("passage insert did not return a row identifier")
+                    passage_id = cursor.lastrowid
                     reference_ids[passage.reference] = passage_id
                     connection.execute(
                         "INSERT INTO passages_fts(rowid, text) VALUES (?, ?)",

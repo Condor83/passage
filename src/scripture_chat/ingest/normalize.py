@@ -78,7 +78,14 @@ def normalize_extraction(
         "edges": [edge.model_dump(mode="json") for edge in edges],
     }
     digest = _sha256(_canonical_json(records))
-    return NormalizedCorpus(**records, normalized_digest=digest)
+    return NormalizedCorpus(
+        source_format=extraction.source_format,
+        source_profile=extraction.profile,
+        passages=passages,
+        notes=notes,
+        edges=edges,
+        normalized_digest=digest,
+    )
 
 
 def serialize_jsonl(corpus: NormalizedCorpus) -> bytes:

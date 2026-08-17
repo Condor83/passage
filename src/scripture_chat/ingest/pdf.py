@@ -76,7 +76,9 @@ def extract_pdf(path: Path, limits: ExtractionLimits) -> ExtractionResult:
     )
 
 
-def _page_lines(page_number: int, page: Any) -> list[tuple[int, str, tuple[float, float, float, float]]]:
+def _page_lines(
+    page_number: int, page: Any
+) -> list[tuple[int, str, tuple[float, float, float, float]]]:
     words = page.extract_words(
         x_tolerance=2,
         y_tolerance=2,

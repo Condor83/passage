@@ -5,7 +5,7 @@ from typing import Any
 
 from scripture_chat.db.control import ControlStore
 from scripture_chat.db.repository import RepositorySearchHit
-from scripture_chat.domain.errors import InvalidQueryError
+from scripture_chat.domain.errors import ConfigUnavailableError, InvalidQueryError
 from scripture_chat.domain.models import (
     Completeness,
     ContextRequest,
@@ -45,6 +45,9 @@ class EvidenceService:
         with self.snapshots.pin(request) as snapshot:
             manifest = snapshot.accepted.manifest
             approval = manifest["source_approval"]
+            lanes = snapshot.config["lanes"]
+            if not isinstance(lanes, list):
+                raise ConfigUnavailableError("evidence lane configuration is invalid")
             return CorpusMetadata(
                 corpus_version=snapshot.corpus_version,
                 retrieval_config=snapshot.retrieval_config,
@@ -53,7 +56,7 @@ class EvidenceService:
                 source_sha256=approval["source_sha256"],
                 schema_version=manifest["schema_version"],
                 importer_version=manifest["importer_version"],
-                enabled_lanes=snapshot.config["lanes"],
+                enabled_lanes=[EvidenceLane(lane) for lane in lanes],
                 supported_operations=[
                     "get_corpus",
                     "get_passage",
@@ -97,7 +100,10 @@ class EvidenceService:
                 before=request.before,
                 after=request.after,
             )
-            limits = {"before": request.before, "after": request.after}
+            limits: dict[str, int | bool | str] = {
+                "before": request.before,
+                "after": request.after,
+            }
             record = self._record(
                 snapshot,
                 passage,
@@ -218,7 +224,10 @@ class EvidenceService:
 
     def search_evidence(self, request: EvidenceSearchRequest) -> EvidenceResponse:
         with self.snapshots.pin(request) as snapshot:
-            candidate_pool = int(snapshot.config["lexical"]["candidate_pool_size"])
+            lexical_config = snapshot.config["lexical"]
+            if not isinstance(lexical_config, dict):
+                raise ConfigUnavailableError("lexical retrieval configuration is invalid")
+            candidate_pool = int(lexical_config["candidate_pool_size"])
             fts_query = compile_fts_query(request.query, LexicalMode.TERMS, None)
             try:
                 lexical_page = snapshot.repository.search_lexical(

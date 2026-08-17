@@ -4,10 +4,13 @@ from scripture_chat.ingest.base import ExtractionLimits
 from scripture_chat.ingest.epub import extract_epub
 from scripture_chat.ingest.normalize import canonical_projection, normalize_extraction
 from scripture_chat.ingest.pdf import extract_pdf
-from scripture_chat.ingest.validation import StructureManifest, reconcile_source_spans, validate_corpus
+from scripture_chat.ingest.validation import (
+    StructureManifest,
+    reconcile_source_spans,
+    validate_corpus,
+)
 from tests.unit.ingest.test_epub import make_epub
 from tests.unit.ingest.test_pdf import write_pdf
-
 
 CHAPTER = """<html xmlns="http://www.w3.org/1999/xhtml"><body>
 <section data-scripture-profile="scripture-chat-v1">

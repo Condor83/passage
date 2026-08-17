@@ -4,7 +4,7 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 *.py[cod]
-.coverage
+.coverage*
 htmlcov/
 dist/
 build/

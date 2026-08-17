@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pytest
 
+from scripture_chat.domain.models import EpubSourceSpan
 from scripture_chat.ingest.base import (
     ExtractedEdge,
     ExtractedPassage,
@@ -13,15 +14,18 @@ from scripture_chat.ingest.validation import (
     StructureManifest,
     validate_corpus,
 )
-from scripture_chat.domain.models import EpubSourceSpan
 
 
-def extraction(passages: list[tuple[str, str]], edges: list[tuple[str, str]] | None = None) -> ExtractionResult:
+def extraction(
+    passages: list[tuple[str, str]], edges: list[tuple[str, str]] | None = None
+) -> ExtractionResult:
     extracted = [
         ExtractedPassage(
             reference=reference,
             text=text,
-            source_spans=[EpubSourceSpan(member="chapter.xhtml", start=index, end=index + 1, order=index)],
+            source_spans=[
+                EpubSourceSpan(member="chapter.xhtml", start=index, end=index + 1, order=index)
+            ],
         )
         for index, (reference, text) in enumerate(passages)
     ]
@@ -31,7 +35,9 @@ def extraction(passages: list[tuple[str, str]], edges: list[tuple[str, str]] | N
             origin_anchor="a",
             target=target,
             source_attribution="official-footnote",
-            source_spans=[EpubSourceSpan(member="chapter.xhtml", start=0, end=1, order=100 + index)],
+            source_spans=[
+                EpubSourceSpan(member="chapter.xhtml", start=0, end=1, order=100 + index)
+            ],
         )
         for index, (origin, target) in enumerate(edges or [])
     ]

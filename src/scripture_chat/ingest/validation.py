@@ -42,8 +42,7 @@ class StructureManifest(StrictModel):
         for book, counts in self.books.items():
             for chapter, verse_count in enumerate(counts, start=1):
                 references.extend(
-                    f"bofm/{book}/{chapter}/{verse}"
-                    for verse in range(1, verse_count + 1)
+                    f"bofm/{book}/{chapter}/{verse}" for verse in range(1, verse_count + 1)
                 )
         return references
 
@@ -145,9 +144,8 @@ def validate_corpus(corpus: NormalizedCorpus, structure: StructureManifest) -> N
                 )
             )
         if edge.target.in_corpus:
-            target = (
-                f"bofm/{edge.target.book}/{edge.target.chapter}/{edge.target.verse}"
-                + (f"-{edge.target.end_verse}" if edge.target.end_verse else "")
+            target = f"bofm/{edge.target.book}/{edge.target.chapter}/{edge.target.verse}" + (
+                f"-{edge.target.end_verse}" if edge.target.end_verse else ""
             )
             target_references = _expand_target(target)
             absent_targets = sorted(set(target_references) - actual_set)

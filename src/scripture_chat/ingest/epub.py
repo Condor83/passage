@@ -99,10 +99,8 @@ def _parse_xml(payload: bytes, limits: ExtractionLimits):
         root = ElementTree.fromstring(payload)
     except Exception as exc:
         raise ExtractionError("unsafe XML or malformed EPUB document") from exc
-    nodes = 0
     text_chars = 0
-    for element in root.iter():
-        nodes += 1
+    for nodes, element in enumerate(root.iter(), start=1):
         text_chars += len(element.text or "") + len(element.tail or "")
         if nodes > limits.max_xml_nodes or text_chars > limits.max_xml_text_chars:
             raise ExtractionError("EPUB XML budget exceeded")
@@ -131,10 +129,10 @@ def _resolve_spine(
             manifest[item_id] = target
     spine: list[str] = []
     for itemref in opf.findall(".//{*}spine/{*}itemref"):
-        target = manifest.get(itemref.attrib.get("idref", ""))
-        if target is None:
+        spine_target = manifest.get(itemref.attrib.get("idref", ""))
+        if spine_target is None:
             raise ExtractionError("EPUB spine references a missing XHTML manifest item")
-        spine.append(target)
+        spine.append(spine_target)
     if not spine:
         raise ExtractionError("EPUB spine contains no XHTML documents")
     return spine
@@ -156,8 +154,7 @@ def _extract_spine(
         payload = _read_member(archive, members, member)
         root = _parse_xml(payload, limits)
         if any(
-            element.attrib.get("data-scripture-profile") == EPUB_PROFILE
-            for element in root.iter()
+            element.attrib.get("data-scripture-profile") == EPUB_PROFILE for element in root.iter()
         ):
             profile_found = True
         decoded = payload.decode("utf-8", errors="strict")

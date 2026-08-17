@@ -32,7 +32,7 @@ def traverse(
     max_nodes: int,
     include_external: bool,
 ) -> TraversalResult:
-    queue = deque([(origin, 0, [])])
+    queue: deque[tuple[str, int, list[str]]] = deque([(origin, 0, [])])
     visited = {origin}
     nodes: list[TraversedNode] = []
     external_targets: dict[str, ReferenceTarget] = {}

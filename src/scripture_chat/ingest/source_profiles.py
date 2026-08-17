@@ -24,7 +24,8 @@ PDF_BOOK_SLUGS = {
     "moroni": "moro",
 }
 PDF_VERSE_PATTERN = re.compile(
-    r"^(?P<book>1 Nephi|2 Nephi|Jacob|Enos|Jarom|Omni|Words of Mormon|Mosiah|Alma|Helaman|3 Nephi|4 Nephi|Mormon|Ether|Moroni) "
+    r"^(?P<book>1 Nephi|2 Nephi|Jacob|Enos|Jarom|Omni|Words of Mormon|"
+    r"Mosiah|Alma|Helaman|3 Nephi|4 Nephi|Mormon|Ether|Moroni) "
     r"(?P<chapter>[1-9]\d*):(?P<verse>[1-9]\d*) (?P<text>\S.*)$",
     re.IGNORECASE,
 )

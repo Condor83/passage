@@ -49,6 +49,8 @@ class SnapshotManager:
             retrieval_config = active.retrieval_config
         else:
             corpus_version = selector.corpus_version
+            if selector.retrieval_config is None:
+                raise ConfigUnavailableError("retrieval configuration is required")
             retrieval_config = selector.retrieval_config
 
         accepted = self.control.get_accepted(corpus_version)

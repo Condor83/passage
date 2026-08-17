@@ -130,37 +130,58 @@ class CorpusRepository:
         after: tuple[float, int] | None,
         limit: int,
     ) -> RepositorySearchPage:
-        where = ["passages_fts MATCH ?"]
-        parameters: list[object] = [query]
-        if filters is not None and filters.books is not None:
-            placeholders = ", ".join("?" for _ in filters.books)
-            where.append(f"p.book IN ({placeholders})")
-            parameters.extend(filters.books)
-        if filters is not None and filters.reference_ranges is not None:
-            ranges = [self._range_bounds(value) for value in filters.reference_ranges]
-            where.append(
-                "(" + " OR ".join("p.canonical_order BETWEEN ? AND ?" for _ in ranges) + ")"
-            )
-            for start, end in ranges:
-                parameters.extend((start, end))
-        ranked_after = ""
-        if after is not None:
-            ranked_after = "WHERE raw_score > ? OR (raw_score = ? AND canonical_order > ?)"
-            parameters.extend((after[0], after[0], after[1]))
-        parameters.append(limit + 1)
+        books = filters.books if filters is not None else None
+        reference_ranges = filters.reference_ranges if filters is not None else None
+        books_json = json.dumps(books) if books is not None else None
+        ranges_json = (
+            json.dumps([self._range_bounds(value) for value in reference_ranges])
+            if reference_ranges is not None
+            else None
+        )
+        after_score = after[0] if after is not None else None
+        after_order = after[1] if after is not None else None
         rows = self.connection.execute(
-            f"""WITH ranked AS (
+            """WITH ranked AS (
                 SELECT p.reference, p.canonical_order, p.text, p.content_hash,
                        p.source_spans_json, bm25(passages_fts) AS raw_score
                 FROM passages_fts
                 JOIN passages p ON p.id = passages_fts.rowid
-                WHERE {" AND ".join(where)}
+                WHERE passages_fts MATCH ?
+                  AND (
+                    ? IS NULL
+                    OR p.book IN (SELECT value FROM json_each(?))
+                  )
+                  AND (
+                    ? IS NULL
+                    OR EXISTS (
+                      SELECT 1
+                      FROM json_each(?) AS requested_range
+                      WHERE p.canonical_order BETWEEN
+                        json_extract(requested_range.value, '$[0]')
+                        AND json_extract(requested_range.value, '$[1]')
+                    )
+                  )
             )
             SELECT * FROM ranked
-            {ranked_after}
+            WHERE (
+              ? IS NULL
+              OR raw_score > ?
+              OR (raw_score = ? AND canonical_order > ?)
+            )
             ORDER BY raw_score, canonical_order
             LIMIT ?""",
-            parameters,
+            (
+                query,
+                books_json,
+                books_json,
+                ranges_json,
+                ranges_json,
+                after_score,
+                after_score,
+                after_score,
+                after_order,
+                limit + 1,
+            ),
         ).fetchall()
         hits = [
             RepositorySearchHit(

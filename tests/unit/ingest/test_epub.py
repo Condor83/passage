@@ -16,7 +16,8 @@ def make_epub(chapter: str, extra_members: dict[str, bytes] | None = None) -> by
             "META-INF/container.xml",
             """<?xml version="1.0"?>
             <container xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
-              <rootfiles><rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/></rootfiles>
+              <rootfiles><rootfile full-path="OEBPS/content.opf"
+                media-type="application/oebps-package+xml"/></rootfiles>
             </container>""",
             compress_type=ZIP_DEFLATED,
         )
@@ -24,8 +25,13 @@ def make_epub(chapter: str, extra_members: dict[str, bytes] | None = None) -> by
             "OEBPS/content.opf",
             """<?xml version="1.0"?>
             <package xmlns="http://www.idpf.org/2007/opf" version="3.0">
-              <metadata><dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">Book of Mormon</dc:title></metadata>
-              <manifest><item id="chapter" href="chapter.xhtml" media-type="application/xhtml+xml"/></manifest>
+              <metadata>
+                <dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">Book of Mormon</dc:title>
+              </metadata>
+              <manifest>
+                <item id="chapter" href="chapter.xhtml"
+                  media-type="application/xhtml+xml"/>
+              </manifest>
               <spine><itemref idref="chapter"/></spine>
             </package>""",
             compress_type=ZIP_DEFLATED,
@@ -38,10 +44,17 @@ def make_epub(chapter: str, extra_members: dict[str, bytes] | None = None) -> by
 
 VALID_CHAPTER = """<html xmlns="http://www.w3.org/1999/xhtml"><body>
 <section data-scripture-profile="scripture-chat-v1">
-<p data-reference="bofm/1-ne/3/7">And it came to pass that I, Nephi, said unto my father: I will go and do.</p>
-<p data-reference="bofm/1-ne/3/8">And it came to pass that I said unto my father: I know that the Lord giveth no commandments.</p>
-<a data-origin="bofm/1-ne/3/7" data-anchor="a" data-target="bofm/1-ne/3/8" data-source="official-footnote">a</a>
-<aside data-note-id="note-a" data-origin="bofm/1-ne/3/7" data-anchor="a" data-kind="footnote">See verse 8.</aside>
+<p data-reference="bofm/1-ne/3/7">
+  And it came to pass that I, Nephi, said unto my father: I will go and do.
+</p>
+<p data-reference="bofm/1-ne/3/8">
+  And it came to pass that I said unto my father:
+  I know that the Lord giveth no commandments.
+</p>
+<a data-origin="bofm/1-ne/3/7" data-anchor="a"
+  data-target="bofm/1-ne/3/8" data-source="official-footnote">a</a>
+<aside data-note-id="note-a" data-origin="bofm/1-ne/3/7"
+  data-anchor="a" data-kind="footnote">See verse 8.</aside>
 </section></body></html>"""
 
 
@@ -89,7 +102,9 @@ def test_epub_enforces_expanded_byte_budget(tmp_path: Path) -> None:
 
 def test_epub_rejects_unknown_profile(tmp_path: Path) -> None:
     source = tmp_path / "unknown.epub"
-    source.write_bytes(make_epub("<html xmlns='http://www.w3.org/1999/xhtml'><body>text</body></html>"))
+    source.write_bytes(
+        make_epub("<html xmlns='http://www.w3.org/1999/xhtml'><body>text</body></html>")
+    )
 
     with pytest.raises(ExtractionError, match="unsupported EPUB source profile"):
         extract_epub(source, ExtractionLimits())
