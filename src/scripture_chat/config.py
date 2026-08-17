@@ -65,8 +65,10 @@ def create_private_file(path: Path, data: bytes = b"") -> None:
     descriptor = os.open(path, flags, 0o600)
     try:
         os.fchmod(descriptor, 0o600)
-        if data:
-            os.write(descriptor, data)
+        view = memoryview(data)
+        while view:
+            written = os.write(descriptor, view)
+            view = view[written:]
         os.fsync(descriptor)
     finally:
         os.close(descriptor)

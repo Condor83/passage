@@ -1,0 +1,1 @@
+"""Immutable SQLite corpus persistence."""
