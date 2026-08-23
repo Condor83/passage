@@ -101,6 +101,9 @@ def test_traversal_is_bounded_cycle_safe_and_keeps_external_targets(
         "bofm/1-ne/1/2",
     ]
     assert response.external_targets[0].work == "bible"
+    assert {edge.target.kind for edge in response.official_edges} == {"internal", "external"}
+    assert all(edge.grammar_version == "official-reference-v1" for edge in response.official_edges)
+    assert all(edge.source_spans for edge in response.official_edges)
     assert response.completeness.truncated is True
     assert response.completeness.frontier == ["bofm/1-ne/1/3"]
 
@@ -116,6 +119,8 @@ def test_evidence_search_combines_lexical_and_official_basis(
     ]
     assert response.records[0].basis[0].lane.value == "lexical"
     assert response.records[1].basis[0].lane.value == "official"
+    assert {edge.target.kind for edge in response.official_edges} == {"internal", "external"}
+    assert all(edge.source_spans for edge in response.official_edges)
     assert response.applied["lanes"] == ["lexical", "official"]
 
 

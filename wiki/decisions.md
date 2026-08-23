@@ -107,10 +107,19 @@ This is the authoritative record of confirmed Passage project decisions. When an
 - **Supersedes:** The unresolved derived-edge review workflow and any reading that either required permanent human approval of every edge or allowed immediate automatic default publication.
 - **Pages updated:** [Retrieval and Concept Links](concepts/retrieval-and-concept-links.md).
 
+### 2026-08-23 - Official reference grammar v1 is synthetic and fail closed
+
+- **Decision:** Phase 0 uses `official-reference-v1`: complete canonical slash targets, explicit semicolon-separated multiple targets, typed internal or unresolved external results, full-input consumption, and stable parse states and codes.
+- **Rationale:** The current canonical identity contract supports these forms without inventing private source syntax or inferring official relationships from prose.
+- **Failure rule:** Ambiguous, unsupported, invalid, duplicate, or partially parsed input creates no edge. External syntax remains unresolved until its source work is accepted and available.
+- **Evidence rule:** Every edge preserves its origin anchor, source attribution, grammar version, and ordered source spans through persistence and traversal.
+- **Authority boundary:** This decision is proven only with synthetic fixtures. It does not validate either private repair candidate or authorize real-source processing, acceptance, activation, or editorial-fidelity claims.
+- **Pages updated:** [Official Reference Grammar](concepts/official-reference-grammar.md), [Project Overview](overview.md), and [Corpus Fidelity and Acceptance](concepts/corpus-fidelity-and-acceptance.md).
+
 ## Open Questions
 
 - Vector storage and semantic retrieval are not confirmed as default behavior. They require a measured retrieval evaluation.
-- The exact official-footnote target grammar and accepted-source validation evidence are not defined.
+- Accepted-source validation evidence and any required successor to `official-reference-v1` remain undefined.
 - The generator, verifier, embedding model, prompts, cost ceiling, and edge-publication thresholds are not selected.
 - Supabase OAuth 2.1 must prove Claude protected-resource discovery, client registration, PKCE, audience binding, consent, and active-membership enforcement before remote alpha.
 - The hobby application host, transactional email provider, backup destination, and retention schedule are not selected.

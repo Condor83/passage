@@ -47,14 +47,15 @@ Failure at any step leaves the prior active state unchanged.
 
 ## Current Application
 
-The [Datalab PDF Apparatus Repair](../analyses/datalab-pdf-apparatus-repair.md) satisfies the current structural and anchor reconciliation checks for separate Book of Mormon and New Testament repair candidates. Both remain inactive, unaccepted, and `review_required`. Typed cross-reference edges and independent editorial comparison remain open work.
+The [Datalab PDF Apparatus Repair](../analyses/datalab-pdf-apparatus-repair.md) satisfies the current structural and anchor reconciliation checks for separate Book of Mormon and New Testament repair candidates. Both remain inactive, unaccepted, and `review_required`. The Phase 0 synthetic grammar now defines typed cross-reference edges and fail-closed parsing. Neither private candidate has been processed with that grammar. Accepted-source validation and independent editorial comparison remain open work.
 
 ## Related Pages
 
 - [Project Overview](../overview.md)
 - [Decision Log](../decisions.md)
+- [Official Reference Grammar](official-reference-grammar.md)
 
 ## Open Questions
 
 - Which independent source or review method is sufficient to approve exact editorial fidelity?
-- What edge-parsing acceptance rules are required before official-reference traversal can use the repaired apparatus?
+- What exact accepted-source validation proves that `official-reference-v1`, or a versioned successor, matches the repaired apparatus?

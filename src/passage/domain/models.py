@@ -234,14 +234,43 @@ class ApparatusNote(StrictModel):
     source_spans: list[SourceSpan]
 
 
-class ReferenceTarget(StrictModel):
-    work: Identifier
+class InternalReferenceTarget(StrictModel):
+    kind: Literal["internal"] = "internal"
+    work: Literal["bofm"] = "bofm"
     book: str
     chapter: int = Field(ge=1)
     verse: int = Field(ge=1)
     end_verse: int | None = Field(default=None, ge=1)
     label: str | None = None
-    in_corpus: bool
+
+    @model_validator(mode="after")
+    def validate_range(self) -> InternalReferenceTarget:
+        if self.end_verse is not None and self.end_verse < self.verse:
+            raise ValueError("range end must not precede its start")
+        return self
+
+
+class ExternalReferenceTarget(StrictModel):
+    kind: Literal["external"] = "external"
+    work: Literal["bible", "dc", "pgp"]
+    book: Annotated[str, StringConstraints(pattern=r"^[a-z0-9-]+$")]
+    chapter: int = Field(ge=1)
+    verse: int = Field(ge=1)
+    end_verse: int | None = Field(default=None, ge=1)
+    label: str | None = None
+    resolution: Literal["unresolved_external"] = "unresolved_external"
+
+    @model_validator(mode="after")
+    def validate_range(self) -> ExternalReferenceTarget:
+        if self.end_verse is not None and self.end_verse < self.verse:
+            raise ValueError("range end must not precede its start")
+        return self
+
+
+ReferenceTarget = Annotated[
+    InternalReferenceTarget | ExternalReferenceTarget,
+    Field(discriminator="kind"),
+]
 
 
 class ReferenceEdge(StrictModel):
@@ -250,6 +279,8 @@ class ReferenceEdge(StrictModel):
     origin_anchor: str
     target: ReferenceTarget
     source_attribution: str
+    grammar_version: Identifier
+    source_spans: list[SourceSpan]
 
 
 class Completeness(StrictModel):
@@ -284,6 +315,7 @@ class EvidenceResponse(StrictModel):
     retrieval_config: Identifier
     applied: dict[str, Any]
     completeness: Completeness
+    official_edges: list[ReferenceEdge] = Field(default_factory=list)
 
 
 class TraversalResponse(EvidenceResponse):

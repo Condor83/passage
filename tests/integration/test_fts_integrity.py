@@ -36,3 +36,22 @@ def test_validation_rejects_missing_fts_row(tmp_path: Path) -> None:
 
     with pytest.raises(CorpusDatabaseError, match="FTS reconciliation"):
         validate_database(database, sample_corpus())
+
+
+def test_validation_rejects_changed_official_edge_evidence(tmp_path: Path) -> None:
+    root = tmp_path / "private"
+    corpus = sample_corpus()
+    with ControlStore(root) as control:
+        published = CorpusBuilder(root, control).build(corpus, approval(), "b" * 64)
+
+    database = published.database_path
+    connection = sqlite3.connect(database)
+    connection.execute(
+        "UPDATE reference_edges SET grammar_version = ?",
+        ("unsupported-version",),
+    )
+    connection.commit()
+    connection.close()
+
+    with pytest.raises(CorpusDatabaseError, match="apparatus reconciliation"):
+        validate_database(database, corpus)

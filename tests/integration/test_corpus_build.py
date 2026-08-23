@@ -40,11 +40,17 @@ def test_build_publishes_content_addressed_immutable_corpus(tmp_path: Path) -> N
         assert published.database_path.exists()
         assert published.database_path.stat().st_mode & 0o777 == 0o600
         assert published.manifest_path.stat().st_mode & 0o777 == 0o600
+        assert control.get_accepted(published.corpus_version).manifest["schema_version"] == 2
         assert control.get_active() is None
         control.activate(published.corpus_version, published.retrieval_config)
 
         with CorpusRepository.open(control) as repository:
             assert repository.get_passage("bofm/1-ne/1/2").text == "Second verse"
+            edge = repository.all_edges()[0]
+            assert edge.target.kind == "external"
+            assert edge.target.resolution == "unresolved_external"
+            assert edge.grammar_version == "official-reference-v1"
+            assert edge.source_spans == sample_corpus().edges[0].source_spans
 
 
 def test_equivalent_build_is_idempotent(tmp_path: Path) -> None:

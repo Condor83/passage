@@ -17,6 +17,8 @@ from passage.domain.identifiers import CanonicalReference
 from passage.domain.models import SourceApproval
 from passage.ingest.normalize import NormalizedCorpus
 
+CORPUS_SCHEMA_VERSION = 2
+
 
 class BuildFault(RuntimeError):
     pass
@@ -63,7 +65,7 @@ class CorpusBuilder:
                     "approval": approval.model_dump(mode="json"),
                     "recipe_fingerprint": recipe_fingerprint,
                     "normalized_digest": corpus.normalized_digest,
-                    "schema_version": 1,
+                    "schema_version": CORPUS_SCHEMA_VERSION,
                     "importer_version": importer_version,
                 }
             )
@@ -94,7 +96,7 @@ class CorpusBuilder:
             retrieval_config = f"baseline-{_sha256(config_bytes)[:24]}"
             config_file_bytes = (config_bytes + "\n").encode("utf-8")
             core_manifest = {
-                "schema_version": 1,
+                "schema_version": CORPUS_SCHEMA_VERSION,
                 "source_approval": approval.model_dump(mode="json"),
                 "source_profile": corpus.source_profile,
                 "source_format": corpus.source_format,
@@ -161,7 +163,7 @@ class CorpusBuilder:
     def _populate(self, path: Path, corpus: NormalizedCorpus) -> None:
         connection = sqlite3.connect(path)
         try:
-            schema = (Path(__file__).parent / "migrations/001_corpus.sql").read_text()
+            schema = (Path(__file__).parent / "migrations/002_corpus.sql").read_text()
             connection.executescript(schema)
             reference_ids: dict[str, int] = {}
             with connection:
@@ -219,14 +221,17 @@ class CorpusBuilder:
                     connection.execute(
                         """INSERT INTO reference_edges(
                             edge_id, origin_passage_id, origin_anchor,
-                            target_json, source_attribution
-                        ) VALUES (?, ?, ?, ?, ?)""",
+                            target_json, source_attribution, grammar_version,
+                            source_spans_json
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?)""",
                         (
                             edge.edge_id,
                             reference_ids[edge.origin_reference],
                             edge.origin_anchor,
                             _json(edge.target.model_dump(mode="json")),
                             edge.source_attribution,
+                            edge.grammar_version,
+                            _json([span.model_dump(mode="json") for span in edge.source_spans]),
                         ),
                     )
             connection.commit()
@@ -237,7 +242,7 @@ class CorpusBuilder:
 
 def _baseline_config(normalized_digest: str) -> dict[str, Any]:
     return {
-        "schema_version": 1,
+        "schema_version": CORPUS_SCHEMA_VERSION,
         "normalized_digest": normalized_digest,
         "lanes": ["lexical", "official"],
         "lexical": {"algorithm": "fts5-bm25", "candidate_pool_size": 100},

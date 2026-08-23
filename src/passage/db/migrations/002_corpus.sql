@@ -34,7 +34,9 @@ CREATE TABLE reference_edges (
     origin_passage_id INTEGER NOT NULL REFERENCES passages(id),
     origin_anchor TEXT NOT NULL,
     target_json TEXT NOT NULL,
-    source_attribution TEXT NOT NULL
+    source_attribution TEXT NOT NULL,
+    grammar_version TEXT NOT NULL,
+    source_spans_json TEXT NOT NULL
 ) WITHOUT ROWID;
 
 CREATE VIRTUAL TABLE passages_fts USING fts5(

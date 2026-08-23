@@ -12,7 +12,13 @@ import pdfplumber
 from pydantic import Field, model_validator
 
 from passage.domain.identifiers import BOOK_SLUG_SET, NEW_TESTAMENT_BOOK_SLUG_SET
-from passage.domain.models import EpubSourceSpan, PdfSourceSpan, StrictModel
+from passage.domain.models import (
+    EpubSourceSpan,
+    InternalReferenceTarget,
+    PdfSourceSpan,
+    StrictModel,
+)
+from passage.ingest.apparatus import OFFICIAL_REFERENCE_GRAMMAR_VERSION
 from passage.ingest.base import ExtractionResult
 
 if TYPE_CHECKING:
@@ -140,6 +146,16 @@ def validate_corpus(corpus: NormalizedCorpus, structure: StructureManifest) -> N
                     references=[note.origin_reference],
                 )
             )
+    edge_counts = Counter(edge.edge_id for edge in corpus.edges)
+    duplicate_edges = sorted(edge_id for edge_id, count in edge_counts.items() if count > 1)
+    if duplicate_edges:
+        findings.append(
+            ValidationFinding(
+                code="duplicate_official_edge",
+                message="official reference edges are duplicated",
+                references=duplicate_edges,
+            )
+        )
     for edge in corpus.edges:
         if edge.origin_reference not in actual_set:
             findings.append(
@@ -149,7 +165,23 @@ def validate_corpus(corpus: NormalizedCorpus, structure: StructureManifest) -> N
                     references=[edge.origin_reference],
                 )
             )
-        if edge.target.in_corpus:
+        if not edge.source_spans:
+            findings.append(
+                ValidationFinding(
+                    code="official_edge_missing_source_span",
+                    message="official reference edge has no retained source span",
+                    references=[edge.origin_reference],
+                )
+            )
+        if edge.grammar_version != OFFICIAL_REFERENCE_GRAMMAR_VERSION:
+            findings.append(
+                ValidationFinding(
+                    code="unsupported_official_reference_grammar",
+                    message="official reference edge uses an unsupported grammar version",
+                    references=[edge.origin_reference],
+                )
+            )
+        if isinstance(edge.target, InternalReferenceTarget):
             target = f"bofm/{edge.target.book}/{edge.target.chapter}/{edge.target.verse}" + (
                 f"-{edge.target.end_verse}" if edge.target.end_verse else ""
             )

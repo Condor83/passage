@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from passage.domain.models import EpubSourceSpan
+from passage.domain.models import EpubSourceSpan, InternalReferenceTarget
 from passage.ingest.base import (
     ExtractedEdge,
     ExtractedPassage,
@@ -115,10 +115,14 @@ def test_validation_rejects_duplicate_and_broken_local_edge() -> None:
                 ("bofm/1-ne/1/1", "Duplicate verse"),
                 ("bofm/1-ne/1/2", "Second verse"),
             ],
-            [("bofm/1-ne/1/1", "bofm/1-ne/1/3")],
+            [("bofm/1-ne/1/1", "bofm/1-ne/1/2")],
         ),
         MANIFEST,
     )
+    broken = corpus.edges[0].model_copy(
+        update={"target": InternalReferenceTarget(book="1-ne", chapter=1, verse=3)}
+    )
+    corpus = corpus.model_copy(update={"edges": [broken]})
 
     with pytest.raises(CorpusValidationError) as failure:
         validate_corpus(corpus, MANIFEST)
@@ -140,4 +144,22 @@ def test_well_formed_external_edge_is_not_a_broken_link() -> None:
     )
 
     validate_corpus(corpus, MANIFEST)
-    assert corpus.edges[0].target.in_corpus is False
+    assert corpus.edges[0].target.kind == "external"
+    assert corpus.edges[0].target.resolution == "unresolved_external"
+
+
+def test_normalization_expands_explicit_targets_and_preserves_edge_evidence() -> None:
+    source = extraction(
+        [
+            ("bofm/1-ne/1/1", "First verse"),
+            ("bofm/1-ne/1/2", "Second verse"),
+        ],
+        [("bofm/1-ne/1/1", "bofm/1-ne/1/2; bible/john/3/16")],
+    )
+
+    corpus = normalize_extraction(source, MANIFEST)
+
+    assert [edge.target.kind for edge in corpus.edges] == ["internal", "external"]
+    assert len({edge.edge_id for edge in corpus.edges}) == 2
+    assert all(edge.grammar_version == "official-reference-v1" for edge in corpus.edges)
+    assert all(edge.source_spans == source.edges[0].source_spans for edge in corpus.edges)

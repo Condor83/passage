@@ -4,7 +4,13 @@ from collections import deque
 from dataclasses import dataclass
 
 from passage.domain.identifiers import CanonicalReference
-from passage.domain.models import Direction, ReferenceEdge, ReferenceTarget
+from passage.domain.models import (
+    Direction,
+    ExternalReferenceTarget,
+    InternalReferenceTarget,
+    ReferenceEdge,
+    ReferenceTarget,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -17,6 +23,7 @@ class TraversedNode:
 class TraversalResult:
     nodes: list[TraversedNode]
     external_targets: list[ReferenceTarget]
+    official_edges: list[ReferenceEdge]
     frontier: list[str]
 
     @property
@@ -36,6 +43,7 @@ def traverse(
     visited = {origin}
     nodes: list[TraversedNode] = []
     external_targets: dict[str, ReferenceTarget] = {}
+    official_edges: dict[str, ReferenceEdge] = {}
     frontier: set[str] = set()
 
     while queue:
@@ -44,6 +52,7 @@ def traverse(
         if depth >= max_depth:
             continue
         for edge, target_reference, external in _neighbors(edges, reference, direction):
+            official_edges[edge.edge_id] = edge
             if external is not None:
                 if include_external:
                     external_targets[_target_key(external)] = external
@@ -60,6 +69,7 @@ def traverse(
     return TraversalResult(
         nodes=nodes,
         external_targets=list(external_targets.values()),
+        official_edges=list(official_edges.values()),
         frontier=sorted(frontier),
     )
 
@@ -73,19 +83,21 @@ def _neighbors(
         for edge in edges:
             if edge.origin_reference != reference:
                 continue
-            if not edge.target.in_corpus:
+            if isinstance(edge.target, ExternalReferenceTarget):
                 yield edge, None, edge.target
                 continue
             for target_reference in _target_references(edge.target):
                 yield edge, target_reference, None
     if direction in (Direction.INBOUND, Direction.BOTH):
         for edge in edges:
-            if edge.target.in_corpus and reference in _target_references(edge.target):
+            if isinstance(edge.target, InternalReferenceTarget) and reference in _target_references(
+                edge.target
+            ):
                 yield edge, edge.origin_reference, None
 
 
 def _target_references(target: ReferenceTarget) -> tuple[str, ...]:
-    if target.work != "bofm":
+    if not isinstance(target, InternalReferenceTarget):
         return ()
     reference = CanonicalReference(
         book=target.book,

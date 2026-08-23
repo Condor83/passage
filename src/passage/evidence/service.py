@@ -19,6 +19,7 @@ from passage.domain.models import (
     LexicalSearchRequest,
     Passage,
     PassageRequest,
+    ReferenceEdge,
     RetrievalBasis,
     SnapshotRequest,
     TraversalRequest,
@@ -219,6 +220,7 @@ class EvidenceService:
                     truncated=result.truncated,
                     frontier=result.frontier,
                 ),
+                official_edges=result.official_edges,
                 external_targets=result.external_targets,
             )
 
@@ -242,6 +244,7 @@ class EvidenceService:
                 raise InvalidQueryError(str(exc)) from exc
 
             candidates: dict[str, tuple[Passage, list[RetrievalBasis]]] = {}
+            official_edges: dict[str, ReferenceEdge] = {}
             for hit in lexical_page.hits:
                 candidates[hit.reference] = (
                     hit.passage,
@@ -259,6 +262,7 @@ class EvidenceService:
                         max_nodes,
                         include_external=False,
                     )
+                    official_edges.update((edge.edge_id, edge) for edge in expanded.official_edges)
                     for node in expanded.nodes[1:]:
                         passage = snapshot.repository.get_passage(node.reference)
                         basis = RetrievalBasis(
@@ -344,6 +348,7 @@ class EvidenceService:
                     truncated=has_more or lexical_page.has_more,
                     cursor=cursor,
                 ),
+                official_edges=list(official_edges.values()),
             )
 
     def _lexical_record(
@@ -392,6 +397,7 @@ class EvidenceService:
         *,
         applied: dict[str, Any],
         completeness: Completeness | None = None,
+        official_edges: list[ReferenceEdge] | None = None,
     ) -> EvidenceResponse:
         return EvidenceResponse(
             records=records,
@@ -399,6 +405,7 @@ class EvidenceService:
             retrieval_config=snapshot.retrieval_config,
             applied=applied,
             completeness=completeness or Completeness(),
+            official_edges=official_edges or [],
         )
 
 

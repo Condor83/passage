@@ -90,3 +90,11 @@ Checked all 11 wiki pages for required frontmatter, local links, inbound links, 
 ## [2026-08-23] update | Active technical identifiers renamed to Passage
 
 Renamed the Python distribution and package, CLI command, configuration prefix, source-independent profile identities, HTTP title, MCP identity, imports, tests, and active technical documentation to Passage. No compatibility package, command alias, environment fallback, or duplicate MCP identity remains. Preserved the historical product-plan filename and its intentional references. Regenerated only the synthetic EPUB and PDF fixtures and updated their synthetic approval digests. No private source was processed, accepted, or activated.
+
+## [2026-08-23] update | Phase 0 official reference grammar implemented
+
+Recorded `official-reference-v1` as the narrow synthetic Phase 0 contract. Documented canonical slash syntax, explicit semicolon lists, typed internal and unresolved external targets, stable failure codes, full-input rejection, source-span evidence, corpus schema v2 persistence, and inspectable traversal output. Confirmed that private repair-note prose, real-source validation, corpus acceptance, and activation remain closed.
+
+## [2026-08-23] lint | Wiki health check after official reference grammar
+
+Checked all 12 wiki pages for required frontmatter, local links, inbound links, index coverage, decision alignment, contradictions, stale claims, and resolved open questions. Found no critical, warning, or informational findings. The grammar is recorded as synthetic Phase 0 behavior, while accepted-source validation, editorial comparison, candidate acceptance, activation, and Phase 1 service work remain open or blocked by their existing gates.

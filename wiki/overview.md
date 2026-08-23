@@ -24,6 +24,7 @@ The product returns inspectable evidence. It does not generate authoritative doc
 - A separate New Testament repair candidate reconstructs all 27 books, 260 chapters, and 7,957 verses with 10,091 unique, nonempty official footnote anchors.
 - Both private repair candidates remain inactive, unaccepted, and marked `review_required`.
 - Official cross-reference targets have not been parsed from the repaired footnote text. The candidates currently contain no relationship edges.
+- Phase 0 implements the deterministic `official-reference-v1` synthetic grammar, typed internal and unresolved external targets, persisted edge provenance, and inspectable traversal evidence. It has not been validated against either private repair candidate.
 - The current implementation uses immutable local SQLite corpus artifacts, loopback HTTP, and stdio MCP. No hosted service, PostgreSQL runtime, authentication system, note surface, or derived graph is implemented.
 - The maintainer approved the [Passage Product Specification](../docs/specs/2026-08-23-passage-product-specification.md) on 2026-08-23. It selects Supabase as the first managed platform and defines the gated path to PostgreSQL, Claude remote MCP, the complete canon, study-group notes, and later General Conference content.
 
@@ -46,10 +47,11 @@ See [Corpus Fidelity and Acceptance](concepts/corpus-fidelity-and-acceptance.md)
 - Supabase Postgres and Auth are the first managed platform. PostgreSQL becomes primary only after contract parity and cutover acceptance. See [PostgreSQL Platform](concepts/postgresql-platform.md).
 - Claude remote MCP is the first hosted client. Phase 2 is evidence-only; Phase 3 adds the owner/member note model. See [Study Group Access](concepts/study-group-access.md).
 - Model-derived relationships remain experimental until the locked H2 and H3 evaluations, including a human sample, pass. See [Retrieval and Concept Links](concepts/retrieval-and-concept-links.md).
+- Official target grammar v1 supports only explicit canonical slash forms and semicolon-separated targets. Real-source validation remains a Phase 2 gate. See [Official Reference Grammar](concepts/official-reference-grammar.md).
 
 ## Open Questions
 
-- What parsing and validation contract should convert official footnote text into typed cross-reference edges?
+- Which accepted-source syntax extensions, if any, will Phase 2 require beyond `official-reference-v1`?
 - What independent comparison or review is required before the repaired private candidate can be accepted?
 - What evaluation result would justify promoting vectors or hybrid retrieval to a default lane?
 - Can Supabase OAuth satisfy every Claude remote MCP requirement in a live compatibility proof?

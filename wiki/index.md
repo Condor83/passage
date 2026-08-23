@@ -9,7 +9,7 @@ tags: [index, navigation]
 
 # Passage Wiki Index
 
-> Last updated: 2026-08-23 | Indexed wiki pages: 10 | Sources ingested: 0
+> Last updated: 2026-08-23 | Indexed wiki pages: 11 | Sources ingested: 0
 
 ## Living Documents
 
@@ -28,6 +28,7 @@ tags: [index, navigation]
 ## Concepts
 
 - [Corpus Fidelity and Acceptance](concepts/corpus-fidelity-and-acceptance.md) - Evidence requirements that separate a repair candidate from an accepted corpus.
+- [Official Reference Grammar](concepts/official-reference-grammar.md) - Versioned Phase 0 synthetic syntax, typed targets, failure codes, and evidence contract.
 - [Content Roadmap](concepts/content-roadmap.md) - Long-term expansion from the Book of Mormon to the LDS canon and Church-leader teachings.
 - [PostgreSQL Platform](concepts/postgresql-platform.md) - Supabase-first PostgreSQL direction, cutover boundary, Auth gate, and provider-exit rules.
 - [Retrieval and Concept Links](concepts/retrieval-and-concept-links.md) - Exact, lexical, semantic, and provenance-backed relationship layers.

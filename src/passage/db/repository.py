@@ -5,6 +5,8 @@ import sqlite3
 from dataclasses import dataclass
 from pathlib import Path
 
+from pydantic import TypeAdapter
+
 from passage.db.control import ControlStore
 from passage.db.validation import validate_published_artifact
 from passage.domain.errors import (
@@ -19,6 +21,8 @@ from passage.domain.models import (
     ReferenceTarget,
     SearchFilters,
 )
+
+_REFERENCE_TARGET_ADAPTER: TypeAdapter[ReferenceTarget] = TypeAdapter(ReferenceTarget)
 
 
 @dataclass(frozen=True, slots=True)
@@ -196,7 +200,8 @@ class CorpusRepository:
     def all_edges(self) -> list[ReferenceEdge]:
         rows = self.connection.execute(
             """SELECT e.edge_id, p.reference AS origin_reference, e.origin_anchor,
-                      e.target_json, e.source_attribution
+                      e.target_json, e.source_attribution, e.grammar_version,
+                      e.source_spans_json
                FROM reference_edges e
                JOIN passages p ON p.id = e.origin_passage_id
                ORDER BY p.canonical_order, e.edge_id"""
@@ -206,8 +211,10 @@ class CorpusRepository:
                 edge_id=row["edge_id"],
                 origin_reference=row["origin_reference"],
                 origin_anchor=row["origin_anchor"],
-                target=ReferenceTarget.model_validate_json(row["target_json"]),
+                target=_REFERENCE_TARGET_ADAPTER.validate_json(row["target_json"]),
                 source_attribution=row["source_attribution"],
+                grammar_version=row["grammar_version"],
+                source_spans=json.loads(row["source_spans_json"]),
             )
             for row in rows
         ]

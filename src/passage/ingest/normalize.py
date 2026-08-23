@@ -12,7 +12,11 @@ from passage.domain.models import (
     ReferenceEdge,
     StrictModel,
 )
-from passage.ingest.apparatus import normalize_target
+from passage.ingest.apparatus import (
+    OFFICIAL_REFERENCE_GRAMMAR_VERSION,
+    reference_target_key,
+    require_official_references,
+)
 from passage.ingest.base import ExtractionResult
 from passage.ingest.validation import StructureManifest
 
@@ -55,21 +59,36 @@ def normalize_extraction(
         )
         for event in extraction.notes
     ]
-    edges = [
-        ReferenceEdge(
-            edge_id=_stable_id(
-                event.origin_reference,
-                event.origin_anchor,
-                event.target,
-                event.source_attribution,
-            ),
-            origin_reference=event.origin_reference,
-            origin_anchor=event.origin_anchor,
-            target=normalize_target(event.target),
-            source_attribution=event.source_attribution,
+    valid_internal_references = set(structure.expected_references())
+    edges: list[ReferenceEdge] = []
+    for event in extraction.edges:
+        parsed = require_official_references(
+            event.target,
+            valid_internal_references=valid_internal_references,
         )
-        for event in extraction.edges
-    ]
+        span_identity = _canonical_json(
+            [span.model_dump(mode="json") for span in event.source_spans]
+        ).decode("utf-8")
+        for target in parsed.targets:
+            target_key = reference_target_key(target)
+            edges.append(
+                ReferenceEdge(
+                    edge_id=_stable_id(
+                        event.origin_reference,
+                        event.origin_anchor,
+                        target_key,
+                        event.source_attribution,
+                        OFFICIAL_REFERENCE_GRAMMAR_VERSION,
+                        span_identity,
+                    ),
+                    origin_reference=event.origin_reference,
+                    origin_anchor=event.origin_anchor,
+                    target=target,
+                    source_attribution=event.source_attribution,
+                    grammar_version=OFFICIAL_REFERENCE_GRAMMAR_VERSION,
+                    source_spans=event.source_spans,
+                )
+            )
     records = {
         "source_format": extraction.source_format,
         "source_profile": extraction.profile,
