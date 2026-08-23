@@ -42,7 +42,7 @@ Footer blocks use three-column visual order. Blocks sort by column and vertical 
 
 ### Marker reconciliation
 
-The parser first links an inline anchor to a footer entry by page, verse, and label. It permits a page-boundary fallback only when the verse source spans and available entry make the result unique. It can recover explicit and continuation labels from irregular table cells when the final label set is sequential. A narrow source-profile correction set records the New Testament OCR defects that required direct PDF review.
+The parser first links an inline anchor to a footer entry by page, verse, and label. It permits a page-boundary fallback only when the verse source spans and available entry make the result unique. It can recover explicit and continuation labels from irregular table cells when the final label set is sequential. A narrow private correction profile records source-specific OCR defects that required direct PDF review. The parser applies that profile only when its stored PDF and Datalab JSON digests match the exact input bytes. The profile and its exact correction rules stay outside Git.
 
 ### PDF glyph verification
 
@@ -56,7 +56,7 @@ This rule permits raised superscripts near block boundaries without counting a m
 
 ### Immutable output
 
-The writer normalizes the extraction and writes a mode-`0600` candidate and report under the configured private root. The repair digest includes the report content, so changed findings produce a new immutable repair directory. Writing a candidate does not accept or activate it.
+The writer rejects a private root inside the repository. It normalizes the extraction and writes a mode-`0600` candidate and report under the configured private root. The report and repair digest bind the PDF, Datalab JSON, text-free structure manifest, parser recipe, optional correction profile, normalized corpus, and findings. A changed input, recipe, profile, or finding produces a new immutable repair directory. Writing a candidate does not accept or activate it.
 
 ## Verified Results
 
@@ -108,6 +108,8 @@ uv run pytest
 ```
 
 A private-source repair must use explicit local source paths and a configured private root outside the repository. Do not place those values in committed commands or logs.
+
+Source-specific correction profiles are private review artifacts. Routine repository tests use synthetic PDFs, Marker JSON, and digest-bound synthetic profiles.
 
 ## Related Pages
 

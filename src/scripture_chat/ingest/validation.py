@@ -5,13 +5,13 @@ import json
 from collections import Counter
 from importlib.resources import files
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Literal
 from zipfile import ZipFile
 
 import pdfplumber
-from pydantic import Field, field_validator
+from pydantic import Field, model_validator
 
-from scripture_chat.domain.identifiers import BOOK_SLUG_SET
+from scripture_chat.domain.identifiers import BOOK_SLUG_SET, NEW_TESTAMENT_BOOK_SLUG_SET
 from scripture_chat.domain.models import EpubSourceSpan, PdfSourceSpan, StrictModel
 from scripture_chat.ingest.base import ExtractionResult
 
@@ -21,28 +21,29 @@ if TYPE_CHECKING:
 
 class StructureManifest(StrictModel):
     schema_version: int = Field(ge=1)
+    work: Literal["bofm", "nt"] = "bofm"
     source: dict[str, Any]
     books: dict[str, list[int]]
 
-    @field_validator("books")
-    @classmethod
-    def validate_books(cls, books: dict[str, list[int]]) -> dict[str, list[int]]:
-        if not books:
+    @model_validator(mode="after")
+    def validate_books(self) -> StructureManifest:
+        if not self.books:
             raise ValueError("structure manifest contains no books")
-        unknown = set(books) - BOOK_SLUG_SET
+        allowed = BOOK_SLUG_SET if self.work == "bofm" else NEW_TESTAMENT_BOOK_SLUG_SET
+        unknown = set(self.books) - allowed
         if unknown:
             raise ValueError(f"unknown books in structure manifest: {sorted(unknown)}")
-        for slug, counts in books.items():
+        for slug, counts in self.books.items():
             if not counts or any(count < 1 for count in counts):
                 raise ValueError(f"invalid chapter counts for {slug}")
-        return books
+        return self
 
     def expected_references(self) -> list[str]:
         references: list[str] = []
         for book, counts in self.books.items():
             for chapter, verse_count in enumerate(counts, start=1):
                 references.extend(
-                    f"bofm/{book}/{chapter}/{verse}" for verse in range(1, verse_count + 1)
+                    f"{self.work}/{book}/{chapter}/{verse}" for verse in range(1, verse_count + 1)
                 )
         return references
 
@@ -61,6 +62,11 @@ class CorpusValidationError(ValueError):
 
 def load_default_structure_manifest() -> StructureManifest:
     resource = files("scripture_chat").joinpath("data/book_of_mormon_structure.json")
+    return StructureManifest.model_validate_json(resource.read_text(encoding="utf-8"))
+
+
+def load_new_testament_structure_manifest() -> StructureManifest:
+    resource = files("scripture_chat").joinpath("data/new_testament_structure.json")
     return StructureManifest.model_validate_json(resource.read_text(encoding="utf-8"))
 
 

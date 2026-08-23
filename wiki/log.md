@@ -54,3 +54,11 @@ Added the approved specification under `docs/specs/`. Recorded the explicit loca
 ## [2026-08-23] lint | Wiki health check after product specification approval
 
 Verified required frontmatter, all local Markdown links, inbound links, and decision-log alignment. Found no broken links or orphan pages. Stale pre-approval phrases occur only inside the preserved static review and append-only historical log entry; the review now records their resolution. Current pages distinguish the implemented SQLite, loopback HTTP, and stdio MCP baseline from the approved but unimplemented PostgreSQL, Supabase, remote MCP, note, and derived-graph direction. Open launch and corpus blockers remain listed in the approved specification and decision log.
+
+## [2026-08-23] update | Datalab repair provenance and privacy hardened
+
+Reviewed the uncommitted New Testament and Datalab implementation against repository standards and the approved specification. Moved exact source-specific correction rules out of Git into a private digest-bound profile, required the repair writer to reject repository-local output, and bound each repair identity to its PDF, Datalab JSON, structure, recipe, optional correction profile, normalized corpus, and findings. Updated the Datalab repair analysis and corpus-fidelity concept page. No private source was processed, accepted, or activated.
+
+## [2026-08-23] lint | Wiki health check after Datalab hardening
+
+Checked all 11 wiki pages for decision alignment, contradictions, stale open questions, frontmatter, local links, index coverage, and inbound links. Found no contradictions, broken links, missing frontmatter, unindexed pages, or orphan pages. The accepted-source, independent editorial comparison, and official-reference grammar questions remain open by design.

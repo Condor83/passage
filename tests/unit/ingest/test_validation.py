@@ -12,6 +12,7 @@ from scripture_chat.ingest.normalize import normalize_extraction, serialize_json
 from scripture_chat.ingest.validation import (
     CorpusValidationError,
     StructureManifest,
+    load_new_testament_structure_manifest,
     validate_corpus,
 )
 
@@ -51,6 +52,29 @@ def extraction(
 
 
 MANIFEST = StructureManifest(schema_version=1, source={}, books={"1-ne": [2]})
+
+
+def test_structure_manifest_supports_new_testament_references() -> None:
+    manifest = StructureManifest(
+        schema_version=1,
+        work="nt",
+        source={"fixture": True},
+        books={"matt": [2]},
+    )
+
+    assert manifest.expected_references() == ["nt/matt/1/1", "nt/matt/1/2"]
+
+
+def test_new_testament_structure_manifest_is_complete() -> None:
+    manifest = load_new_testament_structure_manifest()
+    references = manifest.expected_references()
+
+    assert manifest.work == "nt"
+    assert len(manifest.books) == 27
+    assert sum(len(chapters) for chapters in manifest.books.values()) == 260
+    assert len(references) == 7_957
+    assert references[0] == "nt/matt/1/1"
+    assert references[-1] == "nt/rev/22/21"
 
 
 def test_normalized_jsonl_is_deterministic_and_content_addressed() -> None:

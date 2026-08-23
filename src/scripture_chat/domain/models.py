@@ -14,7 +14,11 @@ from pydantic import (
     model_validator,
 )
 
-from scripture_chat.domain.identifiers import BOOK_SLUG_SET, CanonicalReference
+from scripture_chat.domain.identifiers import (
+    BOOK_SLUG_SET,
+    CanonicalReference,
+    validate_corpus_reference,
+)
 
 Identifier = Annotated[
     str,
@@ -214,8 +218,8 @@ class Passage(StrictModel):
     @field_validator("reference")
     @classmethod
     def validate_passage_reference(cls, value: str) -> str:
-        reference = CanonicalReference.parse(value)
-        if reference.end_verse is not None:
+        _work, _book, _chapter, _verse, end_verse = validate_corpus_reference(value)
+        if end_verse is not None:
             raise ValueError("a passage reference must identify one verse")
         return value
 

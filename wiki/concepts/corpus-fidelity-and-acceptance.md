@@ -31,6 +31,8 @@ An accepted corpus requires:
 
 For a PDF source, glyph and overlay evidence must support the extracted tokens and anchors. Visual review is a useful sanity check, but it does not replace exhaustive reconciliation.
 
+Source-specific extraction corrections must live in a private profile outside Git. The profile must bind to the exact source and extraction-input digests before the parser can apply it. Repair artifacts must also record the structure and recipe identities used to produce them.
+
 ## Lifecycle
 
 1. Inspect and fingerprint the source.

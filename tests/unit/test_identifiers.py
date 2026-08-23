@@ -10,6 +10,8 @@ from scripture_chat.domain.models import (
     EvidenceSearchRequest,
     LexicalMode,
     LexicalSearchRequest,
+    Passage,
+    PassageRequest,
     SearchFilters,
     SnapshotSelector,
     SourceApproval,
@@ -25,6 +27,20 @@ def test_canonical_reference_round_trip() -> None:
     assert reference.verse == 7
     assert reference.end_verse == 9
     assert str(reference) == "bofm/1-ne/3/7-9"
+
+
+def test_private_corpus_passages_can_hold_new_testament_references() -> None:
+    passage = Passage(
+        reference="nt/matt/1/1",
+        text="Fixture text.",
+        canonical_order=0,
+        content_hash="0" * 64,
+        source_spans=[],
+    )
+
+    assert passage.reference == "nt/matt/1/1"
+    with pytest.raises(ValueError, match="invalid canonical reference"):
+        PassageRequest(reference="nt/matt/1/1")
 
 
 @pytest.mark.parametrize(
