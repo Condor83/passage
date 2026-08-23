@@ -78,3 +78,11 @@ Verified all 11 wiki pages, frontmatter, local links, inbound links, and index c
 ## [2026-08-23] update | Bounded Codex subagent roles configured
 
 Added project-scoped Codex configuration for at most three concurrent subagents. A GPT-5.3 Codex Spark mechanical role handles only precise, low-risk, objectively verifiable edits. A stronger read-only reviewer checks correctness, evidence integrity, authorization, data safety, and missing tests. The primary agent retains architecture and integration ownership. Both roles preserve the private-source, corpus, remote-infrastructure, commit, push, and deployment authority boundaries.
+
+## [2026-08-23] create | Autonomous build readiness recorded
+
+Documented the prepared execution worktree, validated baseline, goal-prompt outline, Phase 0 recommendation, subagent contract, proof cadence, completion criteria, and hard stop conditions. The document does not contain the actual goal prompt and does not authorize product implementation or any closed external, source, corpus, cost, deployment, push, or publication gate.
+
+## [2026-08-23] lint | Wiki health check after autonomous build preparation
+
+Checked all 11 wiki pages for required frontmatter, local links, inbound links, index coverage, decision alignment, contradictions, stale claims, unresolved questions, and missing concept coverage. Found no broken links, orphan pages, index gaps, decision conflicts, stale resolved questions, or material concept gaps. The readiness document preserves the Phase 0 boundary and all current source, corpus, OAuth, cost, deployment, and publication gates.
