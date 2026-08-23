@@ -9,11 +9,11 @@ from typing import Any
 import pytest
 from fastapi.testclient import TestClient
 
-from scripture_chat.config import AppConfig
-from scripture_chat.db.builder import CorpusBuilder
-from scripture_chat.db.control import ControlStore
-from scripture_chat.domain.errors import ErrorCode, ScriptureChatError
-from scripture_chat.domain.models import (
+from passage.config import AppConfig
+from passage.db.builder import CorpusBuilder
+from passage.db.control import ControlStore
+from passage.domain.errors import ErrorCode, PassageError
+from passage.domain.models import (
     ContextRequest,
     EvidenceSearchRequest,
     LexicalSearchRequest,
@@ -22,10 +22,10 @@ from scripture_chat.domain.models import (
     SourceApproval,
     TraversalRequest,
 )
-from scripture_chat.evidence.service import EvidenceService
-from scripture_chat.http.app import create_app
-from scripture_chat.ingest.normalize import normalize_extraction
-from scripture_chat.ingest.validation import StructureManifest
+from passage.evidence.service import EvidenceService
+from passage.http.app import create_app
+from passage.ingest.normalize import normalize_extraction
+from passage.ingest.validation import StructureManifest
 from tests.unit.ingest.test_validation import extraction
 
 
@@ -124,6 +124,15 @@ def test_all_six_routes_serialize_the_shared_service_responses(
     assert evidence.json() == expected["evidence"]
 
 
+def test_openapi_uses_passage_service_identity(live_client: tuple[Any, TestClient]) -> None:
+    _, client = live_client
+
+    response = client.get("/openapi.json")
+
+    assert response.status_code == 200
+    assert response.json()["info"]["title"] == "Passage Evidence API"
+
+
 def test_slash_preserving_context_route_precedes_catch_all(
     live_client: tuple[Any, TestClient],
 ) -> None:
@@ -202,7 +211,7 @@ def test_every_domain_error_has_a_stable_http_envelope(
     ) as client:
 
         def fail(_: SnapshotRequest) -> None:
-            raise ScriptureChatError(code, "domain failure", {"kind": "synthetic"})
+            raise PassageError(code, "domain failure", {"kind": "synthetic"})
 
         monkeypatch.setattr(app.state.evidence_service, "get_corpus", fail)
         response = client.get("/v1/corpus")
@@ -284,7 +293,7 @@ def test_startup_fails_closed_without_an_active_snapshot_and_closes_store(tmp_pa
     )
 
     with (
-        pytest.raises(ScriptureChatError) as raised,
+        pytest.raises(PassageError) as raised,
         TestClient(app, base_url="http://localhost"),
     ):
         pass

@@ -1,4 +1,4 @@
-from scripture_chat.ingest.validation import load_default_structure_manifest
+from passage.ingest.validation import load_default_structure_manifest
 
 
 def test_default_structure_manifest_is_complete_and_text_free() -> None:

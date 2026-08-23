@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from scripture_chat.domain.models import SnapshotRequest
-from scripture_chat.eval.cases import EvaluationCase, EvidenceJudgment
-from scripture_chat.eval.performance import measure_performance
-from scripture_chat.eval.runner import EvaluationRunner
+from passage.domain.models import SnapshotRequest
+from passage.eval.cases import EvaluationCase, EvidenceJudgment
+from passage.eval.performance import measure_performance
+from passage.eval.runner import EvaluationRunner
 
 
 def test_locked_baseline_report_is_identity_bound_and_immutable(

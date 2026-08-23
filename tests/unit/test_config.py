@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from scripture_chat.config import AppConfig, prepare_private_root
+from passage.config import AppConfig, prepare_private_root
 
 
 def test_private_root_must_be_absolute(tmp_path: Path) -> None:

@@ -41,7 +41,7 @@ See [Corpus Fidelity and Acceptance](concepts/corpus-fidelity-and-acceptance.md)
 
 ## Key Decisions
 
-- The project name and all future active technical identifiers are **Passage**. Existing identifiers remain unchanged until the approved rename work runs. See [Decision Log](decisions.md#2026-08-23---all-active-technical-identifiers-will-use-passage).
+- The project name and all active technical identifiers are **Passage**. The Phase 0 rename removed the prior package, CLI, environment, service, and MCP identifiers without compatibility aliases. Historical plan filenames remain unchanged. See [Decision Log](decisions.md#2026-08-23---all-active-technical-identifiers-will-use-passage).
 - The long-term corpus covers the LDS scripture canon, followed by teachings from Church leaders. See [Content Roadmap](concepts/content-roadmap.md).
 - Supabase Postgres and Auth are the first managed platform. PostgreSQL becomes primary only after contract parity and cutover acceptance. See [PostgreSQL Platform](concepts/postgresql-platform.md).
 - Claude remote MCP is the first hosted client. Phase 2 is evidence-only; Phase 3 adds the owner/member note model. See [Study Group Access](concepts/study-group-access.md).

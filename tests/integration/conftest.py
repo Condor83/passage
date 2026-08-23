@@ -6,12 +6,12 @@ from pathlib import Path
 
 import pytest
 
-from scripture_chat.db.builder import CorpusBuilder
-from scripture_chat.db.control import ControlStore
-from scripture_chat.domain.models import SourceApproval
-from scripture_chat.evidence.service import EvidenceService
-from scripture_chat.ingest.normalize import normalize_extraction
-from scripture_chat.ingest.validation import StructureManifest
+from passage.db.builder import CorpusBuilder
+from passage.db.control import ControlStore
+from passage.domain.models import SourceApproval
+from passage.evidence.service import EvidenceService
+from passage.ingest.normalize import normalize_extraction
+from passage.ingest.validation import StructureManifest
 from tests.unit.ingest.test_validation import extraction
 
 

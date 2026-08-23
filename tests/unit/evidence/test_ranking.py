@@ -1,5 +1,5 @@
-from scripture_chat.domain.models import EvidenceLane, RetrievalBasis
-from scripture_chat.evidence.ranking import RankedCandidate, rank_candidates
+from passage.domain.models import EvidenceLane, RetrievalBasis
+from passage.evidence.ranking import RankedCandidate, rank_candidates
 
 
 def test_ranking_prefers_lexical_then_score_then_canonical_order() -> None:

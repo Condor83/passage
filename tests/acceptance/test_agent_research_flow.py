@@ -7,8 +7,8 @@ from fastapi.testclient import TestClient
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
-from scripture_chat.config import AppConfig
-from scripture_chat.http.app import create_app
+from passage.config import AppConfig
+from passage.http.app import create_app
 from tests.mcp.test_mcp_tools import TOOL_NAMES, build_active_root, structured
 
 
@@ -47,9 +47,9 @@ async def test_model_free_agent_research_flow_uses_both_real_transports(
 
     parameters = StdioServerParameters(
         command=sys.executable,
-        args=["-m", "scripture_chat.mcp.server"],
+        args=["-m", "passage.mcp.server"],
         cwd=Path.cwd(),
-        env={"SCRIPTURE_CHAT_PRIVATE_ROOT": str(root)},
+        env={"PASSAGE_PRIVATE_ROOT": str(root)},
     )
     async with (
         stdio_client(parameters) as (read_stream, write_stream),

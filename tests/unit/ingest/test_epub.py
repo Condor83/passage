@@ -4,8 +4,8 @@ from zipfile import ZIP_DEFLATED, ZIP_STORED, ZipFile
 
 import pytest
 
-from scripture_chat.ingest.base import ExtractionError, ExtractionLimits
-from scripture_chat.ingest.epub import extract_epub
+from passage.ingest.base import ExtractionError, ExtractionLimits
+from passage.ingest.epub import extract_epub
 
 
 def make_epub(chapter: str, extra_members: dict[str, bytes] | None = None) -> bytes:
@@ -43,7 +43,7 @@ def make_epub(chapter: str, extra_members: dict[str, bytes] | None = None) -> by
 
 
 VALID_CHAPTER = """<html xmlns="http://www.w3.org/1999/xhtml"><body>
-<section data-scripture-profile="scripture-chat-v1">
+<section data-scripture-profile="passage-v1">
 <p data-reference="bofm/1-ne/3/7">
   And it came to pass that I, Nephi, said unto my father: I will go and do.
 </p>
@@ -64,7 +64,7 @@ def test_epub_preserves_passages_apparatus_and_source_members(tmp_path: Path) ->
 
     result = extract_epub(source, ExtractionLimits())
 
-    assert result.profile == "scripture-chat-v1"
+    assert result.profile == "passage-v1"
     assert [event.reference for event in result.passages] == [
         "bofm/1-ne/3/7",
         "bofm/1-ne/3/8",

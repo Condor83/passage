@@ -1,11 +1,11 @@
 from datetime import date
 from pathlib import Path
 
-from scripture_chat.db.builder import CorpusBuilder
-from scripture_chat.db.control import ControlStore
-from scripture_chat.db.repository import CorpusRepository
-from scripture_chat.domain.models import SourceApproval
-from scripture_chat.ingest.normalize import normalize_extraction
+from passage.db.builder import CorpusBuilder
+from passage.db.control import ControlStore
+from passage.db.repository import CorpusRepository
+from passage.domain.models import SourceApproval
+from passage.ingest.normalize import normalize_extraction
 from tests.unit.ingest.test_validation import MANIFEST, extraction
 
 

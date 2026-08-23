@@ -1,6 +1,6 @@
 import pytest
 
-from scripture_chat.eval.metrics import evaluate_ranking
+from passage.eval.metrics import evaluate_ranking
 
 
 def test_metrics_match_hand_checked_ranking() -> None:

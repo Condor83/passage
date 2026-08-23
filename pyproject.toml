@@ -1,5 +1,5 @@
 [project]
-name = "scripture-chat"
+name = "passage"
 version = "0.1.0"
 description = "Local-first scripture evidence service"
 requires-python = ">=3.12"
@@ -13,14 +13,14 @@ dependencies = [
 ]
 
 [project.scripts]
-scripture-chat = "scripture_chat.cli:main"
+passage = "passage.cli:main"
 
 [build-system]
 requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/scripture_chat"]
+packages = ["src/passage"]
 
 [dependency-groups]
 dev = [
@@ -52,7 +52,7 @@ select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
 branch = true
 parallel = true
 patch = ["subprocess"]
-source = ["scripture_chat"]
+source = ["passage"]
 
 [tool.coverage.report]
 fail_under = 85

@@ -1,7 +1,7 @@
 import pytest
 
-from scripture_chat.domain.errors import InvalidQueryError
-from scripture_chat.domain.models import (
+from passage.domain.errors import InvalidQueryError
+from passage.domain.models import (
     ContextRequest,
     Direction,
     EvidenceSearchRequest,
@@ -11,7 +11,7 @@ from scripture_chat.domain.models import (
     SnapshotRequest,
     TraversalRequest,
 )
-from scripture_chat.evidence.service import EvidenceService
+from passage.evidence.service import EvidenceService
 
 
 def test_metadata_lookup_and_context_pin_one_snapshot(service: EvidenceService) -> None:

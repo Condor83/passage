@@ -1,28 +1,60 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
+from importlib import metadata, util
 from pathlib import Path
 from typing import Any
 from zipfile import ZipFile
 
-from scripture_chat.db.control import ControlStore
-from scripture_chat.domain.models import PassageRequest
-from scripture_chat.evidence.service import EvidenceService
+from passage.db.control import ControlStore
+from passage.domain.models import PassageRequest
+from passage.evidence.service import EvidenceService
 
 FIXTURES = Path(__file__).parents[1] / "fixtures"
 
 
 def _run(*arguments: str) -> tuple[subprocess.CompletedProcess[str], dict[str, Any]]:
     completed = subprocess.run(
-        [sys.executable, "-m", "scripture_chat.cli", *arguments],
+        [sys.executable, "-m", "passage.cli", *arguments],
         check=False,
         capture_output=True,
         text=True,
     )
     output = completed.stdout if completed.returncode == 0 else completed.stderr
     return completed, json.loads(output)
+
+
+def test_installed_package_and_console_command_use_only_passage_identity() -> None:
+    distribution = metadata.distribution("passage")
+    console_scripts = {
+        entry.name: entry.value
+        for entry in distribution.entry_points
+        if entry.group == "console_scripts"
+    }
+
+    assert console_scripts == {"passage": "passage.cli:main"}
+    assert util.find_spec("passage") is not None
+    assert util.find_spec("scripture" + "_chat") is None
+
+
+def test_mcp_server_does_not_read_legacy_private_root_environment(tmp_path: Path) -> None:
+    environment = os.environ.copy()
+    environment.pop("PASSAGE_PRIVATE_ROOT", None)
+    environment["SCRIPTURE" + "_CHAT_PRIVATE_ROOT"] = str(tmp_path)
+
+    completed = subprocess.run(
+        [sys.executable, "-m", "passage.mcp.server"],
+        check=False,
+        capture_output=True,
+        text=True,
+        env=environment,
+    )
+
+    assert completed.returncode != 0
+    assert "PASSAGE_PRIVATE_ROOT is required" in completed.stderr
 
 
 def test_fixture_cli_builds_verify_and_evaluate_both_formats(tmp_path: Path) -> None:

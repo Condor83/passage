@@ -2,9 +2,9 @@ from pathlib import Path
 
 import pytest
 
-from scripture_chat.db.builder import BuildFault, CorpusBuilder
-from scripture_chat.db.control import ControlStore
-from scripture_chat.db.repository import CorpusRepository
+from passage.db.builder import BuildFault, CorpusBuilder
+from passage.db.control import ControlStore
+from passage.db.repository import CorpusRepository
 from tests.integration.test_corpus_build import approval, sample_corpus
 
 

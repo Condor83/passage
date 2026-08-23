@@ -5,15 +5,15 @@ from pathlib import Path
 import pytest
 from reportlab.pdfgen import canvas
 
-from scripture_chat.ingest.base import ExtractionError, ExtractionLimits
-from scripture_chat.ingest.datalab import (
+from passage.ingest.base import ExtractionError, ExtractionLimits
+from passage.ingest.datalab import (
     DatalabApparatusVerseOverride,
     DatalabCorrectionAnchor,
     DatalabCorrectionProfile,
     repair_datalab_pdf,
     write_datalab_repair,
 )
-from scripture_chat.ingest.validation import StructureManifest, ValidationFinding
+from passage.ingest.validation import StructureManifest, ValidationFinding
 
 
 def _write_pdf(path: Path, pages: int = 1) -> None:

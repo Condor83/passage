@@ -13,10 +13,10 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from mcp.shared.memory import create_connected_server_and_client_session
 
-from scripture_chat.db.builder import CorpusBuilder
-from scripture_chat.db.control import ControlStore
-from scripture_chat.domain.errors import CorpusUnavailableError
-from scripture_chat.domain.models import (
+from passage.db.builder import CorpusBuilder
+from passage.db.control import ControlStore
+from passage.domain.errors import CorpusUnavailableError
+from passage.domain.models import (
     ContextRequest,
     CorpusMetadata,
     EvidenceResponse,
@@ -28,11 +28,11 @@ from scripture_chat.domain.models import (
     TraversalRequest,
     TraversalResponse,
 )
-from scripture_chat.evidence.service import EvidenceService
-from scripture_chat.ingest.normalize import normalize_extraction
-from scripture_chat.ingest.validation import StructureManifest
-from scripture_chat.mcp.server import create_server, run_stdio
-from scripture_chat.mcp.tools import TOOL_DESCRIPTIONS, ToolHandlers
+from passage.evidence.service import EvidenceService
+from passage.ingest.normalize import normalize_extraction
+from passage.ingest.validation import StructureManifest
+from passage.mcp.server import create_server, run_stdio
+from passage.mcp.tools import TOOL_DESCRIPTIONS, ToolHandlers
 from tests.unit.ingest.test_validation import extraction
 
 TOOL_NAMES = {
@@ -462,18 +462,19 @@ def test_server_runner_selects_stdio_and_never_a_network_transport(active_root: 
 async def test_real_stdio_session_discovers_and_calls_tools(active_root: Path) -> None:
     parameters = StdioServerParameters(
         command=sys.executable,
-        args=["-m", "scripture_chat.mcp.server"],
+        args=["-m", "passage.mcp.server"],
         cwd=Path.cwd(),
-        env={"SCRIPTURE_CHAT_PRIVATE_ROOT": str(active_root)},
+        env={"PASSAGE_PRIVATE_ROOT": str(active_root)},
     )
 
     async with (
         stdio_client(parameters) as (read_stream, write_stream),
         ClientSession(read_stream, write_stream) as session,
     ):
-        await session.initialize()
+        initialized = await session.initialize()
         listed = await session.list_tools()
         result = await session.call_tool("get_corpus", {"request": {}})
 
     assert {tool.name for tool in listed.tools} == TOOL_NAMES
+    assert initialized.serverInfo.name == "passage"
     assert structured(result)["corpus_version"]

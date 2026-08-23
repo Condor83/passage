@@ -2,14 +2,14 @@ from pathlib import Path
 
 import pytest
 
-from scripture_chat.domain.models import EpubSourceSpan
-from scripture_chat.ingest.base import (
+from passage.domain.models import EpubSourceSpan
+from passage.ingest.base import (
     ExtractedEdge,
     ExtractedPassage,
     ExtractionResult,
 )
-from scripture_chat.ingest.normalize import normalize_extraction, serialize_jsonl
-from scripture_chat.ingest.validation import (
+from passage.ingest.normalize import normalize_extraction, serialize_jsonl
+from passage.ingest.validation import (
     CorpusValidationError,
     StructureManifest,
     load_new_testament_structure_manifest,
@@ -45,7 +45,7 @@ def extraction(
     return ExtractionResult(
         source_path=Path("/private/source.epub"),
         source_format="epub",
-        profile="scripture-chat-v1",
+        profile="passage-v1",
         passages=extracted,
         edges=extracted_edges,
     )

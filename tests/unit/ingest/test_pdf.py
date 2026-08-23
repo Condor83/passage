@@ -3,8 +3,8 @@ from pathlib import Path
 import pytest
 from reportlab.pdfgen import canvas
 
-from scripture_chat.ingest.base import ExtractionError, ExtractionLimits
-from scripture_chat.ingest.pdf import extract_pdf
+from passage.ingest.base import ExtractionError, ExtractionLimits
+from passage.ingest.pdf import extract_pdf
 
 
 def write_pdf(path: Path, lines: list[str]) -> None:
@@ -21,7 +21,7 @@ def test_pdf_extracts_text_layer_with_page_and_bbox_provenance(tmp_path: Path) -
     write_pdf(
         source,
         [
-            "BOOK OF MORMON - SCRIPTURE CHAT PROFILE V1",
+            "BOOK OF MORMON - PASSAGE PROFILE V1",
             "1 Nephi 3:7 And it came to pass that I, Nephi, said unto my father: I will go and do.",
             "1 Nephi 3:8 I know that the Lord giveth no commandments unto the children of men.",
         ],
@@ -29,7 +29,7 @@ def test_pdf_extracts_text_layer_with_page_and_bbox_provenance(tmp_path: Path) -
 
     result = extract_pdf(source, ExtractionLimits())
 
-    assert result.profile == "scripture-chat-v1"
+    assert result.profile == "passage-v1"
     assert [event.reference for event in result.passages] == [
         "bofm/1-ne/3/7",
         "bofm/1-ne/3/8",
@@ -59,7 +59,7 @@ def test_pdf_rejects_unknown_profile(tmp_path: Path) -> None:
 def test_pdf_enforces_page_budget(tmp_path: Path) -> None:
     source = tmp_path / "two-pages.pdf"
     document = canvas.Canvas(str(source), pagesize=(612, 792))
-    document.drawString(54, 740, "BOOK OF MORMON - SCRIPTURE CHAT PROFILE V1")
+    document.drawString(54, 740, "BOOK OF MORMON - PASSAGE PROFILE V1")
     document.showPage()
     document.drawString(54, 740, "1 Nephi 3:7 Text")
     document.save()

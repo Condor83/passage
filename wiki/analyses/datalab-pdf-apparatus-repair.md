@@ -4,7 +4,7 @@ type: analysis
 created: 2026-08-23
 updated: 2026-08-23
 sources:
-  - src/scripture_chat/ingest/datalab.py
+  - src/passage/ingest/datalab.py
   - tests/unit/ingest/test_datalab.py
   - docs/plans/2026-08-16-001-feat-scripture-chat-plan.md
 tags: [datalab, pdf, ingestion, footnotes, provenance, repair]

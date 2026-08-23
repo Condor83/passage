@@ -2,8 +2,8 @@ from pathlib import Path
 
 import pytest
 
-from scripture_chat.ingest.base import ExtractionError, ExtractionLimits
-from scripture_chat.ingest.worker import inspect_source_in_worker
+from passage.ingest.base import ExtractionError, ExtractionLimits
+from passage.ingest.worker import inspect_source_in_worker
 from tests.unit.ingest.test_epub import VALID_CHAPTER, make_epub
 
 

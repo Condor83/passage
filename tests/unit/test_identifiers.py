@@ -3,8 +3,8 @@ from datetime import date
 import pytest
 from pydantic import ValidationError
 
-from scripture_chat.domain.identifiers import CanonicalReference
-from scripture_chat.domain.models import (
+from passage.domain.identifiers import CanonicalReference
+from passage.domain.models import (
     Direction,
     EvidenceLane,
     EvidenceSearchRequest,

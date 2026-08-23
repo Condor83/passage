@@ -9,20 +9,20 @@ Verify every path in the current tree before relying on this map.
 - `docs/specs/2026-08-23-passage-product-specification.md`: approved gated evolution beyond the local baseline.
 - `docs/plans/2026-08-16-001-feat-scripture-chat-plan.md`: historical authority for the implemented local SQLite baseline.
 - `pyproject.toml` and `uv.lock`: Python version, dependencies, lint rules, and test configuration.
-- `src/scripture_chat/config.py`: private-root boundary, restrictive file modes, and current loopback configuration.
-- `src/scripture_chat/cli.py`: current local corpus lifecycle, service, and evaluation commands.
+- `src/passage/config.py`: private-root boundary, restrictive file modes, and current loopback configuration.
+- `src/passage/cli.py`: current local corpus lifecycle, service, and evaluation commands.
 
-The package and CLI still use `scripture-chat` identifiers until the approved rename is implemented. Do not describe the rename as complete before the tree proves it.
+The active Python distribution, package, CLI, configuration prefix, service titles, and MCP identity use Passage. Historical plan filenames remain unchanged.
 
 ## Current architecture
 
-- `src/scripture_chat/domain/`: request, response, identity, canonical-reference, provenance, and error contracts.
-- `src/scripture_chat/ingest/`: bounded EPUB, text-layer PDF, Datalab repair, normalization, validation, and text-free structure manifests.
-- `src/scripture_chat/db/`: immutable SQLite corpus construction, validation, control state, activation, and read-only access.
-- `src/scripture_chat/evidence/`: snapshot pinning, lexical retrieval, ranking, official-reference traversal, and the shared evidence service.
-- `src/scripture_chat/http/`: FastAPI routes, stable errors, loopback controls, and application lifecycle.
-- `src/scripture_chat/mcp/`: stdio MCP server and local tool adapters.
-- `src/scripture_chat/eval/`: versioned evaluation cases, metrics, identity-bound reports, and performance data.
+- `src/passage/domain/`: request, response, identity, canonical-reference, provenance, and error contracts.
+- `src/passage/ingest/`: bounded EPUB, text-layer PDF, Datalab repair, normalization, validation, and text-free structure manifests.
+- `src/passage/db/`: immutable SQLite corpus construction, validation, control state, activation, and read-only access.
+- `src/passage/evidence/`: snapshot pinning, lexical retrieval, ranking, official-reference traversal, and the shared evidence service.
+- `src/passage/http/`: FastAPI routes, stable errors, loopback controls, and application lifecycle.
+- `src/passage/mcp/`: stdio MCP server and local tool adapters.
+- `src/passage/eval/`: versioned evaluation cases, metrics, identity-bound reports, and performance data.
 
 The approved PostgreSQL, Supabase Auth, remote MCP, note, and derived-graph systems are not implemented unless current files prove otherwise.
 

@@ -7,9 +7,9 @@ from typing import Any
 
 import pytest
 
-from scripture_chat.db.control import ControlStore
-from scripture_chat.domain.errors import ScriptureChatError
-from scripture_chat.domain.models import (
+from passage.db.control import ControlStore
+from passage.domain.errors import PassageError
+from passage.domain.models import (
     ContextRequest,
     EvidenceSearchRequest,
     LexicalSearchRequest,
@@ -17,7 +17,7 @@ from scripture_chat.domain.models import (
     SnapshotRequest,
     TraversalRequest,
 )
-from scripture_chat.evidence.service import EvidenceService
+from passage.evidence.service import EvidenceService
 from tests.mcp.test_mcp_tools import InMemoryMcpClient, build_active_root
 
 
@@ -47,7 +47,7 @@ def normalized_mcp_error(result: Any) -> dict[str, Any]:
     return json.loads(result.content[0].text)
 
 
-def documented_error_shape(error: ScriptureChatError) -> dict[str, Any]:
+def documented_error_shape(error: PassageError) -> dict[str, Any]:
     return {
         "error": {
             "code": error.code.value,
@@ -165,7 +165,7 @@ async def test_error_payload_matches_documented_http_domain_contract_fixture(
 ) -> None:
     service, client = parity_surfaces
     request = request_model.model_validate(request_payload)
-    with pytest.raises(ScriptureChatError) as caught:
+    with pytest.raises(PassageError) as caught:
         service_call(service, request)
 
     mcp_result = await client.call_tool(tool_name, {"request": request_payload})
