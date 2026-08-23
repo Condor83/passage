@@ -62,3 +62,7 @@ Reviewed the uncommitted New Testament and Datalab implementation against reposi
 ## [2026-08-23] lint | Wiki health check after Datalab hardening
 
 Checked all 11 wiki pages for decision alignment, contradictions, stale open questions, frontmatter, local links, index coverage, and inbound links. Found no contradictions, broken links, missing frontmatter, unindexed pages, or orphan pages. The accepted-source, independent editorial comparison, and official-reference grammar questions remain open by design.
+
+## [2026-08-23] update | Agent grounding and database skills prepared
+
+Synchronized `AGENTS.md` and `CLAUDE.md` with the approved current-versus-future product boundary and the small-group simplicity rule. Replaced the stale local-only grounding skill with a Passage grounding skill under `.agents/skills/`. Added pinned Supabase and PostgreSQL guidance for the planned database work. No product decision, remote infrastructure, or private source state changed.
