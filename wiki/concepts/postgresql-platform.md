@@ -20,7 +20,7 @@ tags: [postgresql, supabase, neon, pgvector, storage]
 
 Supabase Postgres and Auth are Passage's first managed platform. PostgreSQL becomes the primary application store after the approved parity and cutover gates pass.
 
-The existing immutable SQLite implementation remains the working local baseline and rollback reference through the alpha. The PostgreSQL schema, migration, hosted service, and cutover are not implemented. The wiki must not describe the approved direction as current runtime state.
+The existing immutable SQLite implementation remains the working local baseline and rollback reference through the alpha. A lean local Supabase configuration now exists for source-independent development, but the PostgreSQL application schema, migration, hosted service, and cutover are not implemented. The wiki must not describe the approved direction as current runtime state.
 
 ## Why PostgreSQL Fits
 
@@ -55,6 +55,8 @@ Passwordless member access also requires custom transactional email. Supabase's 
 
 Supabase changes frequently. Recheck its changelog and current Auth, RLS, backup, and pricing documentation when implementation starts.
 
+The first local stack check passed PostgreSQL and Auth health checks, then stopped because Docker Desktop published its ports on all host interfaces despite the documented loopback network option. Keep that stack synthetic and stopped until every published port proves a `127.0.0.1` binding. See [Local Supabase](../../docs/development/supabase-local.md).
+
 ## Related Pages
 
 - [Decision Log](../decisions.md)
@@ -66,5 +68,6 @@ Supabase changes frequently. Recheck its changelog and current Auth, RLS, backup
 - How will immutable corpus versions map to PostgreSQL schemas, partitions, or version-keyed rows without permitting partial mixed-version reads?
 - Which non-bypass role and transaction-claim method will the Passage service use?
 - Can the Supabase OAuth server satisfy the complete Claude remote MCP contract?
+- How will the local Supabase stack enforce loopback-only Docker port bindings on the current workstation?
 - Which hobby application host, transactional email provider, backup destination, and retention policy will be selected?
 - What exact parity event permits PostgreSQL cutover and later retirement of the SQLite rollback path?

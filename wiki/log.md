@@ -66,3 +66,11 @@ Checked all 11 wiki pages for decision alignment, contradictions, stale open que
 ## [2026-08-23] update | Agent grounding and database skills prepared
 
 Synchronized `AGENTS.md` and `CLAUDE.md` with the approved current-versus-future product boundary and the small-group simplicity rule. Replaced the stale local-only grounding skill with a Passage grounding skill under `.agents/skills/`. Added pinned Supabase and PostgreSQL guidance for the planned database work. No product decision, remote infrastructure, or private source state changed.
+
+## [2026-08-23] update | Local Supabase configuration initialized
+
+Upgraded the local Supabase CLI from 2.53.6 to 2.115.0 and initialized a lean `passage` project configuration without a schema, seed, remote link, or deployment. Verified PostgreSQL 17.6 and Auth v2.195.0 health with synthetic empty state. Stopped the stack after Docker Desktop published ports on all host interfaces despite the documented loopback network option. Added the loopback stop condition to the PostgreSQL concept page and local development note.
+
+## [2026-08-23] lint | Wiki health check after local Supabase initialization
+
+Verified all 11 wiki pages, frontmatter, local links, inbound links, and index coverage. Found no broken links, orphan pages, index gaps, decision conflicts, or resolved open questions left stale. The new loopback binding question is recorded as an implementation stop condition, not a provider decision change.

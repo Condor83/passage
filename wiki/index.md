@@ -17,6 +17,7 @@ tags: [index, navigation]
 - [Decision Log](decisions.md) - Confirmed decisions with dates and rationale.
 - [Wiki Operations Log](log.md) - Append-only record of wiki changes.
 - [Approved Passage Product Specification](../docs/specs/2026-08-23-passage-product-specification.md) - Approved product direction, phased gates, requirements, and acceptance criteria.
+- [Local Supabase](../docs/development/supabase-local.md) - Current local configuration, verified versions, and loopback stop condition.
 
 ## Analyses
 
