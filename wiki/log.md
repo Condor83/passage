@@ -74,3 +74,7 @@ Upgraded the local Supabase CLI from 2.53.6 to 2.115.0 and initialized a lean `p
 ## [2026-08-23] lint | Wiki health check after local Supabase initialization
 
 Verified all 11 wiki pages, frontmatter, local links, inbound links, and index coverage. Found no broken links, orphan pages, index gaps, decision conflicts, or resolved open questions left stale. The new loopback binding question is recorded as an implementation stop condition, not a provider decision change.
+
+## [2026-08-23] update | Bounded Codex subagent roles configured
+
+Added project-scoped Codex configuration for at most three concurrent subagents. A GPT-5.3 Codex Spark mechanical role handles only precise, low-risk, objectively verifiable edits. A stronger read-only reviewer checks correctness, evidence integrity, authorization, data safety, and missing tests. The primary agent retains architecture and integration ownership. Both roles preserve the private-source, corpus, remote-infrastructure, commit, push, and deployment authority boundaries.
