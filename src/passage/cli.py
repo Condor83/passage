@@ -17,6 +17,7 @@ from passage.db.repository import CorpusRepository
 from passage.db.validation import validate_published_artifact
 from passage.domain.models import SnapshotRequest, SourceApproval
 from passage.eval.cases import load_cases
+from passage.eval.phase0 import Phase0ProbeRunner, load_phase0_probe_definition
 from passage.eval.runner import EvaluationRunner
 from passage.evidence.service import EvidenceService
 from passage.ingest.base import ExtractionLimits, ExtractionResult
@@ -98,6 +99,11 @@ def _parser() -> argparse.ArgumentParser:
     evaluate.add_argument("--cases", type=Path, required=True)
     evaluate.add_argument("--metric-depth", type=int, action="append")
     evaluate.set_defaults(handler=_evaluate)
+
+    phase0_probe = subcommands.add_parser("phase0-probe")
+    _data_argument(phase0_probe)
+    phase0_probe.add_argument("--definition", type=Path, required=True)
+    phase0_probe.set_defaults(handler=_phase0_probe)
     return parser
 
 
@@ -245,6 +251,33 @@ def _evaluate(args: argparse.Namespace) -> dict[str, Any]:
         "eligible": run.report.eligible,
         "ineligibility_reasons": run.report.ineligibility_reasons,
         "report_path": str(run.path),
+    }
+
+
+def _phase0_probe(args: argparse.Namespace) -> dict[str, Any]:
+    root = _private_root(args)
+    definition = load_phase0_probe_definition(args.definition.expanduser().absolute())
+    with ControlStore(root) as control:
+        accepted = _select_accepted(control, None)
+        run = Phase0ProbeRunner(EvidenceService(control)).run(
+            definition,
+            corpus_version=accepted.corpus_version,
+            retrieval_config=accepted.retrieval_config,
+            output_directory=root / "evaluations",
+        )
+    return {
+        "corpus_version": run.report.corpus_version,
+        "retrieval_config": run.report.retrieval_config,
+        "report_digest": run.report.report_digest,
+        "report_path": str(run.path),
+        "present_lanes": run.report.present_lanes,
+        "absent_lanes": run.report.absent_lanes,
+        "zero_citation_errors": run.report.zero_citation_errors,
+        "zero_evidence_class_errors": run.report.zero_evidence_class_errors,
+        "no_fatal_atomic_contract_problem": run.report.no_fatal_atomic_contract_problem,
+        "h1_claim": run.report.h1_claim,
+        "h1_status": run.report.h1_status,
+        "promotion_eligible": run.report.promotion_eligible,
     }
 
 

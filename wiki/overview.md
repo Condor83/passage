@@ -25,6 +25,7 @@ The product returns inspectable evidence. It does not generate authoritative doc
 - Both private repair candidates remain inactive, unaccepted, and marked `review_required`.
 - Official cross-reference targets have not been parsed from the repaired footnote text. The candidates currently contain no relationship edges.
 - Phase 0 implements the deterministic `official-reference-v1` synthetic grammar, typed internal and unresolved external targets, persisted edge provenance, and inspectable traversal evidence. It has not been validated against either private repair candidate.
+- The limited [Phase 0 Product Loop Probe](analyses/phase0-product-loop-probe.md) ran two locked synthetic questions over exact, lexical, and official lanes. It found zero citation or evidence-class errors and no fatal atomic contract problem. Derived and experimental lanes were absent. The result makes no H1 or promotion claim.
 - The current implementation uses immutable local SQLite corpus artifacts, loopback HTTP, and stdio MCP. No hosted service, PostgreSQL runtime, authentication system, note surface, or derived graph is implemented.
 - The maintainer approved the [Passage Product Specification](../docs/specs/2026-08-23-passage-product-specification.md) on 2026-08-23. It selects Supabase as the first managed platform and defines the gated path to PostgreSQL, Claude remote MCP, the complete canon, study-group notes, and later General Conference content.
 

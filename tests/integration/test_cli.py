@@ -124,6 +124,28 @@ def test_fixture_cli_builds_verify_and_evaluate_both_formats(tmp_path: Path) -> 
     assert evaluation["ineligibility_reasons"] == ["no_baseline_comparison"]
     assert Path(evaluation["report_path"]).is_file()
 
+    with ControlStore(roots["epub"]) as control:
+        accepted = control.latest_accepted()
+        assert accepted is not None
+        control.activate(accepted.corpus_version, accepted.retrieval_config)
+    probed, probe = _run(
+        "phase0-probe",
+        "--data-dir",
+        str(roots["epub"]),
+        "--definition",
+        str(FIXTURES / "evaluation" / "phase0_probe.json"),
+    )
+    assert probed.returncode == 0
+    assert probe["present_lanes"] == ["exact", "lexical", "official"]
+    assert probe["absent_lanes"] == ["derived", "experimental"]
+    assert probe["zero_citation_errors"] is True
+    assert probe["zero_evidence_class_errors"] is True
+    assert probe["no_fatal_atomic_contract_problem"] is True
+    assert probe["h1_claim"] is False
+    assert probe["h1_status"] == "not_evaluated"
+    assert probe["promotion_eligible"] is False
+    assert Path(probe["report_path"]).is_file()
+
 
 def test_build_rejects_unreconciled_epub_spans_without_registration(
     tmp_path: Path,

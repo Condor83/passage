@@ -98,3 +98,11 @@ Recorded `official-reference-v1` as the narrow synthetic Phase 0 contract. Docum
 ## [2026-08-23] lint | Wiki health check after official reference grammar
 
 Checked all 12 wiki pages for required frontmatter, local links, inbound links, index coverage, decision alignment, contradictions, stale claims, and resolved open questions. Found no critical, warning, or informational findings. The grammar is recorded as synthetic Phase 0 behavior, while accepted-source validation, editorial comparison, candidate acceptance, activation, and Phase 1 service work remain open or blocked by their existing gates.
+
+## [2026-08-23] create | Phase 0 product loop probe recorded
+
+Documented the committed two-question synthetic definition, fixed reference-pool rubric, five atomic operations, `search_evidence` comparator, pinned identity and evidence audits, and measured report identity. Recorded exact, lexical, and official lanes as present; derived and experimental as absent; zero citation errors; zero evidence-class errors; and no fatal atomic contract problem. Preserved `h1_status: not_evaluated` and no promotion claim. Generated reports remain outside Git.
+
+## [2026-08-23] lint | Wiki health check after Phase 0 probe
+
+Checked all 13 wiki pages for required frontmatter, local links, inbound links, index coverage, decision alignment, contradictions, stale claims, resolved open questions, and Phase 0 versus Phase 2 scope. Found no critical, warning, or informational findings. Current pages distinguish the measured synthetic zero-error result from H1, accepted-corpus evaluation, private-source validation, and promotion eligibility.

@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "probe_id": "phase0-synthetic-v1",
+  "scope": "directional_phase_0",
+  "present_lanes": ["exact", "lexical", "official"],
+  "absent_lanes": ["derived", "experimental"],
+  "rubric": {
+    "coverage_metric": "reference_pool_coverage",
+    "require_resolvable_citations": true,
+    "require_correct_evidence_classes": true,
+    "require_one_pinned_snapshot": true,
+    "require_complete_operation_contracts": true
+  },
+  "cases": [
+    {
+      "case_id": "faith-hope-survey",
+      "question": "Which synthetic passages connect faith and hope?",
+      "query": "faith",
+      "exact_reference": "bofm/1-ne/1/1",
+      "context_reference": "bofm/1-ne/1/1",
+      "context_before": 0,
+      "context_after": 1,
+      "traversal_reference": "bofm/1-ne/1/1",
+      "traversal_depth": 1,
+      "traversal_nodes": 10,
+      "result_limit": 10,
+      "reference_pool": ["bofm/1-ne/1/1", "bofm/1-ne/1/2"]
+    },
+    {
+      "case_id": "hoped-for-survey",
+      "question": "Which synthetic passage contains the phrase hoped for?",
+      "query": "hoped for",
+      "exact_reference": "bofm/1-ne/1/2",
+      "context_reference": "bofm/1-ne/1/2",
+      "context_before": 1,
+      "context_after": 0,
+      "traversal_reference": "bofm/1-ne/1/1",
+      "traversal_depth": 1,
+      "traversal_nodes": 10,
+      "result_limit": 10,
+      "reference_pool": ["bofm/1-ne/1/2"]
+    }
+  ]
+}

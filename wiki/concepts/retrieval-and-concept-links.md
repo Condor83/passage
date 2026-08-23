@@ -72,12 +72,15 @@ Keep vectors as an experimental retrieval lane until an immutable, identity-boun
 
 Measure retrieval quality, citation correctness, evidence-class labeling, judgment coverage, latency, and failure cases. Do not promote a semantic lane because it appears plausible in a few demonstrations. A complete-canon member release may proceed on a validated lexical and official-reference baseline when derived edges remain experimental and the end-to-end survey gate passes.
 
+The [Phase 0 Product Loop Probe](../analyses/phase0-product-loop-probe.md) compares only exact, lexical, and official behavior in a two-question synthetic corpus. Its zero-error result proves that the limited comparison can run with pinned citations and evidence classes. It does not test H1, semantic retrieval, derived edges, or accepted-corpus coverage.
+
 ## Related Pages
 
 - [Content Roadmap](content-roadmap.md)
 - [PostgreSQL Platform](postgresql-platform.md)
 - [Corpus Fidelity and Acceptance](corpus-fidelity-and-acceptance.md)
 - [Datalab PDF Apparatus Repair](../analyses/datalab-pdf-apparatus-repair.md)
+- [Phase 0 Product Loop Probe](../analyses/phase0-product-loop-probe.md)
 
 ## Open Questions
 

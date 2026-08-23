@@ -9,7 +9,7 @@ tags: [index, navigation]
 
 # Passage Wiki Index
 
-> Last updated: 2026-08-23 | Indexed wiki pages: 11 | Sources ingested: 0
+> Last updated: 2026-08-23 | Indexed wiki pages: 12 | Sources ingested: 0
 
 ## Living Documents
 
@@ -24,6 +24,7 @@ tags: [index, navigation]
 
 - [Datalab PDF Apparatus Repair](analyses/datalab-pdf-apparatus-repair.md) - How the parser reconstructed and reconciled canonical passages and official footnotes.
 - [Product Spec Draft Review (2026-08-23)](analyses/product-spec-draft-2026-08-23-review.md) - Review findings and their resolution before specification approval.
+- [Phase 0 Product Loop Probe](analyses/phase0-product-loop-probe.md) - Reproducible synthetic atomic-versus-combined comparison and its strict non-H1 boundary.
 
 ## Concepts
 
