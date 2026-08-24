@@ -147,7 +147,7 @@ General Conference is the first content family after scripture. Church manuals, 
 - R20. Sources are publicly available PDFs supplied by the Church and acquired by the owner through a manual process. Passage must not scrape or automatically download Church content.
 - R21. Each source asset must retain its exact digest, acquisition record, source label, publication identity, and extraction provenance.
 - R21a. Each General Conference corpus version must bind a dated official source catalog, covered conference range, acquisition cutoff, accepted source formats, known gaps, and update policy. An officially published talk without an accepted Church-supplied PDF is outside that version and must appear as a coverage gap.
-- R22. Private source bytes, source paths, review files, derived corpus files, prompts that contain source text, and credentials must remain outside Git.
+- R22. Raw source bytes, source paths, acquisition records, detailed review files, correction profiles, prompts that contain source text, and credentials must remain outside Git. An exact derived candidate snapshot may enter `candidates/` only after explicit maintainer approval, with a digest manifest and inactive, unaccepted, `review_required` status.
 - R23. Public availability and noncommercial use do not establish remote redistribution permission. The owner has accepted this unresolved risk for an invite-only release. The product must preserve a takedown and immediate service-disable path.
 - R24. Passage must not describe the source-use decision as legal clearance.
 
@@ -400,7 +400,7 @@ Note tools do not enter the Phase 2 alpha surface. They enter with the Phase 3 m
 - Run the first automatic enrichment and independent verification pipeline within an approved cost, candidate, time, and stopping budget.
 - Keep every derived edge experimental while the locked H2 and H3 evaluations, including the human edge sample, run.
 - Connect Claude through the evidence-only remote MCP surface and complete the broad-question evidence journey. Do not expose note tools.
-- Keep both current private repair candidates inactive until their separate acceptance gaps are resolved.
+- Keep both current repair candidates inactive until their separate acceptance gaps are resolved. Version control does not constitute acceptance.
 
 ### Phase 3: Complete-canon member release
 

@@ -38,7 +38,11 @@ tags: [index, navigation]
 
 ## Sources
 
-No source summaries are stored yet. Private scripture files and derived artifacts must remain outside Git.
+No source summaries are stored yet. Raw scripture sources and private repair artifacts remain outside Git.
+
+## Candidate Artifacts
+
+- [Scripture Corpus Candidates](../candidates/README.md) - Exact, maintainer-approved Book of Mormon and New Testament candidate snapshots. Both remain inactive, unaccepted, and `review_required`.
 
 ## Entities
 

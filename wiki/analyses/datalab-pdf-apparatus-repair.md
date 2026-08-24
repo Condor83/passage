@@ -16,7 +16,7 @@ tags: [datalab, pdf, ingestion, footnotes, provenance, repair]
 
 Datalab produced useful structured PDF output, but its reading order and inline apparatus markup were not reliable enough for direct corpus acceptance. The repair had to preserve all canonical passages, connect official footnote text to its origin anchor, and fail closed when evidence did not agree.
 
-No private scripture text, source path, derived candidate, or review artifact belongs in this page or elsewhere in Git.
+Raw source files, source paths, Datalab output, correction profiles, and detailed review artifacts remain outside Git. The maintainer separately approved exact inactive candidate snapshots for `candidates/`; that copy does not accept or activate either corpus.
 
 ## Observed Failure Modes
 
@@ -56,7 +56,7 @@ This rule permits raised superscripts near block boundaries without counting a m
 
 ### Immutable output
 
-The writer rejects a private root inside the repository. It normalizes the extraction and writes a mode-`0600` candidate and report under the configured private root. The report and repair digest bind the PDF, Datalab JSON, text-free structure manifest, parser recipe, optional correction profile, normalized corpus, and findings. A changed input, recipe, profile, or finding produces a new immutable repair directory. Writing a candidate does not accept or activate it.
+The writer rejects a private root inside the repository. It normalizes the extraction and writes a mode-`0600` candidate and report under the configured private root. The report and repair digest bind the PDF, Datalab JSON, text-free structure manifest, parser recipe, optional correction profile, normalized corpus, and findings. A changed input, recipe, profile, or finding produces a new immutable repair directory. A separately approved copy may enter `candidates/` with its exact digest and lifecycle state. Writing or copying a candidate does not accept or activate it.
 
 ## Verified Results
 
@@ -91,7 +91,7 @@ The source-independent repository gate now passes with 170 tests. Ruff formattin
 
 ## Why the Candidate Still Requires Review
 
-The repair proves internal PDF-to-parser reconciliation. It does not provide an independent editorial comparison against a separate official structured source. Both private candidates remain inactive, unaccepted, and `review_required`.
+The repair proves internal PDF-to-parser reconciliation. It does not provide an independent editorial comparison against a separate official structured source. Both candidate snapshots remain inactive, unaccepted, and `review_required`.
 
 The repaired notes contain footnote text, but official citation targets inside that text have not been converted into typed relationship edges. Edge parsing is separate future work.
 

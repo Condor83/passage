@@ -27,7 +27,7 @@ An accepted corpus requires:
 - retained source spans for passages and apparatus;
 - no unresolved reading-order, structure, anchor, or provenance ambiguity;
 - complete persistence and index reconciliation; and
-- immutable private artifacts outside Git.
+- immutable artifacts with exact digests and a separate private backup. A maintainer may approve an inactive candidate snapshot for version control without accepting or activating it.
 
 For a PDF source, glyph and overlay evidence must support the extracted tokens and anchors. Visual review is a useful sanity check, but it does not replace exhaustive reconciliation.
 
@@ -47,7 +47,7 @@ Failure at any step leaves the prior active state unchanged.
 
 ## Current Application
 
-The [Datalab PDF Apparatus Repair](../analyses/datalab-pdf-apparatus-repair.md) satisfies the current structural and anchor reconciliation checks for separate Book of Mormon and New Testament repair candidates. Both remain inactive, unaccepted, and `review_required`. The Phase 0 synthetic grammar now defines typed cross-reference edges and fail-closed parsing. Neither private candidate has been processed with that grammar. Accepted-source validation and independent editorial comparison remain open work.
+The [Datalab PDF Apparatus Repair](../analyses/datalab-pdf-apparatus-repair.md) satisfies the current structural and anchor reconciliation checks for separate Book of Mormon and New Testament repair candidates. Exact snapshots are committed under `candidates/` with public digest manifests. Both remain inactive, unaccepted, and `review_required`. The Phase 0 synthetic grammar now defines typed cross-reference edges and fail-closed parsing. Neither candidate has been processed with that grammar. Accepted-source validation and independent editorial comparison remain open work.
 
 ## Related Pages
 

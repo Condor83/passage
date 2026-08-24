@@ -24,7 +24,7 @@ Read [references/repository-map.md](references/repository-map.md) when the task 
 - Passage returns exact, inspectable evidence. It does not generate authoritative doctrinal conclusions.
 - The current runtime uses immutable SQLite corpus artifacts, loopback HTTP, and stdio MCP. Supabase PostgreSQL, authenticated remote MCP, member notes, and the complete-canon release are approved future work, not current behavior.
 - Canonical content comes only from a maintainer-approved exact source digest and acquisition record. A repair candidate is not an accepted corpus.
-- Keep private source bytes, derived corpus data, correction profiles, review artifacts, source paths, study queries, and credentials outside Git.
+- Keep raw source bytes, Datalab output, correction profiles, detailed review artifacts, source paths, acquisition records, study queries, and credentials outside Git. Exact maintainer-approved derived candidate snapshots may live under `candidates/` only with digest manifests and explicit inactive, unaccepted, `review_required` status.
 - Use synthetic fixtures for routine development. Do not process a private source or use an unaccepted candidate, even for a local test, without explicit maintainer authority.
 - Do not accept, activate, deploy, expose remotely, or submit publicly without the separate authority defined for that action.
 - Preserve stable canonical identities, immutable source versions, citation resolvability, and the distinction between canonical content, official apparatus, member notes, and model-derived analysis.

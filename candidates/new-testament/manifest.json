@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "scope": "new-testament",
+  "artifact": "candidate.jsonl",
+  "candidate_sha256": "7b2c3cc1fca0652b123c4f74eb9aa05c19eb40d9ca41033097f0e86abd63ad15",
+  "normalized_digest": "9699431bb42e2a622878721c52f98a86f6defe22e47873217bf591074442245a",
+  "source_format": "pdf",
+  "status": "review_required",
+  "active": false,
+  "accepted": false,
+  "passage_count": 7957,
+  "note_anchor_count": 10091,
+  "edge_count": 0
+}

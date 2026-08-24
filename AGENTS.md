@@ -10,7 +10,7 @@ This workspace uses a living wiki. The wiki is the source of truth for current p
 
 **Description:** A structured evidence platform for the LDS scripture canon and, later, teachings from Church leaders. The current checkout uses immutable SQLite artifacts, loopback HTTP, and stdio MCP. The approved product direction adds Supabase PostgreSQL, authenticated remote MCP, the complete canon, and later General Conference content through explicit gates.
 
-**Source documents:** Repository plans and code live under `docs/` and `src/`. Private scripture and Church-teaching source bytes, derived corpus data, review artifacts, source paths, and credentials stay outside the repository under the configured private root.
+**Source documents:** Repository plans and code live under `docs/` and `src/`. Maintainer-approved, inactive scripture candidate snapshots may live under `candidates/`. Raw source bytes, Datalab output, correction profiles, detailed review artifacts, source paths, acquisition records, and credentials stay outside the repository under the configured private root.
 
 ## Operating Priorities
 
@@ -27,7 +27,7 @@ This workspace uses a living wiki. The wiki is the source of truth for current p
 4. Do not silently resolve contradictions. Record competing evidence under `Open Questions` and let the user decide.
 5. Keep source summaries short. Record provenance and conclusions without reproducing private or copyrighted source material.
 6. Prefer updates and cross-links over duplicate pages.
-7. Keep private source bytes, derived corpus data, review artifacts, source paths, scripture text, and credentials outside Git.
+7. Keep raw source bytes, Datalab output, correction profiles, detailed review artifacts, source paths, acquisition records, and credentials outside Git. Only an exact maintainer-approved derived candidate may enter `candidates/`, with a digest manifest and explicit inactive, unaccepted, `review_required` status.
 8. Do not accept or activate a corpus unless the maintainer approves the exact source digest and acquisition record.
 
 ## Wiki Architecture

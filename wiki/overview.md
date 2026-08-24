@@ -23,7 +23,7 @@ The product returns inspectable evidence. It does not generate authoritative doc
 - The base repository implements bounded EPUB and text-layer PDF extraction, canonical normalization and validation, immutable SQLite corpus construction, lexical retrieval, HTTP, and MCP.
 - A Datalab-specific PDF repair candidate reconstructs all 6,604 canonical passages and links 9,826 unique, nonempty official footnote anchors. See [Datalab PDF Apparatus Repair](analyses/datalab-pdf-apparatus-repair.md).
 - A separate New Testament repair candidate reconstructs all 27 books, 260 chapters, and 7,957 verses with 10,091 unique, nonempty official footnote anchors.
-- Both private repair candidates remain inactive, unaccepted, and marked `review_required`.
+- Exact snapshots of both repair candidates are version-controlled under `candidates/`. They remain inactive, unaccepted, and marked `review_required`.
 - Official cross-reference targets have not been parsed from the repaired footnote text. The candidates currently contain no relationship edges.
 - Phase 0 implements the deterministic `official-reference-v1` synthetic grammar, typed internal and unresolved external targets, persisted edge provenance, and inspectable traversal evidence. It has not been validated against either private repair candidate.
 - The limited [Phase 0 Product Loop Probe](analyses/phase0-product-loop-probe.md) ran two locked synthetic questions over exact, lexical, and official lanes. It found zero citation or evidence-class errors and no fatal atomic contract problem. Derived and experimental lanes were absent. The result makes no H1 or promotion claim.
@@ -34,7 +34,7 @@ The product returns inspectable evidence. It does not generate authoritative doc
 
 ## Operating Boundaries
 
-- Private scripture source bytes and all derived corpus artifacts stay outside the repository.
+- Raw scripture source bytes, Datalab output, correction profiles, detailed repair reports, source paths, and acquisition records stay outside the repository. Only the two explicitly approved candidate snapshots and their public digest manifests are version-controlled under `candidates/`.
 - Canonical acceptance requires the maintainer to approve the exact source digest and acquisition record.
 - Ambiguous reading order, structure, anchors, or provenance fails closed.
 - Corpus versions are immutable. Activation is a separate explicit action.

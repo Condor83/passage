@@ -60,6 +60,6 @@ The current CLI supports separate inspect, build, verify, activate, metadata, se
 - Serve exposes only the active corpus on loopback.
 - Evaluate reads an accepted corpus and writes a private report without changing defaults.
 
-The Datalab repair path can create an inactive, unaccepted `review_required` candidate. Its exact PDF, Marker JSON, structure, recipe, and correction-profile identities remain private. The writer must reject output inside the repository.
+The Datalab repair path can create an inactive, unaccepted `review_required` candidate. Its exact PDF, Marker JSON, structure, recipe, and correction-profile identities remain private. The writer must reject direct output inside the repository. A separate maintainer-approved copy may enter `candidates/` with a digest manifest and unchanged lifecycle status.
 
-Use repository fixtures for source-independent workflows. Real sources, approval records, correction profiles, databases, repairs, reviews, overlays, evaluation outputs, and private paths belong outside Git.
+Use repository fixtures for source-independent workflows. Real sources, acquisition records, correction profiles, databases, raw repairs, detailed reviews, overlays, evaluation outputs, and private paths belong outside Git. Committed candidate snapshots do not authorize routine test use, corpus acceptance, activation, or remote delivery.

@@ -137,6 +137,14 @@ This is the authoritative record of confirmed Passage project decisions. When an
 - **Boundary:** The proof used only synthetic identity and `whoami` data. It did not start the local Supabase stack, create an application schema, process private sources, or deploy scripture content.
 - **Pages updated:** [Project Overview](overview.md), [PostgreSQL Platform](concepts/postgresql-platform.md), and [Study Group Access](concepts/study-group-access.md).
 
+### 2026-08-23 - Exact scripture candidate snapshots may be committed
+
+- **Decision:** Commit the exact current Book of Mormon and New Testament derived candidate snapshots under `candidates/` with public digest manifests.
+- **Lifecycle boundary:** Both snapshots remain inactive, unaccepted, and `review_required`. The commit does not approve a source edition, establish editorial fidelity, authorize routine test use, activate a corpus, or authorize remote delivery.
+- **Privacy boundary:** Raw PDFs, Datalab output, correction profiles, detailed repair reports, source paths, acquisition records, and credentials remain outside Git.
+- **Supersedes:** The blanket rule that all derived corpus data and scripture text must stay outside Git. The exception applies only to exact candidate snapshots that the maintainer explicitly approves.
+- **Pages updated:** [Project Overview](overview.md), [Corpus Fidelity and Acceptance](concepts/corpus-fidelity-and-acceptance.md), [Content Roadmap](concepts/content-roadmap.md), and [Datalab PDF Apparatus Repair](analyses/datalab-pdf-apparatus-repair.md).
+
 ## Open Questions
 
 - Vector storage and semantic retrieval are not confirmed as default behavior. They require a measured retrieval evaluation.

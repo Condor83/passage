@@ -22,7 +22,7 @@ Passage will grow through controlled content layers:
 
 The Book of Mormon remains the first validation scope. This sequence does not reduce the fidelity requirements for later sources.
 
-The current private Book of Mormon and New Testament repair candidates remain inactive, unaccepted, and `review_required`. Their official footnote text has not been converted into typed target edges.
+The current Book of Mormon and New Testament repair candidate snapshots are version-controlled under `candidates/`. They remain inactive, unaccepted, and `review_required`. Their official footnote text has not been converted into typed target edges.
 
 ## Shared Requirements
 

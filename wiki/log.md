@@ -138,3 +138,11 @@ Disconnected and removed the Claude custom connector. Stopped the proof harness 
 ## [2026-08-23] lint | Wiki health check after OAuth proof teardown
 
 Checked all 13 wiki pages for required frontmatter, local links, index coverage, decision alignment, contradictions, stale OAuth status, and resolved open questions. Found no missing frontmatter, broken links, index gaps, or current-page conflict. Current pages record the failed P6 gate, the reopened identity-provider decision, the completed teardown, and the continued PostgreSQL and Auth foundation block.
+
+## [2026-08-23] create | Scripture candidate snapshots added to Git
+
+Added the exact current Book of Mormon and New Testament candidate JSONL snapshots under `candidates/` with public digest and lifecycle manifests. Scanned both artifacts for embedded local paths, credentials, email addresses, URLs, and unexpected fields before copying them. Both remain inactive, unaccepted, `review_required`, and without relationship edges. Raw PDFs, Datalab output, correction profiles, detailed repair reports, source paths, and acquisition records remain outside Git.
+
+## [2026-08-23] lint | Wiki health check after candidate snapshot decision
+
+Checked all 13 wiki pages for required frontmatter, local links, index coverage, decision alignment, and the revised candidate privacy boundary. Found no missing frontmatter, broken links, index gaps, or current-page conflict. The current pages distinguish version control from source approval, corpus acceptance, activation, routine test use, and remote delivery.

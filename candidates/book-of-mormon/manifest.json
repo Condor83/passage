@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "scope": "book-of-mormon",
+  "artifact": "candidate.jsonl",
+  "candidate_sha256": "1dfd7b927e9fe5f4987a5bb5a3c8d1a0398eec6004cd01f45e86d50096a1e6b4",
+  "normalized_digest": "0f0f1a0df7ac87a4305f4173f3547f2a9a3c82fac8a66f754a8b93d406b1eb30",
+  "source_format": "pdf",
+  "status": "review_required",
+  "active": false,
+  "accepted": false,
+  "passage_count": 6604,
+  "note_anchor_count": 9826,
+  "edge_count": 0
+}

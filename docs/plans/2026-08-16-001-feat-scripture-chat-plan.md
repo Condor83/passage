@@ -17,7 +17,7 @@ execution: code
 - **Objective:** Build a local-first Book of Mormon evidence database and agent-facing API that returns exact, inspectable citations from a user-supplied current Church edition.
 - **Product authority:** The Product Contract controls corpus fidelity, provenance, retrieval behavior, and evidence semantics. The Planning Contract controls implementation shape. A supplied source file controls canonical text only after the maintainer approves its exact digest and acquisition record; documentation and fixtures never override approved source bytes.
 - **Execution profile:** Greenfield Python service with a versioned SQLite corpus, deterministic ingestion, HTTP API, MCP tools, and a corpus-specific lexical/reference retrieval evaluation.
-- **Stop conditions:** Do not accept a corpus with unresolved integrity errors, silently OCR an image-only PDF, promote a retrieval method that weakens citation integrity, expose the service beyond loopback without a separate security decision, or commit private source or derived corpus content.
+- **Stop conditions:** Do not accept a corpus with unresolved integrity errors, silently OCR an image-only PDF, promote a retrieval method that weakens citation integrity, expose the service beyond loopback without a separate security decision, or commit raw private source and repair content. A later maintainer decision permits exact inactive derived candidate snapshots under `candidates/`; that exception does not accept or activate them.
 - **Tail ownership:** Implementation includes source-independent automated tests and a private-source acceptance run when the user supplies an EPUB or PDF. Absence of that file blocks corpus acceptance, not development of the importer and service; an unapproved source digest also blocks activation.
 
 ---
@@ -540,4 +540,3 @@ A later Product Contract may promote explicit latency budgets to release gates. 
 - **U6:** The real FastAPI lifecycle implements every operation/error mapping, slash-bearing route, Host/Origin defense, and resource teardown.
 - **U7:** A real MCP stdio session passes discovery, schema/result, error, snapshot, HTTP-parity, and teardown tests.
 - **U8:** Identity-bound baseline evaluation, complete candidate judgments, diagnostic performance measurements, and dual-transport agent research flow pass without dense/fused retrieval.
-
