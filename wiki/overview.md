@@ -6,6 +6,7 @@ updated: 2026-08-23
 sources:
   - docs/plans/2026-08-16-001-feat-scripture-chat-plan.md
   - docs/specs/2026-08-23-passage-product-specification.md
+  - docs/plans/2026-08-23-supabase-claude-oauth-compatibility-proof.md
 tags: [overview, passage, evidence, postgresql, mcp, study-group]
 ---
 
@@ -26,7 +27,9 @@ The product returns inspectable evidence. It does not generate authoritative doc
 - Official cross-reference targets have not been parsed from the repaired footnote text. The candidates currently contain no relationship edges.
 - Phase 0 implements the deterministic `official-reference-v1` synthetic grammar, typed internal and unresolved external targets, persisted edge provenance, and inspectable traversal evidence. It has not been validated against either private repair candidate.
 - The limited [Phase 0 Product Loop Probe](analyses/phase0-product-loop-probe.md) ran two locked synthetic questions over exact, lexical, and official lanes. It found zero citation or evidence-class errors and no fatal atomic contract problem. Derived and experimental lanes were absent. The result makes no H1 or promotion claim.
+- Phase 0 is landed on `main` at `7eaa011`. The complete source-independent gate passes formatting, lint, mypy, and 200 tests. The two remaining warnings come from dependencies.
 - The current implementation uses immutable local SQLite corpus artifacts, loopback HTTP, and stdio MCP. No hosted service, PostgreSQL runtime, authentication system, note surface, or derived graph is implemented.
+- Phase 1 is blocked on the live [Supabase-to-Claude OAuth Compatibility Proof](../docs/plans/2026-08-23-supabase-claude-oauth-compatibility-proof.md). PostgreSQL schema work must not start before that proof passes.
 - The maintainer approved the [Passage Product Specification](../docs/specs/2026-08-23-passage-product-specification.md) on 2026-08-23. It selects Supabase as the first managed platform and defines the gated path to PostgreSQL, Claude remote MCP, the complete canon, study-group notes, and later General Conference content.
 
 ## Operating Boundaries

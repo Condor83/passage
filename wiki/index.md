@@ -19,6 +19,7 @@ tags: [index, navigation]
 - [Approved Passage Product Specification](../docs/specs/2026-08-23-passage-product-specification.md) - Approved product direction, phased gates, requirements, and acceptance criteria.
 - [Autonomous Build Readiness](../docs/plans/2026-08-23-autonomous-build-readiness.md) - Prepared worktree, agent roles, prompt outline, proof cadence, and hard stop conditions for the first build goal.
 - [Local Supabase](../docs/development/supabase-local.md) - Current local configuration, verified versions, and loopback stop condition.
+- [Supabase-to-Claude OAuth Compatibility Proof](../docs/plans/2026-08-23-supabase-claude-oauth-compatibility-proof.md) - Locked synthetic Phase 1 entry gate, evidence matrix, failure rule, and execution authority.
 
 ## Analyses
 

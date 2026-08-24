@@ -6,6 +6,7 @@ updated: 2026-08-23
 sources:
   - user-confirmed-conversation
   - docs/specs/2026-08-23-passage-product-specification.md
+  - docs/plans/2026-08-23-supabase-claude-oauth-compatibility-proof.md
   - https://modelcontextprotocol.io/specification/2025-11-25/basic
   - https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization
 tags: [access, mcp, plugin, api, authentication, study-group]
@@ -52,14 +53,14 @@ Phase 3 adds citation-linked Markdown notes after permission, visibility, member
 
 ## Remote Access and Security
 
-A group-facing remote MCP server requires authenticated HTTPS access. Passage uses Supabase Auth first, but remote alpha is blocked until a live Claude proof validates protected-resource discovery, client registration, PKCE, audience binding, consent, token validation, and active membership on every tool call.
+A group-facing remote MCP server requires authenticated HTTPS access. Passage uses Supabase Auth first, but remote alpha is blocked until the live [Supabase-to-Claude OAuth Compatibility Proof](../../docs/plans/2026-08-23-supabase-claude-oauth-compatibility-proof.md) validates protected-resource discovery, dynamic client registration, PKCE, exact redirects, resource and audience binding, consent, asymmetric token validation, expiry and refresh, and active membership on every tool call.
 
 Use least privilege. Phase 2 enables evidence read only. Phase 3 adds note read and note write. Enforce authorization in the Passage service and PostgreSQL row-level policies. Do not pass client tokens through to upstream services or expose PostgreSQL directly to MCP clients.
 
 ## Delivery Sequence
 
-1. Preserve HTTP, MCP, and domain-service result parity while PostgreSQL is introduced.
-2. Prove Supabase OAuth compatibility with Claude before other remote Phase 1 work.
+1. Prove Supabase OAuth compatibility with Claude before PostgreSQL schema or other remote Phase 1 work.
+2. After the proof passes, preserve HTTP, MCP, and domain-service result parity while PostgreSQL is introduced.
 3. Connect Claude to the Phase 2 evidence-only surface and pass the broad-question evidence journey.
 4. Add the owner/member allowlist and the gated Phase 3 note surface for the complete-canon member release.
 5. Test the same contract in a private ChatGPT developer-mode beta.

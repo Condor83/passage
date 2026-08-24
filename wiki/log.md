@@ -114,3 +114,11 @@ Changed synthetic EPUB official-edge spans to locate the unique reference-elemen
 ## [2026-08-23] lint | Wiki health check after provenance fix
 
 Checked all 13 wiki pages for required frontmatter, local links, and index coverage. Found no missing frontmatter, broken links, or unindexed current pages. The provenance correction changes synthetic artifact identities but does not change a product decision or open a private-source, corpus, H1, deployment, or publication gate.
+
+## [2026-08-23] update | Phase 0 landed and Phase 1 OAuth gate designed
+
+Fast-forwarded `main` from `988f7cb` to Phase 0 commit `7eaa011`, passed the complete source-independent gate with 200 tests and the two known dependency warnings, and pushed `main` to `origin`. Researched current Supabase, Claude, and MCP primary documentation. Added the locked synthetic Supabase-to-Claude proof design and recorded that it is the only Phase 1 entry gate. PostgreSQL schema work remains blocked. Live proof execution awaits explicit authority for a disposable hosted Supabase project, public HTTPS harness, and Claude connection. The local Supabase stack remains stopped.
+
+## [2026-08-23] lint | Wiki health check after Phase 1 gate design
+
+Checked all 13 wiki pages for required frontmatter, local links, index coverage, decision and overview alignment, stale Phase 0 status, and the Phase 1 authority boundary. Found no missing frontmatter, broken links, unindexed current pages, decision conflict, or stale current-state claim. The live OAuth result, hosted-project authority, public-harness authority, Claude connection, local port-binding fix, and PostgreSQL foundation remain open or blocked as recorded.

@@ -6,6 +6,7 @@ updated: 2026-08-23
 sources:
   - user-confirmed-conversation
   - docs/specs/2026-08-23-passage-product-specification.md
+  - docs/plans/2026-08-23-supabase-claude-oauth-compatibility-proof.md
   - https://supabase.com/docs/guides/auth/oauth-server
   - https://supabase.com/docs/guides/platform/backups
   - https://supabase.com/docs/guides/ai/hybrid-search
@@ -39,9 +40,9 @@ Supabase supports pgvector and documents PostgreSQL hybrid search with `tsvector
 
 ## Authentication Gate
 
-Supabase Auth is the first identity system, not a proven Claude integration. Supabase documents OAuth 2.1, PKCE, MCP-compatible dynamic registration, JWKS, and audience customization. Its OAuth server is in public beta.
+Supabase Auth is the first identity system, not a proven Claude integration. Supabase documents OAuth 2.1, PKCE, MCP-compatible dynamic registration, refresh tokens, JWKS, and audience customization. Its OAuth server is in public beta. Current documentation does not establish RFC 8707 `resource` handling, so the live proof must test it instead of inferring compatibility.
 
-The first Phase 1 task is a narrow Supabase-to-Claude compatibility proof. Remote work stops and the identity-provider choice reopens if protected-resource metadata, dynamic client registration, PKCE, exact redirect handling, audience binding, consent, asymmetric token validation, expiry, or active-membership enforcement fails.
+The first and only Phase 1 entry task is the [Supabase-to-Claude OAuth Compatibility Proof](../../docs/plans/2026-08-23-supabase-claude-oauth-compatibility-proof.md). PostgreSQL schema work does not start first. Remote work stops and the identity-provider choice reopens if protected-resource metadata, dynamic client registration, PKCE, exact redirect handling, resource and audience binding, consent, asymmetric token validation, expiry and refresh, or active-membership enforcement fails.
 
 Passwordless member access also requires custom transactional email. Supabase's default project mail service is not the group delivery path.
 

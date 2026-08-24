@@ -3,7 +3,10 @@ title: Decision Log
 type: overview
 created: 2026-08-23
 updated: 2026-08-23
-sources: [user-confirmed-conversation, docs/specs/2026-08-23-passage-product-specification.md]
+sources:
+  - user-confirmed-conversation
+  - docs/specs/2026-08-23-passage-product-specification.md
+  - docs/plans/2026-08-23-supabase-claude-oauth-compatibility-proof.md
 tags: [decisions, authoritative, passage]
 ---
 
@@ -115,6 +118,15 @@ This is the authoritative record of confirmed Passage project decisions. When an
 - **Evidence rule:** Every edge preserves its origin anchor, source attribution, grammar version, and ordered source spans through persistence and traversal.
 - **Authority boundary:** This decision is proven only with synthetic fixtures. It does not validate either private repair candidate or authorize real-source processing, acceptance, activation, or editorial-fidelity claims.
 - **Pages updated:** [Official Reference Grammar](concepts/official-reference-grammar.md), [Project Overview](overview.md), and [Corpus Fidelity and Acceptance](concepts/corpus-fidelity-and-acceptance.md).
+
+### 2026-08-23 - Phase 1 starts with the Supabase-to-Claude OAuth proof
+
+- **Decision:** The live Supabase-to-Claude OAuth compatibility proof is the only Phase 1 entry gate. Do not start PostgreSQL schema work first.
+- **Rationale:** Current documentation shows a plausible OAuth path but does not prove Claude interoperability, RFC 8707 resource handling, exact audience binding, token refresh, or current-member enforcement.
+- **Failure rule:** A material failure after one bounded correction cycle reopens the identity-provider decision. Do not work around a failed identity gate by starting the database foundation.
+- **Pass effect:** A complete pass permits the PostgreSQL and Auth foundation to begin. It does not prove passwordless email, RLS, remote alpha, corpus, deployment, or release readiness.
+- **Authority boundary:** Design is approved. Live execution requires separate authority for the disposable hosted Supabase project, public HTTPS harness, and Claude connection.
+- **Pages updated:** [Project Overview](overview.md), [PostgreSQL Platform](concepts/postgresql-platform.md), and [Study Group Access](concepts/study-group-access.md).
 
 ## Open Questions
 
