@@ -128,12 +128,21 @@ This is the authoritative record of confirmed Passage project decisions. When an
 - **Authority boundary:** Design is approved. Live execution requires separate authority for the disposable hosted Supabase project, public HTTPS harness, and Claude connection.
 - **Pages updated:** [Project Overview](overview.md), [PostgreSQL Platform](concepts/postgresql-platform.md), and [Study Group Access](concepts/study-group-access.md).
 
+### 2026-08-23 - Supabase Auth failed the Phase 1 resource-binding gate
+
+- **Decision:** Reopen the identity-provider decision. Do not start PostgreSQL schema, migration, or Auth-foundation work.
+- **Evidence:** A public OAuth client requested a deliberately wrong RFC 8707 resource. Supabase issued a token, the proof-only hook assigned the Passage audience, and the Passage resource server accepted the token. This fails P6 of the locked [Supabase-to-Claude OAuth Compatibility Proof](../docs/plans/2026-08-23-supabase-claude-oauth-compatibility-proof.md).
+- **What passed:** Claude discovery, dynamic registration, exact callback, explicit consent, asymmetric token validation, a five-minute refresh cycle, minimal MCP listing and call, HTTP 403 inactive-member enforcement, and inactive-member consent blocking were observed.
+- **Supersedes:** The Supabase Auth part of [Supabase is the first managed platform](#2026-08-23---supabase-is-the-first-managed-platform-and-postgresql-becomes-primary-after-cutover). Supabase Postgres remains the selected first PostgreSQL provider. No replacement identity provider is selected.
+- **Boundary:** The proof used only synthetic identity and `whoami` data. It did not start the local Supabase stack, create an application schema, process private sources, or deploy scripture content.
+- **Pages updated:** [Project Overview](overview.md), [PostgreSQL Platform](concepts/postgresql-platform.md), and [Study Group Access](concepts/study-group-access.md).
+
 ## Open Questions
 
 - Vector storage and semantic retrieval are not confirmed as default behavior. They require a measured retrieval evaluation.
 - Accepted-source validation evidence and any required successor to `official-reference-v1` remain undefined.
 - The generator, verifier, embedding model, prompts, cost ceiling, and edge-publication thresholds are not selected.
-- Supabase OAuth 2.1 must prove Claude protected-resource discovery, client registration, PKCE, audience binding, consent, and active-membership enforcement before remote alpha.
+- Which identity provider can satisfy Claude discovery, PKCE, exact redirects, RFC 8707 resource binding, consent, refresh, asymmetric validation, and current-member enforcement?
 - The hobby application host, transactional email provider, backup destination, and retention schedule are not selected.
 - The exact accepted editions and digests for each standard work remain unapproved.
 - General Conference talk-span citation units and dated source catalogs remain undefined.

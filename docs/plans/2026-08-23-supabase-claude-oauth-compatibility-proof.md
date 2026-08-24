@@ -2,7 +2,7 @@
 
 Date: 2026-08-23
 
-Status: Design complete. Live execution awaits explicit authority for a disposable hosted Supabase project, a public HTTPS test harness, and a Claude custom-connector connection.
+Status: Live result failed on 2026-08-24. P6 resource and audience binding failed. Teardown is complete.
 
 ## Decision and Scope
 
@@ -11,6 +11,18 @@ This proof is the only Phase 1 entry gate. Passage must not start PostgreSQL sch
 The proof uses synthetic identity data and one synthetic read-only MCP tool. It uses no scripture text, private source, repair candidate, corpus artifact, note, PostgreSQL application table, migration, seed, or remote database link. The local Supabase stack stays stopped until its loopback port-binding stop condition is fixed.
 
 ## Current Evidence
+
+### Live Result - 2026-08-24 UTC
+
+The gate failed. Claude successfully discovered and registered with Supabase, reached explicit consent, called the synthetic `whoami` tool with an ES256 token, and refreshed a five-minute access token without reconnecting. After one harness correction, a valid inactive member received HTTP 403 before MCP tool dispatch and could not approve a new authorization.
+
+P6 failed in a direct negative probe. A dynamic public client requested `https://wrong-resource.invalid/mcp` during authorization and token exchange. Supabase returned HTTP 200 and issued a token. The custom access-token hook changed that token audience to the Passage MCP resource even though the requested resource was different. The Passage resource server then accepted the token and returned the `whoami` tool list.
+
+This is the exact fail condition in the locked matrix: a wrong-resource request produced a Passage-usable token. The identity-provider decision is reopened. PostgreSQL schema, migration, and Auth-foundation work remain blocked. Sanitized raw evidence is outside Git.
+
+P12 is complete. The Claude connector was disconnected and removed. The public tunnel and local harness were stopped, and the temporary harness directory was removed. The disposable Supabase project was deleted, which removed its grants, sessions, and synthetic user. The local harness URL no longer accepts connections, the former public tunnel returns HTTP 530, and the former Supabase Auth discovery endpoint returns HTTP 410.
+
+The remaining negative matrix rows were not expanded after the decisive P6 failure. They are not inferred as passes.
 
 Current primary documentation shows a plausible path, but it does not prove compatibility:
 
@@ -133,4 +145,3 @@ Authority for this proof does not include PostgreSQL schema work, local Supabase
 - [Supabase changelog](https://supabase.com/changelog.md)
 - [Claude custom connectors](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp)
 - [MCP Authorization specification](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization)
-

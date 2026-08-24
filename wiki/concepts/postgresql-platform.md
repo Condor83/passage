@@ -19,7 +19,7 @@ tags: [postgresql, supabase, neon, pgvector, storage]
 
 ## Confirmed Direction
 
-Supabase Postgres and Auth are Passage's first managed platform. PostgreSQL becomes the primary application store after the approved parity and cutover gates pass.
+Supabase Postgres remains Passage's first PostgreSQL provider. The identity-provider decision is reopened because Supabase Auth failed the locked Phase 1 resource-binding gate. PostgreSQL becomes the primary application store only after the approved parity and cutover gates pass.
 
 The existing immutable SQLite implementation remains the working local baseline and rollback reference through the alpha. A lean local Supabase configuration now exists for source-independent development, but the PostgreSQL application schema, migration, hosted service, and cutover are not implemented. The wiki must not describe the approved direction as current runtime state.
 
@@ -40,9 +40,9 @@ Supabase supports pgvector and documents PostgreSQL hybrid search with `tsvector
 
 ## Authentication Gate
 
-Supabase Auth is the first identity system, not a proven Claude integration. Supabase documents OAuth 2.1, PKCE, MCP-compatible dynamic registration, refresh tokens, JWKS, and audience customization. Its OAuth server is in public beta. Current documentation does not establish RFC 8707 `resource` handling, so the live proof must test it instead of inferring compatibility.
+Supabase Auth is not the selected identity system. In the live proof, Supabase accepted a deliberately wrong RFC 8707 resource and the proof-only audience hook still produced a Passage-usable token. This failed P6 and reopened the identity-provider decision. Supabase Postgres remains selected independently of Auth.
 
-The first and only Phase 1 entry task is the [Supabase-to-Claude OAuth Compatibility Proof](../../docs/plans/2026-08-23-supabase-claude-oauth-compatibility-proof.md). PostgreSQL schema work does not start first. Remote work stops and the identity-provider choice reopens if protected-resource metadata, dynamic client registration, PKCE, exact redirect handling, resource and audience binding, consent, asymmetric token validation, expiry and refresh, or active-membership enforcement fails.
+The first and only Phase 1 entry task was the [Supabase-to-Claude OAuth Compatibility Proof](../../docs/plans/2026-08-23-supabase-claude-oauth-compatibility-proof.md). It failed resource and audience binding. PostgreSQL schema, migration, and Auth-foundation work remain blocked until the maintainer selects and proves a compliant identity path.
 
 Passwordless member access also requires custom transactional email. Supabase's default project mail service is not the group delivery path.
 
@@ -68,7 +68,7 @@ The first local stack check passed PostgreSQL and Auth health checks, then stopp
 
 - How will immutable corpus versions map to PostgreSQL schemas, partitions, or version-keyed rows without permitting partial mixed-version reads?
 - Which non-bypass role and transaction-claim method will the Passage service use?
-- Can the Supabase OAuth server satisfy the complete Claude remote MCP contract?
+- Which identity provider can satisfy the complete Claude remote MCP contract and exact RFC 8707 resource binding?
 - How will the local Supabase stack enforce loopback-only Docker port bindings on the current workstation?
 - Which hobby application host, transactional email provider, backup destination, and retention policy will be selected?
 - What exact parity event permits PostgreSQL cutover and later retirement of the SQLite rollback path?

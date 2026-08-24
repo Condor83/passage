@@ -122,3 +122,19 @@ Fast-forwarded `main` from `988f7cb` to Phase 0 commit `7eaa011`, passed the com
 ## [2026-08-23] lint | Wiki health check after Phase 1 gate design
 
 Checked all 13 wiki pages for required frontmatter, local links, index coverage, decision and overview alignment, stale Phase 0 status, and the Phase 1 authority boundary. Found no missing frontmatter, broken links, unindexed current pages, decision conflict, or stale current-state claim. The live OAuth result, hosted-project authority, public-harness authority, Claude connection, local port-binding fix, and PostgreSQL foundation remain open or blocked as recorded.
+
+## [2026-08-23] update | Supabase Auth compatibility gate failed and identity decision reopened
+
+Ran the authorized synthetic Supabase-to-Claude proof with no scripture or private source content. Claude completed discovery, dynamic registration, exact callback consent, ES256 validation, a five-minute refresh cycle, and the single `whoami` tool path. After one proof-harness correction, a valid inactive member received HTTP 403 before tool dispatch and could not approve authorization. P6 failed: a dynamic client requested a deliberately wrong RFC 8707 resource, Supabase issued a token, the proof-only hook assigned the Passage audience, and Passage accepted the token. Reopened the identity-provider decision and kept PostgreSQL schema, migration, Auth foundation, local Supabase startup, and private-source work blocked. Sanitized raw evidence remains outside Git. Teardown is pending.
+
+## [2026-08-23] lint | Wiki health check after OAuth gate failure
+
+Checked all 13 wiki pages for required frontmatter, local links, index coverage, decision alignment, contradictions, stale OAuth status, and resolved open questions. Found no missing frontmatter, broken links, index gaps, or current-page conflict. Historical Supabase Auth selection remains in the decision record with an explicit supersession. Current pages keep Supabase Postgres separate from the reopened identity-provider choice. Teardown remained the only open proof operation; PostgreSQL and Auth foundation work remained blocked.
+
+## [2026-08-23] delete | Phase 1 OAuth proof teardown completed
+
+Disconnected and removed the Claude custom connector. Stopped the proof harness and its public tunnel, then removed the temporary harness directory. Deleted the disposable Supabase project, including its synthetic user, grants, and sessions. Verified that the local harness no longer accepts connections, the former public tunnel returns HTTP 530, and the former Supabase Auth discovery endpoint returns HTTP 410. Kept the sanitized evidence record outside Git. PostgreSQL and Auth foundation work remain blocked by the failed P6 gate.
+
+## [2026-08-23] lint | Wiki health check after OAuth proof teardown
+
+Checked all 13 wiki pages for required frontmatter, local links, index coverage, decision alignment, contradictions, stale OAuth status, and resolved open questions. Found no missing frontmatter, broken links, index gaps, or current-page conflict. Current pages record the failed P6 gate, the reopened identity-provider decision, the completed teardown, and the continued PostgreSQL and Auth foundation block.

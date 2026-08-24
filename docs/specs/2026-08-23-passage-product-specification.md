@@ -284,7 +284,7 @@ Note tools do not enter the Phase 2 alpha surface. They enter with the Phase 3 m
 
 ### Identity and membership
 
-- R62. Supabase Auth is the first identity system.
+- R62. The identity-provider decision is reopened. Supabase Auth failed the Phase 1 RFC 8707 resource-binding gate. No replacement is selected.
 - R63. Passage acts as an OAuth-protected resource for Claude and ChatGPT.
 - R63a. Remote alpha is blocked until a Claude compatibility test proves protected-resource and authorization-server metadata, PKCE, exact redirect matching, client registration behavior, issuer and audience validation, token expiry, key rotation, and active-membership enforcement on every tool call. If Supabase Auth cannot meet the contract, the identity-provider decision must reopen before remote delivery.
 - R64. Members authenticate to Passage with one configured passwordless email method: magic link or one-time code.
@@ -390,7 +390,7 @@ Note tools do not enter the Phase 2 alpha surface. They enter with the Phase 3 m
 - Preserve complete staged builds, whole-version validation, and atomic activation.
 - Define the exact source acquisition and acceptance record for each English standard work.
 - Implement and validate the Phase 0 official-reference grammar against synthetic fixtures. Real-source edge acceptance remains bound to the exact accepted corpus in Phase 2.
-- After the compatibility proof passes, establish Supabase Auth, allowlist membership, a non-bypass RLS path, transactional email, and the passwordless OAuth consent flow.
+- After a replacement identity path passes the complete compatibility proof, establish allowlist membership, a non-bypass RLS path, transactional email, and the passwordless OAuth consent flow.
 
 ### Phase 2: Book of Mormon technical alpha
 
@@ -525,7 +525,7 @@ The pilot can use a simple owner-maintained result log. Passage does not need an
 15. Search returns the exact matched passage. Context requires a separate call.
 16. Candidate retrieval is recall-first within a hard citation-integrity gate. Recall never permits an unresolved citation or a mislabeled evidence class.
 17. Evaluation uses independent blinded LLM judges with human spot and dispute review.
-18. Supabase Postgres and Auth are the first managed platform.
+18. Supabase Postgres is the first PostgreSQL provider. The identity-provider decision is reopened after Supabase Auth failed resource binding.
 19. Access uses passwordless email, an owner-managed allowlist, and only owner and member roles.
 20. Passage stores citation-linked Markdown study notes in the Phase 3 member release.
 21. The normal new-note choice is group-visible. Every create request must state visibility explicitly, and only the author can edit, delete, or change visibility.
@@ -544,7 +544,7 @@ The pilot can use a simple owner-maintained result log. Passage does not need an
 - O3. What stable talk-span citation unit will General Conference use: paragraph, section, PDF page, or a combination?
 - O4. Which embedding model and chunk identities will generate enrichment candidates?
 - O5. Which approved generator and verifier models, prompts, agreement policy, provider settings, maximum spend, maximum candidates, time limit, and marginal-yield rule will control the first enrichment run? This must be resolved before that run starts.
-- O6. Does the current Supabase OAuth server satisfy every Claude remote MCP requirement, including client registration, resource metadata, audience binding, consent, token validation, expiry, and membership disable behavior? This is a remote-alpha gate.
+- O6. Which identity provider can satisfy every Claude remote MCP requirement, including client registration, resource metadata, exact RFC 8707 resource binding, consent, token validation, expiry, and membership disable behavior?
 - O7. Which managed hobby container platform will host the Python MCP service and meet Streamable HTTP timeout requirements?
 - O8. What exact retention schedule and storage location will protect encrypted logical backups?
 - O9. What result and rate bounds reduce bulk extraction risk without preventing legitimate comprehensive study?
