@@ -10,6 +10,7 @@ from fastapi.exceptions import RequestValidationError
 
 from passage.config import AppConfig
 from passage.db.control import ControlStore
+from passage.db.repository import create_sqlite_evidence_service
 from passage.domain.errors import PassageError
 from passage.domain.models import SnapshotRequest
 from passage.evidence.service import EvidenceService
@@ -30,7 +31,7 @@ def create_app(
     config: AppConfig,
     *,
     control_store_factory: ControlStoreFactory = ControlStore,
-    evidence_service_factory: EvidenceServiceFactory = EvidenceService,
+    evidence_service_factory: EvidenceServiceFactory = create_sqlite_evidence_service,
 ) -> FastAPI:
     security_policy = LocalSecurityPolicy.from_config(config)
 

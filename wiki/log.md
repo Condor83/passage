@@ -2,7 +2,7 @@
 title: Wiki Operations Log
 type: overview
 created: 2026-08-23
-updated: 2026-08-23
+updated: 2026-08-24
 sources: []
 tags: [log, operations, append-only]
 ---
@@ -146,3 +146,55 @@ Added the exact current Book of Mormon and New Testament candidate JSONL snapsho
 ## [2026-08-23] lint | Wiki health check after candidate snapshot decision
 
 Checked all 13 wiki pages for required frontmatter, local links, index coverage, decision alignment, and the revised candidate privacy boundary. Found no missing frontmatter, broken links, index gaps, or current-page conflict. The current pages distinguish version control from source approval, corpus acceptance, activation, routine test use, and remote delivery.
+
+## [2026-08-24] update | Supabase Auth retained and Phase 1 continuation planned
+
+Recorded the maintainer's proportionate hobby-project decision to retain Supabase Auth. Preserved P6 as a failed wrong-resource test and accepted it as a compatibility limitation without claiming strict RFC 8707 compliance. Updated the product specification so supported OIDC scopes establish identity while Passage enforces tool capabilities and current membership. Created the implementation-ready local Phase 1 plan for a loopback-safe PostgreSQL harness, backend-neutral storage boundary, versioned schema, synthetic lifecycle, backend parity, and Auth membership foundation. Hosted deployment, transactional email, member invitations, private-source work, corpus acceptance, activation, and public submission remain closed.
+
+## [2026-08-24] lint | Wiki health check after Phase 1 continuation plan
+
+Checked all 13 wiki pages for required frontmatter, local links, index coverage, decision alignment, current-versus-historical OAuth status, and implemented-versus-approved claims. Found no missing frontmatter, broken links, index gaps, current-page contradiction, or whitespace error. The plan review tightened connection-role separation, synthetic authenticated dispatch, lexical parity, and retry semantics while keeping hosted deployment, real-corpus work, and public access closed.
+
+## [2026-08-24] create | Phase 1 loopback-safe PostgreSQL harness
+
+Implemented Phase 1 U1 with native Docker Engine, the pinned `npx --yes supabase@2.115.0` CLI path, a dedicated loopback-default bridge, and a guarded session fixture. The fixture verifies Node.js, CLI, and Docker prerequisites before startup, suppresses secret-bearing command output, rejects missing services and every non-`127.0.0.1` published binding, and stops the Passage project after success or failure. The live synthetic PostgreSQL, Auth, API, and mail stack passed 15 environment tests and left no containers running. No application schema, migration, private source, corpus operation, hosted link, remote exposure, invitation, or deployment was added.
+
+## [2026-08-24] lint | Wiki health check after Phase 1 U1
+
+Checked all 13 wiki pages for required frontmatter, local links, index coverage, and alignment between the U1 implementation, overview, PostgreSQL concept, and controlling decisions. Found no missing frontmatter, broken links, index gaps, or claim that the local harness is an application runtime. The PostgreSQL schema, Auth implementation, private-source, corpus, hosted, remote-access, invitation, and deployment gates remain closed.
+
+## [2026-08-24] verify | Phase 1 U1 source-independent gate
+
+Verified the loopback harness through the complete source-independent gate: 143 files passed the format check, Ruff and mypy passed, and all 215 tests passed with the two known dependency warnings. The live Supabase fixture again started only on `127.0.0.1`, stopped after the session, and left no Passage containers running. `git diff --check` also passed.
+
+## [2026-08-24] update | Phase 1 backend-neutral storage contracts
+
+Implemented Phase 1 U2 with backend-neutral control-state, request-scoped snapshot, repository-read, structured lexical-intent, and cleanup contracts. Moved FTS5 compilation and SQLite exception translation into the SQLite repository adapter, adapted CLI and evaluation composition, and preserved the existing HTTP and MCP service factories without backend conditionals. Added characterization for normal, domain-failure, and cancellation cleanup plus structured lexical intent and adapter error translation. Focused SQLite integration, API, MCP, contract, acceptance, CLI, evaluation, and Phase 0 behavior passed 107 tests with the two known dependency warnings. No PostgreSQL schema, repository, private-source operation, hosted exposure, authentication, corpus activation, or cutover was added.
+
+## [2026-08-24] lint | Wiki health check after Phase 1 U2
+
+Checked all 13 wiki pages for required frontmatter, local links, index coverage, decision alignment, and implemented-versus-approved claims. Found no missing frontmatter, broken links, index gaps, decision conflict, or current-state drift. Current pages identify SQLite as the only implemented repository, the U2 contracts as backend-neutral preparation, and the PostgreSQL schema, repository, Auth runtime, hosted exposure, private-source, corpus, activation, and cutover gates as still closed.
+
+## [2026-08-24] verify | Phase 1 U2 source-independent gate
+
+Verified the backend-neutral storage extraction through the complete source-independent gate: dependency sync succeeded, 144 files passed the format check, Ruff passed, mypy passed across 46 source files, and all 220 tests passed with the two known dependency warnings. The focused U2 suite separately passed 107 SQLite integration, API, MCP, contract, acceptance, CLI, evaluation, and Phase 0 tests. SQLite remains the active local backend; no PostgreSQL runtime, private corpus, remote exposure, authentication, activation, or cutover was exercised.
+
+## [2026-08-24] update | Phase 1 PostgreSQL schema and security foundation
+
+Implemented Phase 1 U3 through the CLI-generated imperative migration `20260824221345_phase1_foundation.sql`. The non-exposed `passage` schema now defines synthetic source, corpus lifecycle, canonical and versioned passage, apparatus, official-edge, retrieval-configuration, complete retrieval-snapshot, active-pointer, and membership records. Constraints and triggers enforce lifecycle transitions, retry claims, validated and accepted immutability, rejected cleanup, one snapshot per corpus/configuration pair, activation timestamps, and stored English `tsvector` search with a GIN index. Separate non-inheriting, non-bypass request and maintenance logins receive explicit grants under forced RLS. Bounded Psycopg pools use distinct redacted DSNs and parameter-bound transaction-local issuer, subject, and client context. The ephemeral local fixture removes stale synthetic volumes before startup and after shutdown; it never uses the unsafe local reset path that republished PostgreSQL beyond loopback.
+
+## [2026-08-24] review | Independent Phase 1 U3 schema and policy review
+
+Three read-only scouts investigated migration structure, database roles, and RLS/Data API behavior. After maintainer review, Main applied snapshot-identity uniqueness, lifecycle/retry, transitive role, staging-visibility, malformed-context, API-role, and clean-start corrections. An independent reviewer then assessed the resulting schema, privileges, policies, pools, and tests and found no blocker. Main applied its remaining documentation, activation-timestamp, fail-closed child-guard, stale-stack, and credential-redaction recommendations. No subagent edited repository files.
+
+## [2026-08-24] verify | Focused Phase 1 U3 PostgreSQL suite
+
+Verified the final U3 foundation against a fresh loopback-only local Supabase stack. All 39 PostgreSQL checks passed, covering migration application and recorded history, database advisors, schema and index shape, full-text search, lifecycle and retry transitions, accepted-row immutability, complete snapshot binding, login attributes, transitive role separation, forced RLS, active/disabled/absent and malformed request context, staging and rejected visibility, connection reuse after success/error/cancellation, credential redaction, and anonymous/authenticated/service-role REST and GraphQL non-exposure. The fixture stopped the stack and deleted its synthetic database volume. PostgreSQL import, repository parity, Auth verification, runtime selection, hosted delivery, private-source work, corpus activation, and cutover remain closed.
+
+## [2026-08-24] lint | Wiki health check after Phase 1 U3
+
+Checked all 13 wiki pages for required frontmatter, local links, index coverage, decision alignment, and implemented-versus-approved claims. Found no missing frontmatter, broken links, index gaps, decision conflict, or current-state drift. Current pages identify the U3 migration and security foundation as local synthetic infrastructure while keeping SQLite as the only application repository and runtime; PostgreSQL import, parity, Auth, hosted access, private-source, activation, and cutover gates remain closed.
+
+## [2026-08-24] verify | Phase 1 U3 source-independent gate
+
+Verified U3 through the complete source-independent gate: dependency sync succeeded, 149 files passed the format check, Ruff passed, mypy passed across 48 source files, and all 244 tests passed with the two known dependency warnings. The PostgreSQL fixture applied the generated migration to a fresh local database, kept all published ports on `127.0.0.1`, passed migration-history and database-advisor checks, and removed every Passage container and synthetic database volume after the session.

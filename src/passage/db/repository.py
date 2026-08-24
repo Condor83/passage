@@ -2,40 +2,33 @@ from __future__ import annotations
 
 import json
 import sqlite3
-from dataclasses import dataclass
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from pydantic import TypeAdapter
 
+from passage.db.contracts import LexicalQuery, RepositorySearchHit, RepositorySearchPage
 from passage.db.control import ControlStore
 from passage.db.validation import validate_published_artifact
 from passage.domain.errors import (
     ConfigUnavailableError,
     CorpusUnavailableError,
+    InvalidQueryError,
     PassageNotFoundError,
 )
 from passage.domain.identifiers import CanonicalReference
 from passage.domain.models import (
+    LexicalMode,
     Passage,
     ReferenceEdge,
     ReferenceTarget,
     SearchFilters,
 )
 
+if TYPE_CHECKING:
+    from passage.evidence.service import EvidenceService
+
 _REFERENCE_TARGET_ADAPTER: TypeAdapter[ReferenceTarget] = TypeAdapter(ReferenceTarget)
-
-
-@dataclass(frozen=True, slots=True)
-class RepositorySearchHit:
-    reference: str
-    passage: Passage
-    raw_score: float
-
-
-@dataclass(frozen=True, slots=True)
-class RepositorySearchPage:
-    hits: list[RepositorySearchHit]
-    has_more: bool
 
 
 class CorpusRepository:
@@ -129,11 +122,26 @@ class CorpusRepository:
 
     def search_lexical(
         self,
-        query: str,
+        query: LexicalQuery,
         filters: SearchFilters | None,
         after: tuple[float, int] | None,
         limit: int,
     ) -> RepositorySearchPage:
+        try:
+            return self._search_lexical(query, filters, after, limit)
+        except sqlite3.OperationalError as exc:
+            raise InvalidQueryError("query is not valid for lexical search") from exc
+        except ValueError as exc:
+            raise InvalidQueryError(str(exc)) from exc
+
+    def _search_lexical(
+        self,
+        query: LexicalQuery,
+        filters: SearchFilters | None,
+        after: tuple[float, int] | None,
+        limit: int,
+    ) -> RepositorySearchPage:
+        fts_query = _compile_fts5_query(query)
         books = filters.books if filters is not None else None
         reference_ranges = filters.reference_ranges if filters is not None else None
         books_json = json.dumps(books) if books is not None else None
@@ -175,7 +183,7 @@ class CorpusRepository:
             ORDER BY raw_score, canonical_order
             LIMIT ?""",
             (
-                query,
+                fts_query,
                 books_json,
                 books_json,
                 ranges_json,
@@ -255,6 +263,43 @@ class CorpusRepository:
 
     def passage_count(self) -> int:
         return int(self.connection.execute("SELECT count(*) FROM passages").fetchone()[0])
+
+
+class SQLiteRepositoryFactory:
+    def __init__(self, control: ControlStore) -> None:
+        self.control = control
+
+    def __call__(self, corpus_version: str, retrieval_config: str) -> CorpusRepository:
+        return CorpusRepository.open(
+            self.control,
+            corpus_version=corpus_version,
+            retrieval_config=retrieval_config,
+        )
+
+
+def create_sqlite_evidence_service(control: ControlStore) -> EvidenceService:
+    from passage.evidence.service import EvidenceService
+    from passage.evidence.snapshot import SnapshotManager
+
+    return EvidenceService(SnapshotManager(control, SQLiteRepositoryFactory(control)))
+
+
+def _compile_fts5_query(query: LexicalQuery) -> str:
+    if query.mode is LexicalMode.PHRASE:
+        return _quote_fts5(query.text)
+    terms = query.text.split()
+    if not terms:
+        raise InvalidQueryError("query must contain a searchable token")
+    if query.mode is LexicalMode.TERMS:
+        return " AND ".join(_quote_fts5(term) for term in terms)
+    if query.mode is LexicalMode.PREFIX:
+        return " AND ".join(f"{_quote_fts5(term)}*" for term in terms)
+    distance = query.near_distance if query.near_distance is not None else 5
+    return f"NEAR({' '.join(_quote_fts5(term) for term in terms)}, {distance})"
+
+
+def _quote_fts5(value: str) -> str:
+    return f'"{value.replace(chr(34), chr(34) * 2)}"'
 
 
 def _passage(row: sqlite3.Row) -> Passage:

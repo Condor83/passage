@@ -10,8 +10,8 @@ from typing import Any
 from zipfile import ZipFile
 
 from passage.db.control import ControlStore
+from passage.db.repository import create_sqlite_evidence_service
 from passage.domain.models import PassageRequest
-from passage.evidence.service import EvidenceService
 
 FIXTURES = Path(__file__).parents[1] / "fixtures"
 
@@ -101,7 +101,7 @@ def test_fixture_cli_builds_verify_and_evaluate_both_formats(tmp_path: Path) -> 
         with ControlStore(root) as control:
             accepted = control.latest_accepted()
             assert accepted is not None
-            response = EvidenceService(control).get_passage(
+            response = create_sqlite_evidence_service(control).get_passage(
                 PassageRequest(
                     reference="bofm/1-ne/1/1",
                     corpus_version=accepted.corpus_version,

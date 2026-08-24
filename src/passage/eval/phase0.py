@@ -9,7 +9,7 @@ from typing import Annotated, Any, Literal
 from pydantic import Field, StringConstraints, field_validator, model_validator
 
 from passage.config import create_private_file
-from passage.db.repository import CorpusRepository
+from passage.db.contracts import EvidenceRepository
 from passage.domain.identifiers import CanonicalReference
 from passage.domain.models import (
     Completeness,
@@ -217,17 +217,14 @@ class Phase0ProbeRunner:
         fatal_problems: list[str] = []
         case_results: list[Phase0CaseResult] = []
 
-        with CorpusRepository.open(
-            self.service.control,
-            corpus_version,
-            retrieval_config,
-        ) as repository:
-            accepted = self.service.control.get_accepted(corpus_version)
-            if accepted is None or accepted.retrieval_config != retrieval_config:
-                raise ValueError("Phase 0 probe snapshot is unavailable")
-            config = self.service.control.get_config(retrieval_config)
-            if config is None:
-                raise ValueError("Phase 0 probe retrieval configuration is unavailable")
+        with self.service.snapshots.pin(
+            SnapshotRequest(
+                corpus_version=corpus_version,
+                retrieval_config=retrieval_config,
+            )
+        ) as snapshot:
+            repository = snapshot.repository
+            config = snapshot.config
             self._audit_lanes(definition, config, repository, fatal_problems)
             for case in definition.cases:
                 traces = self._run_case(
@@ -286,7 +283,7 @@ class Phase0ProbeRunner:
         self,
         case: Phase0ProbeCase,
         selector: dict[str, str],
-        repository: CorpusRepository,
+        repository: EvidenceRepository,
         citation_errors: list[str],
         evidence_class_errors: list[str],
         fatal_problems: list[str],
@@ -401,7 +398,7 @@ class Phase0ProbeRunner:
         path: Literal["atomic", "comparator"],
         request: StrictModel,
         response: EvidenceResponse,
-        repository: CorpusRepository,
+        repository: EvidenceRepository,
         citation_errors: list[str],
         evidence_class_errors: list[str],
         fatal_problems: list[str],
@@ -464,8 +461,8 @@ class Phase0ProbeRunner:
     def _audit_lanes(
         self,
         definition: Phase0ProbeDefinition,
-        config: dict[str, Any],
-        repository: CorpusRepository,
+        config: dict[str, object],
+        repository: EvidenceRepository,
         fatal_problems: list[str],
     ) -> None:
         actual = ["exact"]
@@ -522,7 +519,7 @@ def _coverage(case: Phase0ProbeCase, traces: list[ProbeOperationTrace]) -> Probe
 
 
 def _citation(
-    repository: CorpusRepository,
+    repository: EvidenceRepository,
     passage: Passage,
     errors: list[str],
     case_id: str,
@@ -545,7 +542,7 @@ def _citation(
 
 
 def _edge_citation(
-    repository: CorpusRepository,
+    repository: EvidenceRepository,
     edge: ReferenceEdge,
     errors: list[str],
     case_id: str,

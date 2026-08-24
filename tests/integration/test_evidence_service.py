@@ -1,6 +1,11 @@
+import asyncio
+import sqlite3
+
 import pytest
 
-from passage.domain.errors import InvalidQueryError
+from passage.db.contracts import LexicalQuery
+from passage.db.repository import CorpusRepository
+from passage.domain.errors import InvalidQueryError, PassageNotFoundError
 from passage.domain.models import (
     ContextRequest,
     Direction,
@@ -129,3 +134,84 @@ def test_empty_search_is_success(service: EvidenceService) -> None:
 
     assert response.records == []
     assert response.completeness.truncated is False
+
+
+def test_service_passes_structured_lexical_intent_to_repository(
+    service: EvidenceService,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    observed: list[LexicalQuery] = []
+    original = CorpusRepository.search_lexical
+
+    def record_query(
+        repository: CorpusRepository,
+        query: LexicalQuery,
+        filters,
+        after: tuple[float, int] | None,
+        limit: int,
+    ):
+        observed.append(query)
+        return original(repository, query, filters, after, limit)
+
+    monkeypatch.setattr(CorpusRepository, "search_lexical", record_query)
+
+    service.search_lexical(
+        LexicalSearchRequest(query="faith hope", mode=LexicalMode.NEAR, near_distance=3)
+    )
+    service.search_evidence(EvidenceSearchRequest(query="faith hope"))
+
+    assert observed == [
+        LexicalQuery("faith hope", LexicalMode.NEAR, 3),
+        LexicalQuery("faith hope", LexicalMode.TERMS),
+    ]
+
+
+def test_sqlite_adapter_translates_invalid_filter_range(
+    service: EvidenceService,
+) -> None:
+    with pytest.raises(InvalidQueryError, match="outside the corpus"):
+        service.search_lexical(
+            LexicalSearchRequest(
+                query="faith",
+                filters={"reference_ranges": ["bofm/alma/1/1"]},
+            )
+        )
+
+
+def test_pinned_snapshot_closes_repository_after_normal_completion(
+    service: EvidenceService,
+) -> None:
+    with service.snapshots.pin(SnapshotRequest()) as snapshot:
+        connection = snapshot.repository.connection
+        assert snapshot.repository.passage_count() > 0
+
+    with pytest.raises(sqlite3.ProgrammingError):
+        connection.execute("SELECT 1")
+
+
+def test_pinned_snapshot_closes_repository_after_domain_failure(
+    service: EvidenceService,
+) -> None:
+    with (
+        pytest.raises(PassageNotFoundError),
+        service.snapshots.pin(SnapshotRequest()) as snapshot,
+    ):
+        connection = snapshot.repository.connection
+        snapshot.repository.get_passage("bofm/1-ne/1/99")
+
+    with pytest.raises(sqlite3.ProgrammingError):
+        connection.execute("SELECT 1")
+
+
+def test_pinned_snapshot_closes_repository_after_cancellation(
+    service: EvidenceService,
+) -> None:
+    with (
+        pytest.raises(asyncio.CancelledError),
+        service.snapshots.pin(SnapshotRequest()) as snapshot,
+    ):
+        connection = snapshot.repository.connection
+        raise asyncio.CancelledError
+
+    with pytest.raises(sqlite3.ProgrammingError):
+        connection.execute("SELECT 1")

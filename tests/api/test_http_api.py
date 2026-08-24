@@ -12,6 +12,7 @@ from fastapi.testclient import TestClient
 from passage.config import AppConfig
 from passage.db.builder import CorpusBuilder
 from passage.db.control import ControlStore
+from passage.db.repository import create_sqlite_evidence_service
 from passage.domain.errors import ErrorCode, PassageError
 from passage.domain.models import (
     ContextRequest,
@@ -22,7 +23,6 @@ from passage.domain.models import (
     SourceApproval,
     TraversalRequest,
 )
-from passage.evidence.service import EvidenceService
 from passage.http.app import create_app
 from passage.ingest.normalize import normalize_extraction
 from passage.ingest.validation import StructureManifest
@@ -80,7 +80,7 @@ def test_all_six_routes_serialize_the_shared_service_responses(
 ) -> None:
     _, client = live_client
     with ControlStore(accepted_config.private_root) as control:
-        service = EvidenceService(control)
+        service = create_sqlite_evidence_service(control)
         expected = {
             "corpus": service.get_corpus(SnapshotRequest()).model_dump(mode="json"),
             "passage": service.get_passage(PassageRequest(reference="bofm/1-ne/1/2")).model_dump(

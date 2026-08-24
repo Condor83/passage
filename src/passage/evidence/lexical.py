@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from passage.domain.errors import InvalidQueryError
-from passage.domain.models import LexicalMode, LexicalSearchRequest
+from passage.domain.models import LexicalSearchRequest
 
 _CURSOR_NAMESPACE = b"passage-cursor-v1\0"
 
@@ -18,20 +18,6 @@ class CursorPosition:
     raw_score: float
     canonical_order: int
     lane_priority: int = 0
-
-
-def compile_fts_query(query: str, mode: LexicalMode, near_distance: int | None) -> str:
-    if mode is LexicalMode.PHRASE:
-        return _quote(query)
-    terms = query.split()
-    if not terms:
-        raise InvalidQueryError("query must contain a searchable token")
-    if mode is LexicalMode.TERMS:
-        return " AND ".join(_quote(term) for term in terms)
-    if mode is LexicalMode.PREFIX:
-        return " AND ".join(f"{_quote(term)}*" for term in terms)
-    distance = near_distance if near_distance is not None else 5
-    return f"NEAR({' '.join(_quote(term) for term in terms)}, {distance})"
 
 
 def request_fingerprint(request: LexicalSearchRequest | dict[str, Any]) -> str:
@@ -74,10 +60,6 @@ def decode_cursor(cursor: str, expected_fingerprint: str) -> CursorPosition:
         )
     except (KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
         raise InvalidQueryError("cursor does not match this pinned request") from exc
-
-
-def _quote(value: str) -> str:
-    return f'"{value.replace(chr(34), chr(34) * 2)}"'
 
 
 def _json(value: Any) -> bytes:

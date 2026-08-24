@@ -16,6 +16,7 @@ from pydantic import ValidationError
 
 from passage.config import AppConfig, prepare_private_root
 from passage.db.control import ControlStore
+from passage.db.repository import create_sqlite_evidence_service
 from passage.domain.errors import (
     CorpusUnavailableError,
     ErrorCode,
@@ -61,7 +62,7 @@ def create_server(
     private_root: Path,
     *,
     control_factory: ControlFactory = ControlStore,
-    service_factory: ServiceFactory = EvidenceService,
+    service_factory: ServiceFactory = create_sqlite_evidence_service,
 ) -> PassageFastMCP:
     config = AppConfig(private_root=private_root)
     root = prepare_private_root(config, Path.cwd())

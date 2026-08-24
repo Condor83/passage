@@ -2,14 +2,14 @@
 title: Wiki Index
 type: overview
 created: 2026-08-23
-updated: 2026-08-23
+updated: 2026-08-24
 sources: []
 tags: [index, navigation]
 ---
 
 # Passage Wiki Index
 
-> Last updated: 2026-08-23 | Indexed wiki pages: 12 | Sources ingested: 0
+> Last updated: 2026-08-24 | Indexed wiki pages: 12 | Sources ingested: 0
 
 ## Living Documents
 
@@ -20,6 +20,7 @@ tags: [index, navigation]
 - [Autonomous Build Readiness](../docs/plans/2026-08-23-autonomous-build-readiness.md) - Prepared worktree, agent roles, prompt outline, proof cadence, and hard stop conditions for the first build goal.
 - [Local Supabase](../docs/development/supabase-local.md) - Current local configuration, verified versions, and loopback stop condition.
 - [Supabase-to-Claude OAuth Compatibility Proof](../docs/plans/2026-08-23-supabase-claude-oauth-compatibility-proof.md) - Locked synthetic Phase 1 entry gate, evidence matrix, failure rule, and execution authority.
+- [Phase 1 PostgreSQL and Supabase Auth Foundation Plan](../docs/plans/2026-08-24-0634-feat-postgres-auth-foundation-plan.md) - Implementation-ready local, synthetic continuation under the accepted hobby-scale OAuth limitation.
 
 ## Analyses
 

@@ -2,7 +2,7 @@
 title: Decision Log
 type: overview
 created: 2026-08-23
-updated: 2026-08-23
+updated: 2026-08-24
 sources:
   - user-confirmed-conversation
   - docs/specs/2026-08-23-passage-product-specification.md
@@ -145,12 +145,21 @@ This is the authoritative record of confirmed Passage project decisions. When an
 - **Supersedes:** The blanket rule that all derived corpus data and scripture text must stay outside Git. The exception applies only to exact candidate snapshots that the maintainer explicitly approves.
 - **Pages updated:** [Project Overview](overview.md), [Corpus Fidelity and Acceptance](concepts/corpus-fidelity-and-acceptance.md), [Content Roadmap](concepts/content-roadmap.md), and [Datalab PDF Apparatus Repair](analyses/datalab-pdf-apparatus-repair.md).
 
+### 2026-08-24 - Supabase Auth is retained with a hobby-scale compatibility exception
+
+- **Decision:** Use Supabase Auth for Passage. Accept its failure to bind a deliberately wrong RFC 8707 resource for the invite-only hobby service. Do not claim that P6 passed or that Supabase Auth provides strict RFC 8707 resource binding.
+- **Rationale:** The live proof showed that the failure can expose Passage access only after a member authorizes a client. It does not expose a member's computer or Claude, Codex, Anthropic, or OpenAI account credentials. Provider migration and enterprise-grade controls are disproportionate for the small trusted group and nonsensitive evidence-only alpha.
+- **Required controls:** Validate asymmetric signature, algorithm, key, issuer, Passage audience, expiry, subject, and client identity. Require explicit consent, restrict accepted callback hosts, check current owner-managed membership before every tool dispatch, keep the first remote catalog read-only, and never log or pass through tokens.
+- **OAuth capability boundary:** Use Supabase-supported OIDC scopes for identity. Passage enforces evidence and later note capabilities in the application because Supabase Auth does not provide Passage-specific OAuth scopes.
+- **Supersedes:** The identity-provider reopening and PostgreSQL/Auth-foundation block in [Supabase Auth failed the Phase 1 resource-binding gate](#2026-08-23---supabase-auth-failed-the-phase-1-resource-binding-gate). The failed proof remains historical evidence and is not rewritten as a pass.
+- **Authority boundary:** This decision permits planning and local source-independent implementation. It does not authorize local non-loopback exposure, hosted deployment, member invitations, transactional email, private-source processing, corpus acceptance, activation, or public submission.
+- **Pages updated:** [Project Overview](overview.md), [PostgreSQL Platform](concepts/postgresql-platform.md), [Study Group Access](concepts/study-group-access.md), and the [Passage Product Specification](../docs/specs/2026-08-23-passage-product-specification.md).
+
 ## Open Questions
 
 - Vector storage and semantic retrieval are not confirmed as default behavior. They require a measured retrieval evaluation.
 - Accepted-source validation evidence and any required successor to `official-reference-v1` remain undefined.
 - The generator, verifier, embedding model, prompts, cost ceiling, and edge-publication thresholds are not selected.
-- Which identity provider can satisfy Claude discovery, PKCE, exact redirects, RFC 8707 resource binding, consent, refresh, asymmetric validation, and current-member enforcement?
 - The hobby application host, transactional email provider, backup destination, and retention schedule are not selected.
 - The exact accepted editions and digests for each standard work remain unapproved.
 - General Conference talk-span citation units and dated source catalogs remain undefined.

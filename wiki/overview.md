@@ -2,11 +2,12 @@
 title: Project Overview
 type: overview
 created: 2026-08-23
-updated: 2026-08-23
+updated: 2026-08-24
 sources:
   - docs/plans/2026-08-16-001-feat-scripture-chat-plan.md
   - docs/specs/2026-08-23-passage-product-specification.md
   - docs/plans/2026-08-23-supabase-claude-oauth-compatibility-proof.md
+  - docs/plans/2026-08-24-0634-feat-postgres-auth-foundation-plan.md
 tags: [overview, passage, evidence, postgresql, mcp, study-group]
 ---
 
@@ -29,8 +30,11 @@ The product returns inspectable evidence. It does not generate authoritative doc
 - The limited [Phase 0 Product Loop Probe](analyses/phase0-product-loop-probe.md) ran two locked synthetic questions over exact, lexical, and official lanes. It found zero citation or evidence-class errors and no fatal atomic contract problem. Derived and experimental lanes were absent. The result makes no H1 or promotion claim.
 - Phase 0 is landed on `main` at `7eaa011`. The complete source-independent gate passes formatting, lint, mypy, and 200 tests. The two remaining warnings come from dependencies.
 - The current implementation uses immutable local SQLite corpus artifacts, loopback HTTP, and stdio MCP. No hosted service, PostgreSQL runtime, authentication system, note surface, or derived graph is implemented.
-- The live [Supabase-to-Claude OAuth Compatibility Proof](../docs/plans/2026-08-23-supabase-claude-oauth-compatibility-proof.md) failed P6. Supabase issued a Passage-usable token after a client requested a deliberately wrong resource. The identity-provider decision is reopened. PostgreSQL schema and Auth-foundation work remain blocked.
-- The maintainer approved the [Passage Product Specification](../docs/specs/2026-08-23-passage-product-specification.md) on 2026-08-23. Supabase Postgres remains its first database provider. The later failed OAuth gate supersedes its Supabase Auth selection and reopens identity-provider choice.
+- Phase 1 U1 adds a source-independent local Supabase harness on native Docker Engine. A pinned CLI invocation, dedicated Docker bridge, and environment tests fail closed unless every published API, database, and mail port binds to `127.0.0.1`; the fixture suppresses secret-bearing output and removes its synthetic database volume after each session.
+- Phase 1 U2 extracts backend-neutral control, snapshot-session, repository-read, lexical-intent, and cleanup contracts. `EvidenceService` no longer imports SQLite types or compiles FTS5 syntax; the SQLite adapter owns native query compilation and domain-error translation while HTTP, MCP, CLI, evaluation, and the Phase 0 probe retain their existing behavior and SQLite composition. No PostgreSQL repository or runtime cutover exists yet.
+- Phase 1 U3 adds the imperative local PostgreSQL foundation in a non-exposed `passage` schema: versioned evidence and complete retrieval-snapshot tables, lifecycle and immutability guards, stored full-text search with a GIN index, separate non-bypass request and maintenance logins, forced RLS, explicit grants, and bounded synchronous Psycopg pools. Synthetic schema, role, policy, context-cleanup, and anon/authenticated/service-role Data API probes pass. No PostgreSQL importer, repository, Auth verifier, runtime selection, hosted service, or cutover exists yet.
+- The live [Supabase-to-Claude OAuth Compatibility Proof](../docs/plans/2026-08-23-supabase-claude-oauth-compatibility-proof.md) failed P6. Supabase issued a Passage-usable token after a client requested a deliberately wrong resource. Discovery, dynamic registration, exact callback consent, asymmetric validation, refresh, minimal MCP access, and current-member enforcement otherwise worked.
+- On 2026-08-24, the maintainer retained Supabase Auth for the invite-only hobby service and accepted the P6 behavior as a documented compatibility limitation. This unblocks local PostgreSQL and Auth-foundation planning and implementation. It does not authorize hosted deployment or claim strict RFC 8707 compliance.
 
 ## Operating Boundaries
 
@@ -48,7 +52,7 @@ See [Corpus Fidelity and Acceptance](concepts/corpus-fidelity-and-acceptance.md)
 
 - The project name and all active technical identifiers are **Passage**. The Phase 0 rename removed the prior package, CLI, environment, service, and MCP identifiers without compatibility aliases. Historical plan filenames remain unchanged. See [Decision Log](decisions.md#2026-08-23---all-active-technical-identifiers-will-use-passage).
 - The long-term corpus covers the LDS scripture canon, followed by teachings from Church leaders. See [Content Roadmap](concepts/content-roadmap.md).
-- Supabase Postgres remains the first PostgreSQL provider. The Supabase Auth selection is reopened after the failed resource-binding gate. PostgreSQL becomes primary only after contract parity and cutover acceptance. See [PostgreSQL Platform](concepts/postgresql-platform.md).
+- Supabase Postgres and Supabase Auth remain the first managed platform under the documented hobby-scale P6 exception. PostgreSQL becomes primary only after contract parity and cutover acceptance. See [PostgreSQL Platform](concepts/postgresql-platform.md).
 - Claude remote MCP is the first hosted client. Phase 2 is evidence-only; Phase 3 adds the owner/member note model. See [Study Group Access](concepts/study-group-access.md).
 - Model-derived relationships remain experimental until the locked H2 and H3 evaluations, including a human sample, pass. See [Retrieval and Concept Links](concepts/retrieval-and-concept-links.md).
 - Official target grammar v1 supports only explicit canonical slash forms and semicolon-separated targets. Real-source validation remains a Phase 2 gate. See [Official Reference Grammar](concepts/official-reference-grammar.md).
@@ -58,6 +62,5 @@ See [Corpus Fidelity and Acceptance](concepts/corpus-fidelity-and-acceptance.md)
 - Which accepted-source syntax extensions, if any, will Phase 2 require beyond `official-reference-v1`?
 - What independent comparison or review is required before the repaired private candidate can be accepted?
 - What evaluation result would justify promoting vectors or hybrid retrieval to a default lane?
-- Which identity provider can satisfy the locked Claude remote MCP contract after Supabase Auth failed resource binding?
 - Which hobby application host, transactional email provider, and encrypted backup destination will Passage use?
 - Which exact source catalogs and citation units will define the complete canon and General Conference corpus versions?

@@ -3,8 +3,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from passage.db.control import AcceptedCorpus, ControlStore
-from passage.db.repository import CorpusRepository
+from passage.db.contracts import (
+    AcceptedSnapshot,
+    ControlState,
+    EvidenceRepository,
+    RepositorySessionFactory,
+)
 from passage.domain.errors import (
     ConfigUnavailableError,
     CorpusUnavailableError,
@@ -17,9 +21,9 @@ if TYPE_CHECKING:
 
 @dataclass(slots=True)
 class PinnedSnapshot:
-    accepted: AcceptedCorpus
+    accepted: AcceptedSnapshot
     config: dict[str, object]
-    repository: CorpusRepository
+    repository: EvidenceRepository
 
     @property
     def corpus_version(self) -> str:
@@ -37,8 +41,13 @@ class PinnedSnapshot:
 
 
 class SnapshotManager:
-    def __init__(self, control: ControlStore) -> None:
+    def __init__(
+        self,
+        control: ControlState,
+        repository_factory: RepositorySessionFactory,
+    ) -> None:
         self.control = control
+        self.repository_factory = repository_factory
 
     def pin(self, selector: SnapshotSelector) -> PinnedSnapshot:
         if selector.corpus_version is None:
@@ -61,11 +70,7 @@ class SnapshotManager:
         config = self.control.get_config(retrieval_config)
         if config is None:
             raise ConfigUnavailableError("selected retrieval configuration is unavailable")
-        repository = CorpusRepository.open(
-            self.control,
-            corpus_version=corpus_version,
-            retrieval_config=retrieval_config,
-        )
+        repository = self.repository_factory(corpus_version, retrieval_config)
         return PinnedSnapshot(
             accepted=accepted,
             config=config,

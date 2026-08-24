@@ -22,7 +22,8 @@ def test_locked_baseline_report_is_identity_bound_and_immutable(
             EvidenceJudgment(reference="bofm/1-ne/1/2", grade=2),
         ],
     )
-    active_before = service.control.get_active()
+    with service.snapshots.pin(SnapshotRequest()) as snapshot:
+        active_before = (snapshot.corpus_version, snapshot.retrieval_config)
 
     first = EvaluationRunner(service).run(
         [case],
@@ -48,7 +49,8 @@ def test_locked_baseline_report_is_identity_bound_and_immutable(
     assert first.report.unjudged_candidates == []
     assert first.report.identities.corpus_version == metadata.corpus_version
     assert first.report.identities.retrieval_config == metadata.retrieval_config
-    assert service.control.get_active() == active_before
+    with service.snapshots.pin(SnapshotRequest()) as snapshot:
+        assert (snapshot.corpus_version, snapshot.retrieval_config) == active_before
 
 
 def test_unjudged_candidates_and_missing_locked_cases_block_eligibility(

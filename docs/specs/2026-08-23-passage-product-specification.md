@@ -243,7 +243,7 @@ These thresholds are recommendations. Initial Book of Mormon evaluation must tes
 ### Remote contract
 
 - R52. Remote MCP uses public HTTPS, OAuth, bounded inputs, structured outputs, and stable domain errors.
-- R52a. OAuth uses the smallest useful scope set. Phase 2 enables evidence read only. Phase 3 adds note read and note write. Every tool declares and enforces its required scope in addition to the active-member check.
+- R52a. OAuth uses the smallest supported OIDC scope set for identity. Passage separately authorizes tool capabilities. Phase 2 enables evidence read only. Phase 3 may add note read and note write only after application-level capability and permission tests pass. Every tool declares and enforces its required capability in addition to the active-member check.
 - R53. MCP remains an adapter over the Passage domain service. It must not become the durable data model.
 - R53a. HTTP and MCP must return equivalent domain results, snapshot identities, bounds, and stable errors for every shared operation. Contract parity tests must cover both transports whenever a shared operation changes.
 - R54. The Phase 2 remote-alpha surface is atomic, evidence-only, and read-only.
@@ -284,9 +284,9 @@ Note tools do not enter the Phase 2 alpha surface. They enter with the Phase 3 m
 
 ### Identity and membership
 
-- R62. The identity-provider decision is reopened. Supabase Auth failed the Phase 1 RFC 8707 resource-binding gate. No replacement is selected.
+- R62. Supabase Auth is the selected identity provider for the invite-only hobby service. Its failure to bind a deliberately wrong RFC 8707 resource is an accepted compatibility limitation, not a passing result or a claim of strict RFC 8707 compliance.
 - R63. Passage acts as an OAuth-protected resource for Claude and ChatGPT.
-- R63a. Remote alpha is blocked until a Claude compatibility test proves protected-resource and authorization-server metadata, PKCE, exact redirect matching, client registration behavior, issuer and audience validation, token expiry, key rotation, and active-membership enforcement on every tool call. If Supabase Auth cannot meet the contract, the identity-provider decision must reopen before remote delivery.
+- R63a. Before remote alpha, a bounded Claude regression must prove protected-resource and authorization-server metadata, PKCE, exact redirect matching, client registration behavior, issuer and Passage-audience validation, token expiry and refresh, asymmetric key handling, explicit consent, and active-membership enforcement on every tool call. The test must retain the wrong-resource result as an accepted limitation and must not describe Supabase Auth as enforcing exact RFC 8707 resource binding.
 - R64. Members authenticate to Passage with one configured passwordless email method: magic link or one-time code.
 - R64a. Member release requires a configured transactional email provider and sender domain, secret rotation, non-enumerating responses, delivery tests, and link or code expiry tests. Supabase's default project email service is not the member delivery path.
 - R65. Only verified email addresses on an owner-managed allowlist can receive access.
@@ -383,14 +383,14 @@ Note tools do not enter the Phase 2 alpha surface. They enter with the Phase 3 m
 
 ### Phase 1: PostgreSQL and source foundation
 
-- First, run a narrow Supabase-to-Claude OAuth compatibility proof. Stop remote work and reopen the identity-provider decision if protected-resource discovery, dynamic client registration, PKCE, audience binding, consent, token validation, or active-membership enforcement fails.
+- Carry forward the completed Supabase-to-Claude proof. Treat its wrong-resource result as an accepted compatibility limitation for the invite-only hobby service while preserving the behaviors that passed: discovery, dynamic client registration, PKCE, exact callback, explicit consent, asymmetric token validation, refresh, and current-member enforcement.
 - Keep the current local path available as a read-only parity reference through the alpha. Do not maintain two permanent application backends.
 - Define the versioned PostgreSQL corpus model and migrations.
 - Map current canonical identities and accepted fixture behavior to PostgreSQL, prove contract parity, define the cutover point, and retain rollback to the prior local alpha until cutover acceptance.
 - Preserve complete staged builds, whole-version validation, and atomic activation.
 - Define the exact source acquisition and acceptance record for each English standard work.
 - Implement and validate the Phase 0 official-reference grammar against synthetic fixtures. Real-source edge acceptance remains bound to the exact accepted corpus in Phase 2.
-- After a replacement identity path passes the complete compatibility proof, establish allowlist membership, a non-bypass RLS path, transactional email, and the passwordless OAuth consent flow.
+- With Supabase Auth retained, establish allowlist membership, a non-bypass RLS path, transactional email, and the passwordless OAuth consent flow. Re-run the bounded Claude regression in R63a before remote alpha.
 
 ### Phase 2: Book of Mormon technical alpha
 
@@ -499,7 +499,7 @@ The pilot can use a simple owner-maintained result log. Passage does not need an
 | Supabase Free can pause or run out of storage | Measure capacity and connector cold starts, create daily external backups, and upgrade through explicit triggers. |
 | Model or prompt drift can make enrichment irreproducible | Pin and record models, prompts, inputs, order, checkpoints, outputs, corpus, and publication policy. |
 | Enrichment cost or candidate volume grows without bound | Require a dry-run estimate, owner-approved cost and volume bounds, a time limit, and a marginal-yield stop rule. |
-| Passwordless email or OAuth cannot support the connector | Block remote alpha until transactional email and the exact Claude OAuth contract pass end-to-end tests. Reopen the identity-provider decision if Supabase cannot pass. |
+| Passwordless email or OAuth cannot support the connector | Block remote alpha until transactional email and the bounded Claude regression pass. Keep the accepted wrong-resource limitation visible and reopen provider selection only if a practical Passage access or account-safety problem appears. |
 | A privileged database connection bypasses note policies | Use a non-bypass role for normal requests, pass verified identity into each transaction, and isolate elevated owner credentials. |
 | Claude and ChatGPT can use tools differently | Keep tools atomic, run locked host-parity prompts, and publish only after the private beta passes. |
 | Public plugin work expands the product before it has a public audience | Keep ChatGPT private and allowlisted until a separate public-delivery specification is approved. |
@@ -525,7 +525,7 @@ The pilot can use a simple owner-maintained result log. Passage does not need an
 15. Search returns the exact matched passage. Context requires a separate call.
 16. Candidate retrieval is recall-first within a hard citation-integrity gate. Recall never permits an unresolved citation or a mislabeled evidence class.
 17. Evaluation uses independent blinded LLM judges with human spot and dispute review.
-18. Supabase Postgres is the first PostgreSQL provider. The identity-provider decision is reopened after Supabase Auth failed resource binding.
+18. Supabase Postgres and Supabase Auth are the first managed platform. The owner accepts Supabase Auth's failed wrong-resource binding for the invite-only hobby service without claiming strict RFC 8707 compliance.
 19. Access uses passwordless email, an owner-managed allowlist, and only owner and member roles.
 20. Passage stores citation-linked Markdown study notes in the Phase 3 member release.
 21. The normal new-note choice is group-visible. Every create request must state visibility explicitly, and only the author can edit, delete, or change visibility.
@@ -544,7 +544,6 @@ The pilot can use a simple owner-maintained result log. Passage does not need an
 - O3. What stable talk-span citation unit will General Conference use: paragraph, section, PDF page, or a combination?
 - O4. Which embedding model and chunk identities will generate enrichment candidates?
 - O5. Which approved generator and verifier models, prompts, agreement policy, provider settings, maximum spend, maximum candidates, time limit, and marginal-yield rule will control the first enrichment run? This must be resolved before that run starts.
-- O6. Which identity provider can satisfy every Claude remote MCP requirement, including client registration, resource metadata, exact RFC 8707 resource binding, consent, token validation, expiry, and membership disable behavior?
 - O7. Which managed hobby container platform will host the Python MCP service and meet Streamable HTTP timeout requirements?
 - O8. What exact retention schedule and storage location will protect encrypted logical backups?
 - O9. What result and rate bounds reduce bulk extraction risk without preventing legitimate comprehensive study?
@@ -584,4 +583,4 @@ Approval requires these repository documentation actions:
 
 ### Approval state
 
-The maintainer approved this specification on 2026-08-23. O1 blocks real official-edge acceptance. O2 blocks corpus acceptance. O5 blocks the first enrichment run. O6, O11, and O12 block remote alpha. O10 blocks any public ChatGPT submission. Other open technical questions belong to later architecture and implementation planning.
+The maintainer approved this specification on 2026-08-23 and revised the Supabase Auth risk decision on 2026-08-24. O1 blocks real official-edge acceptance. O2 blocks corpus acceptance. O5 blocks the first enrichment run. O11, O12, and the bounded R63a regression block remote alpha. O10 blocks any public ChatGPT submission. Other open technical questions belong to later architecture and implementation planning.

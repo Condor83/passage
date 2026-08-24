@@ -8,6 +8,7 @@ import pytest
 
 from passage.db.builder import CorpusBuilder
 from passage.db.control import ControlStore
+from passage.db.repository import create_sqlite_evidence_service
 from passage.domain.models import SourceApproval
 from passage.evidence.service import EvidenceService
 from passage.ingest.normalize import normalize_extraction
@@ -52,6 +53,6 @@ def service(tmp_path: Path) -> Iterator[EvidenceService]:
     published = CorpusBuilder(root, control).build(corpus, approval, "b" * 64)
     control.activate(published.corpus_version, published.retrieval_config)
     try:
-        yield EvidenceService(control)
+        yield create_sqlite_evidence_service(control)
     finally:
         control.close()

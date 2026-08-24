@@ -15,6 +15,7 @@ from mcp.shared.memory import create_connected_server_and_client_session
 
 from passage.db.builder import CorpusBuilder
 from passage.db.control import ControlStore
+from passage.db.repository import create_sqlite_evidence_service
 from passage.domain.errors import CorpusUnavailableError
 from passage.domain.models import (
     ContextRequest,
@@ -245,7 +246,10 @@ async def test_unexpected_error_is_opaque_and_never_echoes_private_or_query_text
         def search_evidence(self, request: EvidenceSearchRequest) -> EvidenceResponse:
             raise RuntimeError(f"source excerpt and query: {request.query}")
 
-    server = create_server(active_root, service_factory=ExplodingService)
+    def exploding_service(control: ControlStore) -> EvidenceService:
+        return ExplodingService(create_sqlite_evidence_service(control).snapshots)
+
+    server = create_server(active_root, service_factory=exploding_service)
     async with create_connected_server_and_client_session(server._mcp_server) as client:
         result = await client.call_tool(
             "search_evidence",

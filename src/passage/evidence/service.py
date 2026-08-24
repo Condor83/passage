@@ -1,11 +1,14 @@
 from __future__ import annotations
 
-import sqlite3
 from typing import Any
 
-from passage.db.control import ControlStore
-from passage.db.repository import RepositorySearchHit
-from passage.domain.errors import ConfigUnavailableError, InvalidQueryError
+from passage.db.contracts import (
+    LexicalQuery,
+    RepositorySearchHit,
+    SnapshotProvider,
+    SnapshotSession,
+)
+from passage.domain.errors import ConfigUnavailableError
 from passage.domain.models import (
     Completeness,
     ContextRequest,
@@ -27,20 +30,17 @@ from passage.domain.models import (
 )
 from passage.evidence.lexical import (
     CursorPosition,
-    compile_fts_query,
     decode_cursor,
     encode_cursor,
     request_fingerprint,
 )
 from passage.evidence.ranking import RankedCandidate, rank_candidates
 from passage.evidence.references import traverse
-from passage.evidence.snapshot import PinnedSnapshot, SnapshotManager
 
 
 class EvidenceService:
-    def __init__(self, control: ControlStore) -> None:
-        self.control = control
-        self.snapshots = SnapshotManager(control)
+    def __init__(self, snapshots: SnapshotProvider) -> None:
+        self.snapshots = snapshots
 
     def get_corpus(self, request: SnapshotRequest) -> CorpusMetadata:
         with self.snapshots.pin(request) as snapshot:
@@ -120,7 +120,7 @@ class EvidenceService:
 
     def search_lexical(self, request: LexicalSearchRequest) -> EvidenceResponse:
         with self.snapshots.pin(request) as snapshot:
-            fts_query = compile_fts_query(request.query, request.mode, request.near_distance)
+            query = LexicalQuery(request.query, request.mode, request.near_distance)
             fingerprint = request_fingerprint(
                 {
                     "operation": "search_lexical",
@@ -133,17 +133,12 @@ class EvidenceService:
             if request.cursor is not None:
                 position = decode_cursor(request.cursor, fingerprint)
                 after = (position.raw_score, position.canonical_order)
-            try:
-                page = snapshot.repository.search_lexical(
-                    fts_query,
-                    request.filters,
-                    after,
-                    request.limit,
-                )
-            except sqlite3.OperationalError as exc:
-                raise InvalidQueryError("query is not valid for lexical search") from exc
-            except ValueError as exc:
-                raise InvalidQueryError(str(exc)) from exc
+            page = snapshot.repository.search_lexical(
+                query,
+                request.filters,
+                after,
+                request.limit,
+            )
             records = [self._lexical_record(snapshot, hit, request) for hit in page.hits]
             cursor = None
             if page.has_more and page.hits:
@@ -230,18 +225,13 @@ class EvidenceService:
             if not isinstance(lexical_config, dict):
                 raise ConfigUnavailableError("lexical retrieval configuration is invalid")
             candidate_pool = int(lexical_config["candidate_pool_size"])
-            fts_query = compile_fts_query(request.query, LexicalMode.TERMS, None)
-            try:
-                lexical_page = snapshot.repository.search_lexical(
-                    fts_query,
-                    request.filters,
-                    None,
-                    candidate_pool,
-                )
-            except sqlite3.OperationalError as exc:
-                raise InvalidQueryError("query is not valid for evidence search") from exc
-            except ValueError as exc:
-                raise InvalidQueryError(str(exc)) from exc
+            lexical_query = LexicalQuery(request.query, LexicalMode.TERMS)
+            lexical_page = snapshot.repository.search_lexical(
+                lexical_query,
+                request.filters,
+                None,
+                candidate_pool,
+            )
 
             candidates: dict[str, tuple[Passage, list[RetrievalBasis]]] = {}
             official_edges: dict[str, ReferenceEdge] = {}
@@ -353,7 +343,7 @@ class EvidenceService:
 
     def _lexical_record(
         self,
-        snapshot: PinnedSnapshot,
+        snapshot: SnapshotSession,
         hit: RepositorySearchHit,
         request: LexicalSearchRequest,
     ) -> EvidenceRecord:
@@ -371,7 +361,7 @@ class EvidenceService:
 
     def _record(
         self,
-        snapshot: PinnedSnapshot,
+        snapshot: SnapshotSession,
         passage: Passage,
         *,
         basis: list[RetrievalBasis],
@@ -392,7 +382,7 @@ class EvidenceService:
 
     def _response(
         self,
-        snapshot: PinnedSnapshot,
+        snapshot: SnapshotSession,
         records: list[EvidenceRecord],
         *,
         applied: dict[str, Any],

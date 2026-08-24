@@ -2,11 +2,12 @@
 title: Study Group Access
 type: concept
 created: 2026-08-23
-updated: 2026-08-23
+updated: 2026-08-24
 sources:
   - user-confirmed-conversation
   - docs/specs/2026-08-23-passage-product-specification.md
   - docs/plans/2026-08-23-supabase-claude-oauth-compatibility-proof.md
+  - docs/plans/2026-08-24-0634-feat-postgres-auth-foundation-plan.md
   - https://modelcontextprotocol.io/specification/2025-11-25/basic
   - https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization
 tags: [access, mcp, plugin, api, authentication, study-group]
@@ -53,14 +54,14 @@ Phase 3 adds citation-linked Markdown notes after permission, visibility, member
 
 ## Remote Access and Security
 
-A group-facing remote MCP server requires authenticated HTTPS access. Supabase Auth failed the live [Supabase-to-Claude OAuth Compatibility Proof](../../docs/plans/2026-08-23-supabase-claude-oauth-compatibility-proof.md): a wrong-resource request produced a Passage-usable token. The identity-provider decision is reopened. Remote alpha remains blocked.
+A group-facing remote MCP server requires authenticated HTTPS access. Supabase Auth failed P6 of the live [Supabase-to-Claude OAuth Compatibility Proof](../../docs/plans/2026-08-23-supabase-claude-oauth-compatibility-proof.md): a wrong-resource request produced a Passage-usable token. The maintainer accepts that behavior for the invite-only hobby service without claiming strict RFC 8707 compliance. Remote alpha remains separately gated by the bounded positive-flow regression, transactional email, application authorization, and deployment authority.
 
 Use least privilege. Phase 2 enables evidence read only. Phase 3 adds note read and note write. Enforce authorization in the Passage service and PostgreSQL row-level policies. Do not pass client tokens through to upstream services or expose PostgreSQL directly to MCP clients.
 
 ## Delivery Sequence
 
-1. Select an identity path that can enforce exact RFC 8707 resource binding, then pass the complete Claude OAuth proof.
-2. After that proof passes, preserve HTTP, MCP, and domain-service result parity while PostgreSQL is introduced.
+1. Retain Supabase Auth, document the accepted wrong-resource limitation, and preserve the positive behaviors observed in the Claude proof.
+2. Preserve HTTP, MCP, and domain-service result parity while PostgreSQL and application authorization are introduced.
 3. Connect Claude to the Phase 2 evidence-only surface and pass the broad-question evidence journey.
 4. Add the owner/member allowlist and the gated Phase 3 note surface for the complete-canon member release.
 5. Test the same contract in a private ChatGPT developer-mode beta.
@@ -76,7 +77,6 @@ Use least privilege. Phase 2 enables evidence read only. Phase 3 adds note read 
 
 ## Open Questions
 
-- Which identity provider can satisfy the exact Claude remote MCP contract after Supabase Auth failed P6?
 - Which passwordless email method, transactional email provider, and sender domain will Passage use?
 - What bounded result and identity-rate limits preserve normal broad study without enabling bulk extraction?
 - What exact backup retention and export workflow applies before permanent member removal?

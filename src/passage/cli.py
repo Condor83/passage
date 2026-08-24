@@ -13,13 +13,12 @@ from pydantic import ValidationError
 from passage.config import AppConfig, create_private_file, prepare_private_root
 from passage.db.builder import CorpusBuilder
 from passage.db.control import AcceptedCorpus, ControlStore
-from passage.db.repository import CorpusRepository
+from passage.db.repository import CorpusRepository, create_sqlite_evidence_service
 from passage.db.validation import validate_published_artifact
 from passage.domain.models import SnapshotRequest, SourceApproval
 from passage.eval.cases import load_cases
 from passage.eval.phase0 import Phase0ProbeRunner, load_phase0_probe_definition
 from passage.eval.runner import EvaluationRunner
-from passage.evidence.service import EvidenceService
 from passage.ingest.base import ExtractionLimits, ExtractionResult
 from passage.ingest.normalize import NormalizedCorpus, normalize_extraction, serialize_jsonl
 from passage.ingest.review import render_review_markdown
@@ -208,7 +207,7 @@ def _activate(args: argparse.Namespace) -> dict[str, Any]:
 def _metadata(args: argparse.Namespace) -> dict[str, Any]:
     root = _private_root(args)
     with ControlStore(root) as control:
-        metadata = EvidenceService(control).get_corpus(SnapshotRequest())
+        metadata = create_sqlite_evidence_service(control).get_corpus(SnapshotRequest())
     return {"metadata": metadata.model_dump(mode="json")}
 
 
@@ -237,7 +236,7 @@ def _evaluate(args: argparse.Namespace) -> dict[str, Any]:
     cases = load_cases(args.cases)
     with ControlStore(root) as control:
         accepted = _select_accepted(control, None)
-        run = EvaluationRunner(EvidenceService(control)).run(
+        run = EvaluationRunner(create_sqlite_evidence_service(control)).run(
             cases,
             corpus_version=accepted.corpus_version,
             retrieval_config=accepted.retrieval_config,
@@ -259,7 +258,7 @@ def _phase0_probe(args: argparse.Namespace) -> dict[str, Any]:
     definition = load_phase0_probe_definition(args.definition.expanduser().absolute())
     with ControlStore(root) as control:
         accepted = _select_accepted(control, None)
-        run = Phase0ProbeRunner(EvidenceService(control)).run(
+        run = Phase0ProbeRunner(create_sqlite_evidence_service(control)).run(
             definition,
             corpus_version=accepted.corpus_version,
             retrieval_config=accepted.retrieval_config,

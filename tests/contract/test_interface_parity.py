@@ -8,6 +8,7 @@ from typing import Any
 import pytest
 
 from passage.db.control import ControlStore
+from passage.db.repository import create_sqlite_evidence_service
 from passage.domain.errors import PassageError
 from passage.domain.models import (
     ContextRequest,
@@ -30,7 +31,7 @@ def parity_root(tmp_path: Path) -> Path:
 def parity_surfaces(parity_root: Path):
     control = ControlStore(parity_root)
     try:
-        yield EvidenceService(control), InMemoryMcpClient(parity_root)
+        yield create_sqlite_evidence_service(control), InMemoryMcpClient(parity_root)
     finally:
         control.close()
 
