@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from collections import Counter
 from importlib.resources import files
 from pathlib import Path
@@ -213,7 +214,14 @@ def reconcile_source_spans(extraction: ExtractionResult) -> None:
 def _reconcile_epub(extraction: ExtractionResult) -> None:
     findings: list[ValidationFinding] = []
     with ZipFile(extraction.source_path) as archive:
-        for expected, spans, reference in _source_expectations(extraction):
+        records = [
+            (passage.text, passage.source_spans, passage.reference)
+            for passage in extraction.passages
+        ] + [
+            (note.text or note.anchor, note.source_spans, note.origin_reference)
+            for note in extraction.notes
+        ]
+        for expected, spans, reference in records:
             for span in spans:
                 if not isinstance(span, EpubSourceSpan):
                     findings.append(
@@ -242,6 +250,49 @@ def _reconcile_epub(extraction: ExtractionResult) -> None:
                             code="source_span_mismatch",
                             message="EPUB source span does not contain normalized content",
                             references=[reference],
+                        )
+                    )
+        for edge in extraction.edges:
+            for span in edge.source_spans:
+                if not isinstance(span, EpubSourceSpan):
+                    findings.append(
+                        ValidationFinding(
+                            code="source_span_kind_mismatch",
+                            message="EPUB edge carries a non-EPUB source span",
+                            references=[edge.origin_reference],
+                        )
+                    )
+                    continue
+                try:
+                    source = archive.read(span.member).decode("utf-8")
+                except Exception:
+                    findings.append(
+                        ValidationFinding(
+                            code="source_span_unreadable",
+                            message="EPUB edge source member cannot be read",
+                            references=[edge.origin_reference],
+                        )
+                    )
+                    continue
+                observed = source[span.start : span.end]
+                expected_attributes = {
+                    "data-origin": edge.origin_reference,
+                    "data-anchor": edge.origin_anchor,
+                    "data-target": edge.target,
+                    "data-source": edge.source_attribution,
+                }
+                if not all(
+                    _raw_attribute_value(observed, name) == value
+                    for name, value in expected_attributes.items()
+                ):
+                    findings.append(
+                        ValidationFinding(
+                            code="source_span_mismatch",
+                            message=(
+                                "EPUB edge source span does not contain its exact "
+                                "relationship attributes"
+                            ),
+                            references=[edge.origin_reference],
                         )
                     )
     if findings:
@@ -284,6 +335,16 @@ def _source_expectations(extraction: ExtractionResult):
         yield note.text or note.anchor, note.source_spans, note.origin_reference
     for edge in extraction.edges:
         yield edge.origin_anchor, edge.source_spans, edge.origin_reference
+
+
+def _raw_attribute_value(start_tag: str, name: str) -> str | None:
+    match = re.search(
+        rf"(?:^|\s){re.escape(name)}\s*=\s*(?:\"([^\"]*)\"|'([^']*)')",
+        start_tag,
+    )
+    if match is None:
+        return None
+    return match.group(1) if match.group(1) is not None else match.group(2)
 
 
 def write_finding_report(path: Path, findings: list[ValidationFinding]) -> None:

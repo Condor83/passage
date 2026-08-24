@@ -190,13 +190,27 @@ def _extract_spine(
             if target:
                 origin = _required(element.attrib, "data-origin", "reference")
                 CanonicalReference.parse(origin)
+                source_attribution = _required(element.attrib, "data-source", "reference")
+                origin_anchor = _required(element.attrib, "data-anchor", "reference")
                 edges.append(
                     ExtractedEdge(
                         origin_reference=origin,
-                        origin_anchor=_required(element.attrib, "data-anchor", "reference"),
+                        origin_anchor=origin_anchor,
                         target=target,
-                        source_attribution=_required(element.attrib, "data-source", "reference"),
-                        source_spans=[_epub_span(member, decoded, _element_text(element), order)],
+                        source_attribution=source_attribution,
+                        source_spans=[
+                            _epub_reference_span(
+                                member,
+                                decoded,
+                                {
+                                    "data-origin": origin,
+                                    "data-anchor": origin_anchor,
+                                    "data-target": target,
+                                    "data-source": source_attribution,
+                                },
+                                order,
+                            )
+                        ],
                     )
                 )
                 order += 1
@@ -228,6 +242,37 @@ def _epub_span(member: str, decoded: str, text: str, order: int) -> EpubSourceSp
         end=max(start + len(text), start + 1),
         order=order,
     )
+
+
+def _epub_reference_span(
+    member: str,
+    decoded: str,
+    attributes: dict[str, str],
+    order: int,
+) -> EpubSourceSpan:
+    matches: list[tuple[int, int]] = []
+    for candidate in re.finditer(r"<(?![!?/])[^>]+>", decoded, flags=re.DOTALL):
+        start_tag = candidate.group(0)
+        if all(
+            _raw_attribute_value(start_tag, name) == value for name, value in attributes.items()
+        ):
+            matches.append(candidate.span())
+    if len(matches) != 1:
+        raise ExtractionError(
+            "EPUB reference element cannot be located uniquely in its source member"
+        )
+    start, end = matches[0]
+    return EpubSourceSpan(member=member, start=start, end=end, order=order)
+
+
+def _raw_attribute_value(start_tag: str, name: str) -> str | None:
+    match = re.search(
+        rf"(?:^|\s){re.escape(name)}\s*=\s*(?:\"([^\"]*)\"|'([^']*)')",
+        start_tag,
+    )
+    if match is None:
+        return None
+    return match.group(1) if match.group(1) is not None else match.group(2)
 
 
 def _required(attributes: dict[str, str], name: str, kind: str) -> str:

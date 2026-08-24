@@ -34,9 +34,9 @@ The committed definition, evaluator code, corpus, retrieval configuration, opera
 
 ## Measured Synthetic Result
 
-- Corpus: `corpus-071f94efabeeea2588a8da68`
-- Retrieval configuration: `baseline-1eb2d8a4e626ac5881f59055`
-- Report: `af3727fddc73a78aebdf4b1349b1662feb3366e1536d98835130b3680a974c1b`
+- Corpus: `corpus-f4e1c36fa761e5233148d682`
+- Retrieval configuration: `baseline-643e9e13bab2151424253dad`
+- Report: `f371a8ea8c23d5c77860626a202952740a425224c2c7175ef824b6a0ea3bd170`
 - Present lanes: exact, lexical, official
 - Absent lanes: derived, experimental
 - Citation errors: 0

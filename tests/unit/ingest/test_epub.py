@@ -6,6 +6,7 @@ import pytest
 
 from passage.ingest.base import ExtractionError, ExtractionLimits
 from passage.ingest.epub import extract_epub
+from passage.ingest.validation import CorpusValidationError, reconcile_source_spans
 
 
 def make_epub(chapter: str, extra_members: dict[str, bytes] | None = None) -> bytes:
@@ -72,6 +73,46 @@ def test_epub_preserves_passages_apparatus_and_source_members(tmp_path: Path) ->
     assert result.passages[0].source_spans[0].member == "OEBPS/chapter.xhtml"
     assert result.notes[0].note_id == "note-a"
     assert result.edges[0].target == "bofm/1-ne/3/8"
+    edge_span = result.edges[0].source_spans[0]
+    observed = VALID_CHAPTER[edge_span.start : edge_span.end]
+    assert observed.startswith('<a data-origin="bofm/1-ne/3/7"')
+    assert 'data-target="bofm/1-ne/3/8"' in observed
+    assert 'data-source="official-footnote"' in observed
+
+
+def test_epub_rejects_reference_element_that_is_not_unique(tmp_path: Path) -> None:
+    source = tmp_path / "ambiguous-edge.epub"
+    repeated_edge = """<a data-origin="bofm/1-ne/3/7" data-anchor="a"
+      data-target="bofm/1-ne/3/8" data-source="official-footnote">a</a>"""
+    chapter = VALID_CHAPTER.replace("</section>", f"{repeated_edge}</section>")
+    source.write_bytes(make_epub(chapter))
+
+    with pytest.raises(ExtractionError, match="cannot be located uniquely"):
+        extract_epub(source, ExtractionLimits())
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("target", "bofm/1-ne/3/9"),
+        ("source_attribution", "derived-cross-reference"),
+    ],
+)
+def test_epub_reconciliation_checks_exact_reference_attributes(
+    tmp_path: Path,
+    field: str,
+    value: str,
+) -> None:
+    source = tmp_path / "book.epub"
+    source.write_bytes(make_epub(VALID_CHAPTER))
+    result = extract_epub(source, ExtractionLimits())
+    tampered_edge = result.edges[0].model_copy(update={field: value})
+    tampered = result.model_copy(update={"edges": [tampered_edge]})
+
+    with pytest.raises(CorpusValidationError) as failure:
+        reconcile_source_spans(tampered)
+
+    assert {finding.code for finding in failure.value.findings} == {"source_span_mismatch"}
 
 
 def test_epub_rejects_traversal_member(tmp_path: Path) -> None:

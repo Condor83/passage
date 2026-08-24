@@ -106,3 +106,11 @@ Documented the committed two-question synthetic definition, fixed reference-pool
 ## [2026-08-23] lint | Wiki health check after Phase 0 probe
 
 Checked all 13 wiki pages for required frontmatter, local links, inbound links, index coverage, decision alignment, contradictions, stale claims, resolved open questions, and Phase 0 versus Phase 2 scope. Found no critical, warning, or informational findings. Current pages distinguish the measured synthetic zero-error result from H1, accepted-corpus evaluation, private-source validation, and promotion eligibility.
+
+## [2026-08-23] fix | Official-edge EPUB provenance hardened
+
+Changed synthetic EPUB official-edge spans to locate the unique reference-element start tag instead of matching the first occurrence of short anchor text. Reconciliation now checks the exact origin, anchor, target, and source attribution. Added repeated-anchor, ambiguous-element, target-tamper, and attribution-tamper regression coverage. Re-ran the deterministic synthetic Phase 0 probe and updated its corpus, retrieval, and report identities. The measured result remains zero citation errors, zero evidence-class errors, no fatal atomic contract problem, `h1_status: not_evaluated`, and not promotion eligible. No private source was processed, accepted, or activated.
+
+## [2026-08-23] lint | Wiki health check after provenance fix
+
+Checked all 13 wiki pages for required frontmatter, local links, and index coverage. Found no missing frontmatter, broken links, or unindexed current pages. The provenance correction changes synthetic artifact identities but does not change a product decision or open a private-source, corpus, H1, deployment, or publication gate.

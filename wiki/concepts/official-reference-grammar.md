@@ -36,7 +36,7 @@ Any failure returns zero targets. A valid prefix never creates an edge when the 
 
 ## Evidence and Persistence
 
-Each accepted edge records a discriminated internal or external target, grammar version, origin reference and anchor, source attribution, and ordered source spans. Multiple targets reuse the exact originating span evidence and receive separate stable edge identities. Corpus schema v2 stores and exactly reconciles these fields. Traversal and combined evidence search return the official edge records used by their paths through the shared HTTP and MCP contract.
+Each accepted edge records a discriminated internal or external target, grammar version, origin reference and anchor, source attribution, and ordered source spans. An EPUB edge span locates the unique reference-element start tag. Reconciliation checks its exact origin, anchor, target, and source-attribution attributes. Ambiguous or missing reference elements fail closed. Multiple targets reuse the exact originating span evidence and receive separate stable edge identities. Corpus schema v2 stores and exactly reconciles these fields. Traversal and combined evidence search return the official edge records used by their paths through the shared HTTP and MCP contract.
 
 ## Closed and Open Boundaries
 
