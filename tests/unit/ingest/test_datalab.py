@@ -6,11 +6,13 @@ import pytest
 from reportlab.pdfgen import canvas
 
 from passage.ingest.base import ExtractionError, ExtractionLimits
+from passage.ingest.candidate import load_candidate
 from passage.ingest.datalab import (
     DatalabApparatusVerseOverride,
     DatalabCorrectionAnchor,
     DatalabCorrectionProfile,
     DatalabTerminalBoundary,
+    DatalabVerseOneBoundaryOverride,
     repair_datalab_pdf,
     write_datalab_repair,
 )
@@ -156,6 +158,7 @@ def _correction_profile(
     false_inline_anchors: list[DatalabCorrectionAnchor] | None = None,
     apparatus_verse_overrides: list[DatalabApparatusVerseOverride] | None = None,
     verified_continuation_anchors: list[DatalabCorrectionAnchor] | None = None,
+    verse_one_boundary_overrides: list[DatalabVerseOneBoundaryOverride] | None = None,
     terminal_boundary: DatalabTerminalBoundary | None = None,
 ) -> DatalabCorrectionProfile:
     return DatalabCorrectionProfile(
@@ -165,6 +168,7 @@ def _correction_profile(
         false_inline_anchors=false_inline_anchors or [],
         apparatus_verse_overrides=apparatus_verse_overrides or [],
         verified_continuation_anchors=verified_continuation_anchors or [],
+        verse_one_boundary_overrides=verse_one_boundary_overrides or [],
         terminal_boundary=terminal_boundary,
     )
 
@@ -458,6 +462,186 @@ def test_datalab_keeps_italic_text_after_verse_one_starts(tmp_path: Path) -> Non
     assert not any(finding.code == "ambiguous_verse_one_boundary" for finding in repaired.findings)
 
 
+def test_digest_bound_profile_overrides_ambiguous_verse_one_boundary(tmp_path: Path) -> None:
+    pdf = tmp_path / "book.pdf"
+    source = tmp_path / "book.pdf.json"
+    _write_pdf(pdf)
+    _write_datalab(
+        source,
+        [
+            _block("SectionHeader", "<h2>THE FIRST BOOK OF NEPHI</h2>", [200, 80, 800, 120]),
+            _block("SectionHeader", "<h3>CHAPTER 1</h3>", [180, 160, 420, 200]),
+            _block("Text", "<p><i>Chapter summary.</i></p>", [50, 220, 480, 280]),
+            _block(
+                "Text",
+                "<p>First verse begins before a pause—and continues</p>",
+                [50, 300, 480, 360],
+            ),
+            _block("Text", "<p>in a second block.</p>", [50, 370, 480, 430]),
+            _block("Text", "<p>2 Second verse.</p>", [50, 440, 480, 500]),
+        ],
+    )
+
+    fragment_text = "First verse begins before a pause—and continues"
+    fingerprint = hashlib.sha256(
+        json.dumps(
+            {
+                "page": 1,
+                "bbox": [50.0, 300.0, 480.0, 360.0],
+                "text": fragment_text,
+                "italic": False,
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    ).hexdigest()
+    profile = _correction_profile(
+        pdf,
+        source,
+        verse_one_boundary_overrides=[
+            DatalabVerseOneBoundaryOverride(
+                reference="bofm/1-ne/1/1",
+                first_verse_fragment_index=1,
+                expected_fragment_fingerprint=fingerprint,
+            )
+        ],
+    )
+
+    repaired = repair_datalab_pdf(source, pdf, ExtractionLimits(), _manifest(2), profile)
+
+    assert repaired.extraction.passages[0].text == (
+        "First verse begins before a pause—and continues in a second block."
+    )
+    assert [span.page for span in repaired.extraction.passages[0].source_spans] == [1, 1]
+    assert not any(finding.code == "ambiguous_verse_one_boundary" for finding in repaired.findings)
+    assert any(finding.code == "source_profile_correction" for finding in repaired.findings)
+
+
+def test_default_inference_excludes_nonitalic_summary_continuation(tmp_path: Path) -> None:
+    pdf = tmp_path / "book.pdf"
+    source = tmp_path / "book.pdf.json"
+    _write_pdf(pdf)
+    _write_datalab(
+        source,
+        [
+            _block("SectionHeader", "<h2>THE FIRST BOOK OF NEPHI</h2>", [200, 80, 800, 120]),
+            _block("SectionHeader", "<h3>CHAPTER 1</h3>", [180, 160, 420, 200]),
+            _block("Text", "<p><i>Summary begins.</i></p>", [50, 220, 480, 280]),
+            _block(
+                "Text",
+                "<p>and continues—The account follows. About 600 B.C.</p>",
+                [50, 290, 480, 350],
+            ),
+            _block("Text", "<p>First verse.</p>", [50, 360, 480, 420]),
+            _block("Text", "<p>2 Second verse.</p>", [50, 430, 480, 490]),
+        ],
+    )
+
+    repaired = repair_datalab_pdf(source, pdf, ExtractionLimits(), _manifest(2))
+
+    assert repaired.extraction.passages[0].text == "First verse."
+
+
+def test_verse_one_override_rejects_a_non_verse_one_reference(tmp_path: Path) -> None:
+    pdf = tmp_path / "book.pdf"
+    source = tmp_path / "book.pdf.json"
+    _write_pdf(pdf)
+    _write_datalab(source, [])
+    profile = _correction_profile(
+        pdf,
+        source,
+        verse_one_boundary_overrides=[
+            DatalabVerseOneBoundaryOverride(
+                reference="bofm/1-ne/1/2",
+                first_verse_fragment_index=0,
+                expected_fragment_fingerprint="0" * 64,
+            )
+        ],
+    )
+
+    with pytest.raises(ExtractionError, match="invalid verse-one boundary reference"):
+        repair_datalab_pdf(source, pdf, ExtractionLimits(), _manifest(2), profile)
+
+
+def test_verse_one_override_rejects_duplicate_references() -> None:
+    rule = DatalabVerseOneBoundaryOverride(
+        reference="bofm/1-ne/1/1",
+        first_verse_fragment_index=0,
+        expected_fragment_fingerprint="0" * 64,
+    )
+
+    with pytest.raises(ValueError, match="duplicate rules"):
+        DatalabCorrectionProfile(
+            profile_id="synthetic-datalab-corrections-v1",
+            pdf_sha256="0" * 64,
+            datalab_json_sha256="1" * 64,
+            verse_one_boundary_overrides=[rule, rule],
+        )
+
+
+def test_verse_one_override_must_be_consumed(tmp_path: Path) -> None:
+    pdf = tmp_path / "book.pdf"
+    source = tmp_path / "book.pdf.json"
+    _write_pdf(pdf)
+    _write_datalab(source, [])
+    profile = _correction_profile(
+        pdf,
+        source,
+        verse_one_boundary_overrides=[
+            DatalabVerseOneBoundaryOverride(
+                reference="bofm/1-ne/1/1",
+                first_verse_fragment_index=0,
+                expected_fragment_fingerprint="0" * 64,
+            )
+        ],
+    )
+
+    with pytest.raises(ExtractionError, match="was not consumed"):
+        repair_datalab_pdf(source, pdf, ExtractionLimits(), _manifest(2), profile)
+
+
+@pytest.mark.parametrize(
+    ("fragment_index", "fingerprint", "message"),
+    [
+        (9, "0" * 64, "exceeds pending fragments"),
+        (1, "0" * 64, "does not match its source fragment"),
+    ],
+)
+def test_verse_one_override_fails_closed_at_runtime(
+    tmp_path: Path,
+    fragment_index: int,
+    fingerprint: str,
+    message: str,
+) -> None:
+    pdf = tmp_path / "book.pdf"
+    source = tmp_path / "book.pdf.json"
+    _write_pdf(pdf)
+    _write_datalab(
+        source,
+        [
+            _block("SectionHeader", "<h2>THE FIRST BOOK OF NEPHI</h2>", [200, 80, 800, 120]),
+            _block("SectionHeader", "<h3>CHAPTER 1</h3>", [180, 160, 420, 200]),
+            _block("Text", "<p><i>Summary.</i></p>", [50, 220, 480, 280]),
+            _block("Text", "<p>First verse.</p>", [50, 300, 480, 360]),
+            _block("Text", "<p>2 Second verse.</p>", [50, 370, 480, 430]),
+        ],
+    )
+    profile = _correction_profile(
+        pdf,
+        source,
+        verse_one_boundary_overrides=[
+            DatalabVerseOneBoundaryOverride(
+                reference="bofm/1-ne/1/1",
+                first_verse_fragment_index=fragment_index,
+                expected_fragment_fingerprint=fingerprint,
+            )
+        ],
+    )
+
+    with pytest.raises(ExtractionError, match=message):
+        repair_datalab_pdf(source, pdf, ExtractionLimits(), _manifest(2), profile)
+
+
 def test_datalab_fails_closed_when_structure_is_incomplete(tmp_path: Path) -> None:
     pdf = tmp_path / "book.pdf"
     source = tmp_path / "book.pdf.json"
@@ -540,6 +724,10 @@ def test_datalab_writes_an_inactive_private_candidate(tmp_path: Path) -> None:
     assert report["recipe_fingerprint"] == repaired.recipe_fingerprint
     assert artifacts.candidate.is_file()
     assert artifacts.candidate.stat().st_mode & 0o777 == 0o600
+    assert artifacts.manifest.is_file()
+    assert artifacts.manifest.stat().st_mode & 0o777 == 0o600
+    loaded = load_candidate(artifacts.candidate, structure=structure)
+    assert loaded.candidate_sha256 == hashlib.sha256(artifacts.candidate.read_bytes()).hexdigest()
 
     revised = repaired.model_copy(
         update={

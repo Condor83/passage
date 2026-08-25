@@ -27,6 +27,7 @@ Raw source files, source paths, Datalab output, correction profiles, and detaile
 
 - Right-column body blocks could appear before a left-column chapter heading.
 - Verse 1 had no printed verse number and required a chapter-summary boundary.
+- Broad punctuation-based summary detection could discard a real first-verse fragment when that fragment used the same em-dash or date forms as a chapter summary.
 - A block could contain multiple numbered verses or a verse could cross blocks and pages.
 - Footnote continuation blocks were indented. Sorting them by exact horizontal position moved continuations after later entries.
 - Some apparatus blocks were labeled `PageFooter` or narrow bottom `Text`, not `Footnote`.
@@ -43,6 +44,8 @@ Raw source files, source paths, Datalab output, correction profiles, and detaile
 The parser reconstructs passages in visual column order and compares the result with a packaged text-free structure manifest. The repair supports the Book of Mormon manifest and the 27-book New Testament manifest. It fails if the extracted references do not equal the selected manifest.
 
 Canonical identity equality alone does not prove terminal fidelity: once the final expected reference has started, unrelated later text can still be appended to it. The current checkout therefore permits a digest-bound private profile to declare the first excluded PDF page and the terminal canonical reference. The parser requires that reference to be the structure manifest's final record, requires the boundary to be encountered, fails if the boundary arrives before that record, and ignores later pages only after the assertion succeeds.
+
+Ambiguous verse-one starts use a private, digest-bound override with the exact verse-one reference, pending-fragment index, and a fingerprint of the reviewed source fragment. The fingerprint binds its PDF page, Datalab bounding box, normalized fragment text, and italic state. Duplicate, out-of-corpus, misplaced, stale, or unused rules fail closed. Default summary inference remains unchanged for chapters without an override.
 
 ### Footnote reading order
 
@@ -64,7 +67,7 @@ This rule permits raised superscripts near block boundaries without counting a m
 
 ### Immutable output
 
-The writer rejects a private root inside the repository. It normalizes and validates the extraction before creating repair files, then writes a mode-`0600` candidate and report under the configured private root. Corpus validation rejects scripture passage text over 10,000 characters, more than 64 source spans, or a PDF provenance window over eight pages. The report and repair digest bind the PDF, Datalab JSON, text-free structure manifest, parser recipe, optional correction profile, normalized corpus, and findings. A changed input, recipe, profile, or finding produces a new immutable repair directory. A separately approved copy may enter `candidates/` with its exact digest and lifecycle state. Writing or copying a candidate does not accept or activate it.
+The writer rejects a private root inside the repository. It normalizes and validates the extraction before creating repair files, then writes a mode-`0600` candidate, strict adjacent manifest, and report under the configured private root. It round-trips the result through the ordinary candidate loader before returning. Corpus validation rejects scripture passage text over 10,000 characters, more than 64 source spans, or a PDF provenance window over eight pages. The report and repair digest bind the PDF, Datalab JSON, text-free structure manifest, parser recipe, optional correction profile, normalized corpus, and findings. A changed input, recipe, profile, or finding produces a new immutable repair directory. A separately approved copy may enter `candidates/` with its exact digest and lifecycle state. Writing or copying a candidate does not accept or activate it.
 
 ## Historical Results and Current Quarantine
 
@@ -99,17 +102,23 @@ That result is not fidelity-valid. A later text-free audit found that `bofm/moro
 
 The New Testament status is unchanged by the Book of Mormon diagnosis. It remains inactive, unaccepted, and `review_required`.
 
-## Implemented Safeguards, Not a Rebuilt Corpus
+## Rebuilt Private Review Candidate
 
-The current checkout implements the digest-bound terminal-page cutoff, writer-time corpus validation, and the 10,000-character, 64-span, and eight-page-window backstops. Published SQLite validation applies the same per-passage integrity rules before repository access. Focused regressions cover preservation of a legitimate final-verse continuation, exclusion of later pages, fail-closed boundary errors, rejection before repair files are created, rejection of a digest-consistent oversized candidate without control-state change, and rejection of a digest-consistent legacy artifact already recorded as accepted.
+The current checkout implements the digest-bound terminal-page cutoff, fingerprinted verse-one overrides, writer-time corpus validation and strict manifest publication, and the 10,000-character, 64-span, and eight-page-window backstops. Published SQLite validation applies the same per-passage integrity rules before repository access. Focused regressions cover positive and negative verse-one cases, stale and invalid overrides, preservation of a legitimate final-verse continuation, exclusion of later pages, fail-closed boundary errors, writer round-trip, rejection before repair files are created, rejection of a digest-consistent oversized candidate without control-state change, and rejection of a digest-consistent legacy artifact already recorded as accepted.
 
-The full source-independent gate passes 321 tests plus formatting, lint, and type checking. This establishes current checkout behavior only. The exact approved PDF, Marker JSON, and original Datalab profile are absent on this host, so no repaired private candidate, rebound edge set, or new exact digest is claimed here.
+The maintainer restored a matching private PDF and Datalab JSON pair. No surviving historical report proves that these are byte-identical to the original raw files, and the original correction profile is absent. Passage therefore labels the input as an exact extracted-content and source-block lineage match and labels the new source profile as reconstructed rather than original.
+
+The private rebuild produced base candidate SHA-256 `f1d0abb72460121179ec944ee43ff3b569a2321265358dd66f20e39ee8b6aa66`: 6,604 passages, 9,826 notes, zero edges, and a 278-character terminal record with one source span on PDF page 554. All 6,603 nonterminal passage records match the quarantined candidate exactly. All 9,826 note IDs and text match; regenerated source-order fields differ while page and bounding-box evidence matches. All 6,604 passage texts reconcile exactly to their Datalab source blocks, every passage and note span maps to a source block, and all 10,280 unique PDF span regions contain nonempty overlay text.
+
+The result is private, inactive, unaccepted, and `review_required`. Writing and verifying it did not change control state.
 
 ## Why the Candidate Still Requires Review
 
 The prior repair proved many internal PDF-to-parser reconciliation properties, but the missing terminal boundary shows why those properties did not establish whole-work fidelity. On 2026-08-25 the maintainer confirmed the defect, withdrew editorial authority from the affected Book of Mormon identities, and authorized repair and private rebuild.
 
-`official-reference-v2` remains grammar-capability resolved, including typed whole-unit targets and approved digest-bound reference repairs. Its prior exact run inherited the corrupted base, so its corpus proof is quarantined. After the exact private inputs are restored, Passage must rebuild privately, rebind or rederive official edges, verify the result, and ask the maintainer to approve the new exact digest. Acceptance and activation are separate later decisions.
+`official-reference-v2` remains grammar-capability resolved, including typed whole-unit targets and approved digest-bound reference repairs. Rebinding those three reviewed repairs to the new base after note-ID and note-text-hash verification produced successor SHA-256 `35ed3713ee222c2778d58f3962c016ea2fef888bc0f8be4edb2b6aacf5641a4d`: 9,827 notes, 7,213 parsed reference-bearing notes, 2,614 no-reference notes, zero blockers, and 13,136 edges. Strict loading passed.
+
+Acceptance still requires a truthful acquisition record bound to the restored raw inputs, a separate encrypted off-workstation backup with a verified restore path, and maintainer approval of the exact successor digest. Import and activation are separate later actions.
 
 ## Reproduction
 
@@ -135,5 +144,4 @@ Source-specific correction profiles are private review artifacts. Routine reposi
 
 ## Open Questions
 
-- What proportionate independent comparison should accompany the rebuilt Book of Mormon before a new exact-digest approval decision?
 - Should a future independent EPUB comparison become a required acceptance check for this repaired PDF corpus?

@@ -24,9 +24,10 @@ still technically select the old corpus, but that does not preserve editorial
 acceptance. The successor must not be imported or accepted.
 
 Neither committed candidate contains typed relationship edges. The
-`official-reference-v2` grammar remains implemented capability, but its prior
-13,136-edge exact run inherited the quarantined base and must be rederived after
-a private rebuild. The New Testament candidate remains unaccepted and inactive.
+`official-reference-v2` grammar remains implemented capability. A repaired
+private base and complete 13,136-edge successor now exist outside Git, but both
+remain inactive, unaccepted, and `review_required`. The New Testament candidate
+remains unaccepted and inactive.
 
 Raw source files, Datalab output, correction profiles, detailed repair reports,
 source paths, acquisition records, and credentials remain outside Git. Routine
@@ -34,8 +35,8 @@ tests must continue to use synthetic fixtures unless the maintainer separately
 authorizes use of an exact candidate digest.
 
 Runtime acceptance and activation live in the private control store rather than
-these commit-time manifests. The next Book of Mormon gate is to restore the exact
-approved PDF, Marker JSON, and original Datalab profile outside Git, rebuild
-privately, rederive and verify official edges, and request approval of the new
-exact digest. Activation remains separate. None of this authorizes remote
+these commit-time manifests. The next Book of Mormon gate is a truthful
+raw-source acquisition record, a verified encrypted off-workstation backup, and
+maintainer approval of the new exact private successor digest. Import
+verification and activation remain separate. None of this authorizes remote
 delivery.

@@ -114,6 +114,12 @@ class DatalabTerminalBoundary(StrictModel):
     first_excluded_pdf_page: int = Field(ge=1)
 
 
+class DatalabVerseOneBoundaryOverride(StrictModel):
+    reference: str
+    first_verse_fragment_index: int = Field(ge=0)
+    expected_fragment_fingerprint: Sha256
+
+
 class DatalabCorrectionProfile(StrictModel):
     """Private source-specific repairs bound to exact PDF and Marker JSON bytes."""
 
@@ -123,6 +129,9 @@ class DatalabCorrectionProfile(StrictModel):
     false_inline_anchors: list[DatalabCorrectionAnchor] = Field(default_factory=list)
     apparatus_verse_overrides: list[DatalabApparatusVerseOverride] = Field(default_factory=list)
     verified_continuation_anchors: list[DatalabCorrectionAnchor] = Field(default_factory=list)
+    verse_one_boundary_overrides: list[DatalabVerseOneBoundaryOverride] = Field(
+        default_factory=list
+    )
     terminal_boundary: DatalabTerminalBoundary | None = None
 
     @model_validator(mode="after")
@@ -136,6 +145,9 @@ class DatalabCorrectionProfile(StrictModel):
             keys = [(rule.reference, rule.anchor) for rule in rules]
             if len(keys) != len(set(keys)):
                 raise ValueError("Datalab correction profile contains duplicate rules")
+        boundary_references = [rule.reference for rule in self.verse_one_boundary_overrides]
+        if len(boundary_references) != len(set(boundary_references)):
+            raise ValueError("Datalab correction profile contains duplicate rules")
         return self
 
 
@@ -153,6 +165,7 @@ class DatalabRepair(StrictModel):
 class DatalabRepairArtifacts(StrictModel):
     directory: Path
     candidate: Path
+    manifest: Path
     report: Path
 
 
@@ -164,6 +177,7 @@ def write_datalab_repair(
     repository_root: Path,
 ) -> DatalabRepairArtifacts:
     """Write an immutable private candidate without accepting or activating it."""
+    from passage.ingest.candidate import CandidateManifest, load_candidate
     from passage.ingest.normalize import normalize_extraction, serialize_jsonl
 
     private_root = prepare_private_root(
@@ -198,13 +212,39 @@ def write_datalab_repair(
     directory = private_root / "repairs" / repair_digest
     directory.mkdir(mode=0o700, parents=True, exist_ok=True)
     candidate = directory / "candidate.jsonl"
+    manifest = directory / "manifest.json"
     report = directory / "report.json"
-    _write_immutable(candidate, serialize_jsonl(corpus))
+    candidate_payload = serialize_jsonl(corpus)
+    _write_immutable(candidate, candidate_payload)
+    candidate_manifest = CandidateManifest(
+        schema_version=1,
+        scope="book-of-mormon" if structure.work == "bofm" else "new-testament",
+        artifact=candidate.name,
+        candidate_sha256=hashlib.sha256(candidate_payload).hexdigest(),
+        normalized_digest=corpus.normalized_digest,
+        source_format=corpus.source_format,
+        status="review_required",
+        active=False,
+        accepted=False,
+        passage_count=len(corpus.passages),
+        note_anchor_count=len(corpus.notes),
+        edge_count=len(corpus.edges),
+    )
+    _write_immutable(
+        manifest,
+        (json.dumps(candidate_manifest.model_dump(mode="json"), indent=2) + "\n").encode("utf-8"),
+    )
     _write_immutable(
         report,
         (json.dumps(report_payload, sort_keys=True, indent=2) + "\n").encode("utf-8"),
     )
-    return DatalabRepairArtifacts(directory=directory, candidate=candidate, report=report)
+    load_candidate(candidate, manifest, structure=structure)
+    return DatalabRepairArtifacts(
+        directory=directory,
+        candidate=candidate,
+        manifest=manifest,
+        report=report,
+    )
 
 
 @dataclass
@@ -215,6 +255,17 @@ class _Fragment:
     width_ratio: float
     italic: bool
     rendered_page_size: tuple[float, float]
+
+
+def _fragment_fingerprint(fragment: _Fragment) -> str:
+    return _canonical_digest(
+        {
+            "page": fragment.page + 1,
+            "bbox": list(fragment.bbox),
+            "text": fragment.text,
+            "italic": fragment.italic,
+        }
+    )
 
 
 @dataclass
@@ -414,6 +465,15 @@ class _DatalabParser:
                 else []
             )
         }
+        self.verse_one_boundary_overrides = {
+            rule.reference: rule
+            for rule in (
+                correction_profile.verse_one_boundary_overrides
+                if correction_profile is not None
+                else []
+            )
+        }
+        self.consumed_verse_one_boundary_overrides: set[str] = set()
         self.profile = (
             correction_profile.profile_id
             if correction_profile is not None
@@ -616,6 +676,30 @@ class _DatalabParser:
     def _materialize_verse_one(self) -> None:
         if not self.pending:
             return
+        reference = self._reference(1)
+        override = self.verse_one_boundary_overrides.get(reference)
+        if override is not None:
+            index = override.first_verse_fragment_index
+            if index >= len(self.pending):
+                raise ExtractionError(
+                    "Datalab verse-one boundary override exceeds pending fragments"
+                )
+            if _fragment_fingerprint(self.pending[index]) != override.expected_fragment_fingerprint:
+                raise ExtractionError(
+                    "Datalab verse-one boundary override does not match its source fragment"
+                )
+            self._verse(1).fragments.extend(self.pending[index:])
+            self.current_verse = 1
+            self.pending = []
+            self.consumed_verse_one_boundary_overrides.add(reference)
+            self.findings.append(
+                ValidationFinding(
+                    code="source_profile_correction",
+                    message="digest-bound verse-one source boundary was applied",
+                    references=[reference],
+                )
+            )
+            return
         start: int | None = None
         summary_seen = False
         for index, fragment in enumerate(self.pending):
@@ -683,6 +767,11 @@ class _DatalabParser:
         if self.terminal_boundary is not None and not self.terminal_boundary_encountered:
             raise ExtractionError("Datalab terminal boundary was not encountered")
         self._finalize_chapter()
+        unused_overrides = set(self.verse_one_boundary_overrides) - (
+            self.consumed_verse_one_boundary_overrides
+        )
+        if unused_overrides:
+            raise ExtractionError("Datalab verse-one boundary override was not consumed")
         expected = self.structure.expected_references()
         actual = set(self.verses)
         if actual != set(expected):
@@ -1508,6 +1597,17 @@ def _validate_correction_profile(
             or rule.reference not in expected_references
         ):
             raise ExtractionError("Datalab correction profile contains an out-of-corpus reference")
+    for boundary_rule in profile.verse_one_boundary_overrides:
+        work, _book, _chapter, verse, end_verse = validate_corpus_reference(boundary_rule.reference)
+        if (
+            work != structure.work
+            or verse != 1
+            or end_verse is not None
+            or boundary_rule.reference not in expected_references
+        ):
+            raise ExtractionError(
+                "Datalab correction profile contains an invalid verse-one boundary reference"
+            )
     return _canonical_digest(profile.model_dump(mode="json"))
 
 

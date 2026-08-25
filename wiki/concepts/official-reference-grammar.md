@@ -49,7 +49,7 @@ The parser also classifies footnotes with no reference as `no_reference` / `offi
 
 The `corpus derive-official-edges` command binds derivation to an explicitly approved source-candidate SHA. Optional source-specific repairs come only from a private correction profile that binds the same SHA and the exact original text digest for each repaired note. It always writes a private, text-free report and edge preview. It writes an inactive, unaccepted, `review_required` successor candidate only when every reference-bearing note parses successfully. Derivation does not import or activate a corpus.
 
-## Quarantined Exact Book of Mormon Run
+## Quarantined and Rebuilt Book of Mormon Runs
 
 The maintainer chose typed whole-unit targets and approved the three remaining exact reference repairs for source candidate SHA-256 `1dfd7b927e9fe5f4987a5bb5a3c8d1a0398eec6004cd01f45e86d50096a1e6b4`. Those grammar and reference-repair choices remain in force.
 
@@ -62,11 +62,13 @@ The prior v2 derivation classified 9,827 official footnotes:
 
 Those parser counts resolve O1 as a grammar-capability question, but they no longer prove exact-corpus correctness. The base candidate's final canonical record contained 1,027,420 characters, 3,486 spans, and pages 554-795 because a missing terminal boundary admitted post-canon material. Base SHA-256 `1dfd7b927e9fe5f4987a5bb5a3c8d1a0398eec6004cd01f45e86d50096a1e6b4`, technically selected corpus `corpus-7ba9051125f848e1aed71c46`, and successor SHA-256 `5207e9c1c003f12798053c667a997e8e0697495f8f4a9cafb2e112ef3aee7fa5` are quarantined from evidence and evaluation. The successor must not be imported or accepted.
 
+The private repaired base candidate is SHA-256 `f1d0abb72460121179ec944ee43ff3b569a2321265358dd66f20e39ee8b6aa66`. After the three already approved official-note repairs were rebound only after note-ID and note-text-hash verification, `official-reference-v2` reproduced the same complete classification: 9,827 notes, 7,213 parsed reference-bearing notes, 2,614 no-reference notes, zero blockers, and 13,136 edges (7,972 internal and 5,164 external). The new inactive, unaccepted, `review_required` successor is SHA-256 `35ed3713ee222c2778d58f3962c016ea2fef888bc0f8be4edb2b6aacf5641a4d`. It has not been imported or activated.
+
 ## Closed and Open Boundaries
 
 The current EPUB synthetic profile supplies already normalized `data-target` values. Phase 0 does not parse Datalab repair-note prose, private footnote text, or real source abbreviations. Unsupported source forms fail closed.
 
-The v2 grammar and approved reference repairs remain implemented capability, but the exact corpus proof must be re-established. The next gate is to restore the exact approved PDF, Marker JSON, and original Datalab profile, which are absent on this host; rebuild the source candidate privately with the digest-bound terminal cutoff and validation backstops; rebind or rederive the official edges; verify; and ask the maintainer to approve the new exact digest. Acceptance and activation remain separate operations.
+The v2 grammar and approved reference repairs remain implemented capability. The repaired private successor re-establishes the derivation result but not acceptance. The next gate is a truthful acquisition record bound to the restored raw identities, a verified separate encrypted off-workstation backup, and maintainer approval of exact successor SHA-256 `35ed3713ee222c2778d58f3962c016ea2fef888bc0f8be4edb2b6aacf5641a4d`. Import verification and activation remain separate operations.
 
 ## Related Pages
 

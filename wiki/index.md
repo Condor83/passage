@@ -43,7 +43,7 @@ No source summaries are stored yet. Raw scripture sources and private repair art
 
 ## Candidate Artifacts
 
-- [Scripture Corpus Candidates](../candidates/README.md) - Exact Book of Mormon and New Testament candidate snapshots. The Book of Mormon base candidate, its technically selected local corpus, and its typed-edge successor are quarantined from evidence and evaluation pending a private rebuild and new exact-digest approval; the New Testament remains inactive and unaccepted.
+- [Scripture Corpus Candidates](../candidates/README.md) - Exact committed Book of Mormon and New Testament snapshots. The committed Book of Mormon lineage remains quarantined; a repaired private successor now awaits backup and new exact-digest approval. The New Testament remains inactive and unaccepted.
 
 ## Entities
 
