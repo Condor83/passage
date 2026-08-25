@@ -52,7 +52,7 @@ Failure at any step leaves the prior active state unchanged.
 
 The [Datalab PDF Apparatus Repair](../analyses/datalab-pdf-apparatus-repair.md) previously appeared to satisfy Book of Mormon structure and anchor reconciliation because all 6,604 canonical identities were present. A later text-free audit found that the final canonical record contained 1,027,420 characters, 3,486 source spans, and pages 554-795. The parser had no terminal source boundary and appended post-canon material to that record. Structure equality, hashes, and persistence reconciliation therefore did not establish editorial fidelity.
 
-The maintainer confirmed the defect on 2026-08-25 and withdrew editorial authority from exact base candidate SHA-256 `1dfd7b927e9fe5f4987a5bb5a3c8d1a0398eec6004cd01f45e86d50096a1e6b4`, private local corpus `corpus-7ba9051125f848e1aed71c46`, and typed successor SHA-256 `5207e9c1c003f12798053c667a997e8e0697495f8f4a9cafb2e112ef3aee7fa5`. All three are quarantined from evidence and evaluation. The control pointer may still technically select the old corpus, but that state is not editorial acceptance and must not be used.
+The maintainer confirmed the defect on 2026-08-25 and withdrew editorial authority from exact base candidate SHA-256 `1dfd7b927e9fe5f4987a5bb5a3c8d1a0398eec6004cd01f45e86d50096a1e6b4`, private local corpus `corpus-7ba9051125f848e1aed71c46`, and typed successor SHA-256 `5207e9c1c003f12798053c667a997e8e0697495f8f4a9cafb2e112ef3aee7fa5`. All three are quarantined from evidence and evaluation. The old corpus remains immutable historical control data but is now inactive and must not be used.
 
 The current checkout implements a digest-bound terminal-page cutoff that must match the last canonical reference, must be encountered, and fails if the parser reaches it before that reference. Exact-input-bound, fragment-fingerprinted verse-one overrides handle three ambiguous chapter starts without weakening default summary inference. The Datalab writer validates normalized output, publishes a strict adjacent manifest, and round-trips the immutable result through the candidate loader. The character, span, and page-window backstops above also reject a digest-consistent legacy artifact at repository open even when private control state already records it as accepted.
 
@@ -60,7 +60,7 @@ The maintainer restored a matching private PDF and Datalab JSON pair, but no sur
 
 The rederived typed-edge successor is SHA-256 `35ed3713ee222c2778d58f3962c016ea2fef888bc0f8be4edb2b6aacf5641a4d`, with 9,827 notes, zero blockers, and 13,136 edges. A private acquisition record binds the actual Version 1/24, printed 02/2026 publication identity, restored raw-input digests, reconstructed profile, base, edge profile, successor, and normalized identities. On 2026-08-25 the maintainer accepted the exact successor without manual content review because exhaustive automated reconciliation passed, and explicitly waived off-workstation backup as a pre-acceptance gate for this single-maintainer local-only beta while accepting rebuild risk.
 
-Import created accepted inactive corpus `corpus-eb076af14ec6fff84eb40cf0` with artifact SHA-256 `eb076af14ec6fff84eb40cf02e6371dc807512efde0f1ba2f78f5750eb227fb0` and baseline `baseline-27ce2c9404b2a0e0df20859b`. Post-import validation, SQLite integrity, foreign keys, record counts, and the corrected terminal record passed. The active pointer remains the quarantined old corpus. Activation is a separate maintainer decision. The backup waiver does not extend to remote delivery or irreplaceable member data. The New Testament candidate remains inactive, unaccepted, and `review_required`.
+Import created corpus `corpus-eb076af14ec6fff84eb40cf0` with artifact SHA-256 `eb076af14ec6fff84eb40cf02e6371dc807512efde0f1ba2f78f5750eb227fb0` and baseline `baseline-27ce2c9404b2a0e0df20859b`. Post-import validation, SQLite integrity, foreign keys, record counts, and the corrected terminal record passed. On 2026-08-25 the maintainer separately activated that exact pair. HTTP and MCP smoke checks agree on the active identity, terminal-passage hash and length, lexical ordering, and official traversal. The old corrupted corpus remains immutable but inactive and quarantined. The backup waiver does not extend to remote delivery or irreplaceable member data. The New Testament candidate remains inactive, unaccepted, and `review_required`.
 
 ## Related Pages
 
@@ -70,4 +70,4 @@ Import created accepted inactive corpus `corpus-eb076af14ec6fff84eb40cf0` with a
 
 ## Open Questions
 
-- When should the accepted repaired Book of Mormon corpus be activated for the local beta?
+- Does the active corpus pass the locked local-beta evaluation and repeated real-use gate?

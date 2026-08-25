@@ -85,7 +85,7 @@ The prior repair reported:
 - one false inline marker removed; and
 - one duplicate parsed footer entry ignored.
 
-That result is not fidelity-valid. A later text-free audit found that `bofm/moro/10/34`, the final canonical record, contained 1,027,420 characters and 3,486 source spans across PDF pages 554-795. The parser had never recognized the end of the canonical work, so it appended post-canon material to the final verse. Base candidate SHA-256 `1dfd7b927e9fe5f4987a5bb5a3c8d1a0398eec6004cd01f45e86d50096a1e6b4`, technically selected local corpus `corpus-7ba9051125f848e1aed71c46`, and typed successor SHA-256 `5207e9c1c003f12798053c667a997e8e0697495f8f4a9cafb2e112ef3aee7fa5` are quarantined from evidence and evaluation. The control pointer may still technically select the old corpus, but editorial authority is withdrawn.
+That result is not fidelity-valid. A later text-free audit found that `bofm/moro/10/34`, the final canonical record, contained 1,027,420 characters and 3,486 source spans across PDF pages 554-795. The parser had never recognized the end of the canonical work, so it appended post-canon material to the final verse. Base candidate SHA-256 `1dfd7b927e9fe5f4987a5bb5a3c8d1a0398eec6004cd01f45e86d50096a1e6b4`, formerly selected local corpus `corpus-7ba9051125f848e1aed71c46`, and typed successor SHA-256 `5207e9c1c003f12798053c667a997e8e0697495f8f4a9cafb2e112ef3aee7fa5` are quarantined from evidence and evaluation. The old corpus remains immutable but is now inactive and without editorial authority.
 
 ### New Testament
 
@@ -118,9 +118,9 @@ The prior repair proved many internal PDF-to-parser reconciliation properties, b
 
 `official-reference-v2` remains grammar-capability resolved, including typed whole-unit targets and approved digest-bound reference repairs. Rebinding those three reviewed repairs to the new base after note-ID and note-text-hash verification produced successor SHA-256 `35ed3713ee222c2778d58f3962c016ea2fef888bc0f8be4edb2b6aacf5641a4d`: 9,827 notes, 7,213 parsed reference-bearing notes, 2,614 no-reference notes, zero blockers, and 13,136 edges. Strict loading passed.
 
-On 2026-08-25 the maintainer accepted that exact successor without manual content review after the exhaustive automated reconciliation above. Import created inactive corpus `corpus-eb076af14ec6fff84eb40cf0`; post-import artifact, SQLite, foreign-key, record-count, and terminal-record verification passed. The active pointer remains on the quarantined old corpus pending a separate activation decision.
+On 2026-08-25 the maintainer accepted that exact successor without manual content review after the exhaustive automated reconciliation above. Import created corpus `corpus-eb076af14ec6fff84eb40cf0`; post-import artifact, SQLite, foreign-key, record-count, and terminal-record verification passed. The maintainer then separately activated it with baseline `baseline-27ce2c9404b2a0e0df20859b`. HTTP and MCP smoke checks agree on exact lookup, lexical ordering, and official traversal.
 
-The truthful acquisition record, exact-digest approval, import, and post-import verification are complete. The maintainer explicitly waived off-workstation backup only as a pre-acceptance gate for this single-maintainer local-only beta and accepted rebuild risk. Activation remains the next separate action; backup and recovery still gate remote delivery or irreplaceable member data.
+The truthful acquisition record, exact-digest approval, import, verification, and activation are complete. The maintainer explicitly waived off-workstation backup only as a pre-acceptance gate for this single-maintainer local-only beta and accepted rebuild risk. The locked product-loop evaluation and repeated real-use gate are next; backup and recovery still gate remote delivery or irreplaceable member data.
 
 ## Reproduction
 

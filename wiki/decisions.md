@@ -206,10 +206,20 @@ This is the authoritative record of confirmed Passage project decisions. When an
 - **Supersedes:** The acceptance and backup prerequisites in the prior repair decision for this exact successor only. It preserves the quarantine of the corrupted historical lineage and the separate activation gate.
 - **Pages updated:** [Project Overview](overview.md), [Corpus Fidelity and Acceptance](concepts/corpus-fidelity-and-acceptance.md), [Official Reference Grammar](concepts/official-reference-grammar.md), [Content Roadmap](concepts/content-roadmap.md), [Datalab PDF Apparatus Repair](analyses/datalab-pdf-apparatus-repair.md), [Wiki Index](index.md), [Scripture Corpus Candidates](../candidates/README.md), and the [Passage Product Specification](../docs/specs/2026-08-23-passage-product-specification.md).
 
+### 2026-08-25 - Repaired Book of Mormon corpus activated for the local beta
+
+- **Decision:** Activate accepted corpus `corpus-eb076af14ec6fff84eb40cf0` with its compatible baseline `baseline-27ce2c9404b2a0e0df20859b` for the single-maintainer local SQLite beta.
+- **Verification:** The activation command opened and revalidated the immutable artifact before atomically changing the pointer. Independent control-store checks confirmed the exact new pair and integrity `ok`. The supported metadata surface reports the Version 1/24, printed 02/2026 edition, schema v2, and both lexical and official lanes. In-process HTTP and stdio MCP checks agreed on the corpus/configuration pair, corrected terminal-passage hash and length, lexical result ordering, and two terminal-passage official edges.
+- **Prior state:** The corrupted historical corpus remains immutable and accepted as historical control data but is no longer active and retains no editorial authority. Its quarantine from evidence and evaluation remains in force.
+- **Next gate:** Run the locked broad-question product-loop evaluation against this active pair, require zero citation-resolution and evidence-class failures, exercise repeated real local study flows, and record whether the local workflow is useful enough to pass the beta exit gate.
+- **Authority boundary:** Activation authorizes local loopback HTTP and stdio MCP evidence use only. It does not authorize non-loopback exposure, hosted deployment, member access, PostgreSQL cutover, or public submission. The narrow local-beta backup waiver remains unchanged.
+- **Supersedes:** The inactive runtime state and separate activation question in [Repaired Book of Mormon successor accepted locally but not activated](#2026-08-25---repaired-book-of-mormon-successor-accepted-locally-but-not-activated). It preserves that decision's exact source, corpus, backup-waiver, and remote-delivery boundaries.
+- **Pages updated:** [Project Overview](overview.md), [Corpus Fidelity and Acceptance](concepts/corpus-fidelity-and-acceptance.md), [Official Reference Grammar](concepts/official-reference-grammar.md), [Content Roadmap](concepts/content-roadmap.md), [Datalab PDF Apparatus Repair](analyses/datalab-pdf-apparatus-repair.md), [Wiki Index](index.md), [Scripture Corpus Candidates](../candidates/README.md), and the [Passage Product Specification](../docs/specs/2026-08-23-passage-product-specification.md).
+
 ## Open Questions
 
 - Vector storage and semantic retrieval are not confirmed as default behavior. They require a measured retrieval evaluation.
-- When should accepted corpus `corpus-eb076af14ec6fff84eb40cf0` be activated for the local beta? Activation remains a separate maintainer decision.
+- Does the locked broad-question evaluation and repeated real local study flow establish zero citation/evidence-class failures and enough usefulness to pass the local-beta exit gate?
 - The generator, verifier, embedding model, prompts, cost ceiling, and edge-publication thresholds are not selected.
 - The hobby application host, transactional email provider, backup destination, and retention schedule are not selected.
 - The exact accepted editions and digests for the New Testament and later standard works remain unapproved.
