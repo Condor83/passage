@@ -17,7 +17,7 @@ tags: [access, mcp, plugin, api, authentication, study-group]
 
 ## Confirmed Direction
 
-Claude remote MCP is the first hosted client for Passage. A private ChatGPT developer-mode beta follows against the same domain contract. Public plugin submission requires a separate public-delivery gate and does not open registration or corpus access.
+The immediate beta is local and single-maintainer, using loopback HTTP and stdio MCP without accounts, remote exposure, Docker, or Supabase. Claude remote MCP remains the first hosted client after that local beta passes. A private ChatGPT developer-mode beta follows against the same domain contract. Public plugin submission requires a separate public-delivery gate and does not open registration or corpus access.
 
 Passage serves a small, trusted group. Members authenticate with passwordless email. Only verified addresses on an owner-managed allowlist can receive access. The first release has only `owner` and `member` roles.
 
@@ -60,12 +60,14 @@ Use least privilege. Phase 2 enables evidence read only. Phase 3 adds note read 
 
 ## Delivery Sequence
 
-1. Retain Supabase Auth, document the accepted wrong-resource limitation, and preserve the positive behaviors observed in the Claude proof.
-2. Preserve HTTP, MCP, and domain-service result parity while PostgreSQL and application authorization are introduced.
-3. Connect Claude to the Phase 2 evidence-only surface and pass the broad-question evidence journey.
-4. Add the owner/member allowlist and the gated Phase 3 note surface for the complete-canon member release.
-5. Test the same contract in a private ChatGPT developer-mode beta.
-6. Consider public submission only after a separate public audience, support, policy, and content-rights decision.
+1. Complete the single-maintainer local SQLite beta with an accepted Book of Mormon corpus, citation-resolving HTTP/MCP flows, and the locked broad-question evaluation.
+2. Make an explicit maintainer decision that the local workflow is useful enough to share remotely.
+3. Resume PostgreSQL parity and application authorization while preserving the proven local contract.
+4. Retain Supabase Auth, document the accepted wrong-resource limitation, and preserve the positive behaviors observed in the Claude proof.
+5. Connect Claude to the evidence-only remote surface and pass the broad-question evidence journey.
+6. Add the owner/member allowlist and the gated note surface for the complete-canon member release.
+7. Test the same contract in a private ChatGPT developer-mode beta.
+8. Consider public submission only after a separate public audience, support, policy, and content-rights decision.
 
 ## Related Pages
 

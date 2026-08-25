@@ -25,7 +25,7 @@ The recommended long-term design is hybrid and layered:
 
 1. **Canonical relational layer:** exact source records, identities, editions, provenance, and citation spans.
 2. **Explicit relationship layer:** official cross-references plus experimental or published derived concept edges with type, evidence, method, confidence, and immutable graph identity.
-3. **Lexical layer:** PostgreSQL full-text search for exact words, phrases, names, and inspectable term matches.
+3. **Lexical layer:** SQLite FTS5 for the local beta, followed by PostgreSQL full-text search after a separately accepted cutover; both provide exact words, phrases, names, and inspectable term matches.
 4. **Semantic lane:** embeddings and pgvector for conceptually similar passages or teachings that do not share vocabulary.
 5. **Fusion and reranking:** combine independently produced candidate lists only after evaluation proves better discovery without weaker citation integrity.
 
@@ -55,7 +55,7 @@ Published graph versions and retrieval snapshots are immutable. Edge changes cre
 
 ## Current Technical Evidence
 
-- PostgreSQL provides native full-text parsing, matching, and ranking.
+- SQLite FTS5 is the implemented local-beta lexical engine. PostgreSQL provides the future hosted engine's native full-text parsing, matching, and ranking after parity and cutover acceptance.
 - pgvector supports exact search plus HNSW and IVFFlat approximate indexes. Approximate indexes trade recall for speed.
 - pgvector and Supabase document hybrid search that combines full-text and vector result lists, including reciprocal-rank fusion.
 - Supabase and Neon both support pgvector in managed PostgreSQL.

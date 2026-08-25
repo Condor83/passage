@@ -62,7 +62,7 @@ The report stays under the private root. Generated report files are not committe
 
 ## Remaining Gate
 
-Phase 2 must lock the full broad-question set and host-output rubric, accept one exact Book of Mormon source, include every lane present in that accepted corpus, and run the complete H1 comparison. Phase 0 does not authorize or satisfy that gate.
+The local beta must lock the full broad-question set and host-output rubric, accept one exact Book of Mormon source, include every lane present in that accepted corpus, and run the complete H1 comparison. Phase 0 does not authorize or satisfy that gate.
 
 ## Related Pages
 

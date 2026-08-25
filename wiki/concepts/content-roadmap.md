@@ -2,7 +2,7 @@
 title: Content Roadmap
 type: concept
 created: 2026-08-23
-updated: 2026-08-23
+updated: 2026-08-24
 sources:
   - user-confirmed-conversation
   - wiki/decisions.md
@@ -16,13 +16,15 @@ tags: [content, canon, scriptures, church-leaders, roadmap]
 
 Passage will grow through controlled content layers:
 
-1. Use the Book of Mormon as the technical alpha for corpus fidelity, typed official links, retrieval, enrichment evaluation, OAuth, and Claude MCP behavior.
+1. Use the Book of Mormon as a single-maintainer local beta for corpus fidelity, typed official links, retrieval, local MCP behavior, and the host-composed product-loop evaluation. Run this beta on immutable SQLite before OAuth, PostgreSQL runtime, or hosted delivery resumes.
 2. Expand to the complete English LDS scripture canon. This is the minimum member-facing corpus.
 3. Add the English General Conference archive as the first content family after scripture.
 
 The Book of Mormon remains the first validation scope. This sequence does not reduce the fidelity requirements for later sources.
 
-The current Book of Mormon and New Testament repair candidate snapshots are version-controlled under `candidates/`. They remain inactive, unaccepted, and `review_required`. Their official footnote text has not been converted into typed target edges.
+The exact Book of Mormon candidate has now passed its digest, source-record, acceptance, and activation gates for local use. The local beta is complete only after local HTTP/MCP evidence flows resolve their citations and the locked broad-question evaluation has zero unresolved citation or evidence-class failures.
+
+The current Book of Mormon and New Testament repair candidate snapshots are version-controlled under `candidates/`. The Book of Mormon snapshot is accepted and active in the maintainer's private local SQLite runtime. The New Testament snapshot remains inactive, unaccepted, and `review_required`. Their official footnote text has not been converted into typed target edges.
 
 ## Shared Requirements
 
@@ -58,7 +60,7 @@ Sources are manually acquired, publicly available PDFs supplied by the Church. P
 
 ## Open Questions
 
-- Which edition and acquisition contract applies to each work in the LDS canon?
+- Which edition and acquisition contract applies to the New Testament and later works in the LDS canon?
 - What dated official catalog and acquisition cutoff define the first General Conference corpus version?
 - What stable citation unit should a talk use: paragraph, PDF page, publication section, or a combination?
 - Will the owner seek written permission before any public delivery decision?

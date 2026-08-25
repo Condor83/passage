@@ -4,8 +4,8 @@ from pathlib import Path
 from passage.db.builder import CorpusBuilder
 from passage.db.control import ControlStore
 from passage.db.repository import CorpusRepository
-from passage.domain.models import SourceApproval
-from passage.ingest.normalize import normalize_extraction
+from passage.domain.models import ExternalChapterReferenceTarget, SourceApproval
+from passage.ingest.normalize import normalize_extraction, with_recomputed_digest
 from tests.unit.ingest.test_validation import MANIFEST, extraction
 
 
@@ -62,3 +62,32 @@ def test_equivalent_build_is_idempotent(tmp_path: Path) -> None:
 
         assert second == first
         assert control.accepted_count() == 1
+
+
+def test_sqlite_round_trips_a_typed_whole_section_target(tmp_path: Path) -> None:
+    corpus = sample_corpus()
+    edge = corpus.edges[0].model_copy(
+        update={
+            "target": ExternalChapterReferenceTarget(
+                work="dc",
+                book="section",
+                chapter=138,
+                unit="section",
+                label="D&C 138",
+            ),
+            "grammar_version": "official-reference-v2",
+        }
+    )
+    corpus = with_recomputed_digest(corpus, edges=[edge])
+    root = tmp_path / "private"
+
+    with ControlStore(root) as control:
+        published = CorpusBuilder(root, control).build(corpus, approval(), "b" * 64)
+        control.activate(published.corpus_version, published.retrieval_config)
+
+        with CorpusRepository.open(control) as repository:
+            target = repository.all_edges()[0].target
+
+    assert target.kind == "external_chapter"
+    assert target.unit == "section"
+    assert target.chapter == 138

@@ -91,7 +91,7 @@ The source-independent repository gate now passes with 170 tests. Ruff formattin
 
 ## Why the Candidate Still Requires Review
 
-The repair proves internal PDF-to-parser reconciliation. It does not provide an independent editorial comparison against a separate official structured source. Both candidate snapshots remain inactive, unaccepted, and `review_required`.
+The repair proves internal PDF-to-parser reconciliation. It does not provide an independent editorial comparison against a separate official structured source. On 2026-08-24 the maintainer vouched for the Book of Mormon's Church-public-PDF source and approved its exact candidate digest for the local beta; that candidate is now accepted and active in the private local runtime. The New Testament candidate remains inactive, unaccepted, and `review_required`.
 
 The repaired notes contain footnote text, but official citation targets inside that text have not been converted into typed relationship edges. Edge parsing is separate future work.
 

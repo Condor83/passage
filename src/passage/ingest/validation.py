@@ -15,11 +15,15 @@ from pydantic import Field, model_validator
 from passage.domain.identifiers import BOOK_SLUG_SET, NEW_TESTAMENT_BOOK_SLUG_SET
 from passage.domain.models import (
     EpubSourceSpan,
+    InternalChapterReferenceTarget,
     InternalReferenceTarget,
     PdfSourceSpan,
     StrictModel,
 )
-from passage.ingest.apparatus import OFFICIAL_REFERENCE_GRAMMAR_VERSION
+from passage.ingest.apparatus import (
+    CHURCH_PDF_REFERENCE_GRAMMAR_VERSION,
+    OFFICIAL_REFERENCE_GRAMMAR_VERSION,
+)
 from passage.ingest.base import ExtractionResult
 
 if TYPE_CHECKING:
@@ -174,7 +178,10 @@ def validate_corpus(corpus: NormalizedCorpus, structure: StructureManifest) -> N
                     references=[edge.origin_reference],
                 )
             )
-        if edge.grammar_version != OFFICIAL_REFERENCE_GRAMMAR_VERSION:
+        if edge.grammar_version not in {
+            OFFICIAL_REFERENCE_GRAMMAR_VERSION,
+            CHURCH_PDF_REFERENCE_GRAMMAR_VERSION,
+        }:
             findings.append(
                 ValidationFinding(
                     code="unsupported_official_reference_grammar",
@@ -194,6 +201,24 @@ def validate_corpus(corpus: NormalizedCorpus, structure: StructureManifest) -> N
                         code="broken_local_edge",
                         message="reference edge target is absent",
                         references=absent_targets,
+                    )
+                )
+        elif isinstance(edge.target, InternalChapterReferenceTarget):
+            end_chapter = edge.target.end_chapter or edge.target.chapter
+            absent_chapters = [
+                f"bofm/{edge.target.book}/{chapter}"
+                for chapter in range(edge.target.chapter, end_chapter + 1)
+                if not any(
+                    reference.startswith(f"bofm/{edge.target.book}/{chapter}/")
+                    for reference in actual_set
+                )
+            ]
+            if absent_chapters:
+                findings.append(
+                    ValidationFinding(
+                        code="broken_local_edge",
+                        message="reference edge chapter target is absent",
+                        references=absent_chapters,
                     )
                 )
     if findings:

@@ -18,8 +18,10 @@ from passage.domain.models import (
     EvidenceLane,
     EvidenceResponse,
     EvidenceSearchRequest,
+    ExternalChapterReferenceTarget,
     ExternalReferenceTarget,
     Identifier,
+    InternalChapterReferenceTarget,
     InternalReferenceTarget,
     LexicalSearchRequest,
     Passage,
@@ -563,7 +565,14 @@ def _edge_citation(
                 repository.get_passage(str(target))
             except Exception:
                 errors.append(f"{case_id}:{operation}:{edge.edge_id}:unresolved_target")
-    elif not isinstance(edge.target, ExternalReferenceTarget) or (
+    elif isinstance(edge.target, InternalChapterReferenceTarget):
+        end_chapter = edge.target.end_chapter or edge.target.chapter
+        for chapter in range(edge.target.chapter, end_chapter + 1):
+            try:
+                repository.get_passage(f"bofm/{edge.target.book}/{chapter}/1")
+            except Exception:
+                errors.append(f"{case_id}:{operation}:{edge.edge_id}:unresolved_target")
+    elif not isinstance(edge.target, (ExternalReferenceTarget, ExternalChapterReferenceTarget)) or (
         edge.target.resolution != "unresolved_external"
     ):
         errors.append(f"{case_id}:{operation}:{edge.edge_id}:external_target_class")

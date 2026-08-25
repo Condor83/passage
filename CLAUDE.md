@@ -8,7 +8,7 @@ This workspace uses a living wiki. The wiki is the source of truth for current p
 
 **Project:** Passage
 
-**Description:** A structured evidence platform for the LDS scripture canon and, later, teachings from Church leaders. The current checkout uses immutable SQLite artifacts, loopback HTTP, and stdio MCP. The approved product direction adds Supabase PostgreSQL, authenticated remote MCP, the complete canon, and later General Conference content through explicit gates.
+**Description:** A structured evidence platform for the LDS scripture canon and, later, teachings from Church leaders. The current checkout uses immutable SQLite artifacts, loopback HTTP, and stdio MCP. The immediate product milestone is a usable local beta on that stack. Supabase PostgreSQL, authenticated remote MCP, the complete canon, and later General Conference content remain future, explicitly gated direction.
 
 **Source documents:** Repository plans and code live under `docs/` and `src/`. Maintainer-approved, inactive scripture candidate snapshots may live under `candidates/`. Raw source bytes, Datalab output, correction profiles, detailed review artifacts, source paths, acquisition records, and credentials stay outside the repository under the configured private root.
 
@@ -16,8 +16,9 @@ This workspace uses a living wiki. The wiki is the source of truth for current p
 
 1. Use `.agents/skills/passage-grounding/SKILL.md` before consequential planning, implementation, diagnosis, or review.
 2. Separate implemented behavior from approved future direction. `wiki/decisions.md` controls decisions. The approved product specification controls work beyond the local baseline.
-3. Favor the smallest useful vertical slice for a hobby project and a small trusted group. Do not add enterprise administration, speculative scale systems, or generic SaaS controls unless a measured requirement needs them.
-4. Use synthetic fixtures for routine work. Private-source processing, test-only candidate use, corpus acceptance, activation, remote deployment, and public submission each require explicit maintainer authority.
+3. Complete and evaluate the local SQLite beta before resuming Docker/Supabase/PostgreSQL, authentication, or hosted-delivery work. Docker is not a local-beta runtime requirement.
+4. Favor the smallest useful vertical slice for a hobby project and a small trusted group. Do not add enterprise administration, speculative scale systems, or generic SaaS controls unless a measured requirement needs them.
+5. Use synthetic fixtures for routine work. Private-source processing, test-only candidate use, corpus acceptance, activation, remote deployment, and public submission each require explicit maintainer authority.
 
 ## Living Wiki Operating Rules
 

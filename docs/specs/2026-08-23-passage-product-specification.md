@@ -11,6 +11,8 @@ approved: 2026-08-23
 
 This is the approved product specification. Approval authorizes the documentation actions in Section 14. It does not authorize implementation, corpus acceptance, activation, private-source processing, deployment, or public submission.
 
+**2026-08-24 sequencing amendment:** Passage must complete a single-maintainer local beta on the implemented immutable SQLite, loopback HTTP, and stdio MCP stack before the remaining PostgreSQL/Auth foundation or hosted-delivery critical path resumes. Completed Phase 1 U1-U3 groundwork remains recorded, but Docker and Supabase are not local-beta runtime requirements.
+
 - **Confirmed** means the maintainer approved the direction during the product interview.
 - **Recommended** means an initial threshold or operating choice that the product must test before treating it as permanent.
 - **Hypothesis** means the product must test the claim before it relies on it.
@@ -136,7 +138,7 @@ flowchart TB
 
 ### Content roadmap
 
-1. **Book of Mormon technical alpha.** Prove ingestion, acceptance, retrieval, enrichment, evaluation, OAuth, and Claude MCP behavior.
+1. **Book of Mormon local beta.** Prove ingestion, acceptance, retrieval, typed official links, evaluation, and the host-composed workflow through local HTTP and stdio MCP. PostgreSQL, OAuth, and hosted Claude behavior follow only after this beta passes.
 2. **Complete English LDS scripture canon.** This is the minimum member-facing corpus.
 3. **English General Conference archive.** Ingest Church-supplied English PDF talks in validated conference-sized staging batches. Each accepted corpus version uses a dated source catalog, an acquisition cutoff, explicit inclusion rules, and a known-gap list.
 
@@ -167,7 +169,7 @@ General Conference is the first content family after scripture. Church manuals, 
 
 ### Ingestion and activation
 
-- R25. Ingestion must build a complete version in staged, version-keyed PostgreSQL records.
+- R25. During the local beta, ingestion uses the implemented complete immutable SQLite artifact lifecycle. Before hosted member delivery, the same accepted identities and whole-version invariants must be reproduced in staged, version-keyed PostgreSQL records and pass the separate cutover gate.
 - R26. Upserts are permitted only inside an unaccepted staging build or for mutable operational records.
 - R27. The system must validate the complete staged version before acceptance.
 - R28. Activation must switch one compatible corpus, derived-graph publication, and retrieval-snapshot tuple atomically.
@@ -176,7 +178,7 @@ General Conference is the first content family after scripture. Church manuals, 
 - R30. A failed replacement must leave the prior active version unchanged.
 - R30a. Conference-sized units are staged and validated ingestion batches. Acceptance composes them into one complete immutable corpus version that contains the full accumulated scripture and conference scope.
 
-The current private repaired Book of Mormon candidate contains 6,604 passages and 9,826 footnote anchors. The separate New Testament candidate contains 27 books, 260 chapters, 7,957 passages, and 10,091 footnote anchors. Both remain inactive, unaccepted, and `review_required`. Their footnote text has not yet been converted into typed official reference edges.
+The version-controlled repaired Book of Mormon candidate snapshot contains 6,604 passages and 9,826 footnote anchors. On 2026-08-24 the maintainer approved its exact digest and Church-public-PDF source record for the local beta; its verified immutable SQLite artifact is accepted and active locally. The maintainer later chose typed whole-chapter and whole-section targets and approved three exact source repairs. `official-reference-v2` then produced a complete private successor with 9,827 notes and 13,136 typed, provenance-backed edges. The successor remains inactive, unaccepted, and `review_required`; the active corpus remains the earlier edge-free artifact. The separate New Testament candidate snapshot contains 27 books, 260 chapters, 7,957 passages, and 10,091 footnote anchors and remains inactive, unaccepted, and `review_required` without typed edges.
 
 ## 6. Retrieval and Concept-Link Architecture
 
@@ -185,7 +187,7 @@ The current private repaired Book of Mormon candidate contains 6,604 passages an
 Passage uses layered retrieval:
 
 1. Exact canonical lookup.
-2. PostgreSQL full-text lexical search.
+2. Backend-appropriate full-text lexical search: SQLite FTS5 for the local beta and PostgreSQL full-text search only after cutover.
 3. Official-reference traversal.
 4. Published derived-edge traversal.
 5. Experimental semantic or hybrid search.
@@ -374,14 +376,25 @@ Note tools do not enter the Phase 2 alpha surface. They enter with the Phase 3 m
 - Approve this product specification.
 - Resolve O1 at the grammar and synthetic-test level. Define how official footnote text becomes typed internal or external targets and what evidence makes a parsed edge valid. Real-source execution remains a later authority step.
 - Run a limited local feasibility probe that compares the current five atomic research operations with the combined `search_evidence` operation. Grade only the lanes that the selected test corpus actually contains.
-- Use synthetic fixtures by default. The probe may use an exact private repair candidate only after the maintainer separately approves that artifact for a disposable, local, test-only evaluation snapshot. This approval does not accept or activate the corpus, permit remote service, or prove editorial fidelity.
+- Use synthetic fixtures by default. The probe may use an exact version-controlled candidate snapshot only after the maintainer separately approves its digest for a disposable, local, test-only evaluation snapshot. This approval does not accept or activate the corpus, permit remote service, or prove editorial fidelity.
 - Treat the Phase 0 result as directional. It must show zero citation and evidence-class errors and no fatal atomic-tool contract failure. It does not satisfy H1, derived-edge promotion, or the complete product-loop gate.
 - Rename all active `scripture-chat` identifiers to Passage.
 - Rename the Python distribution and package, CLI command, configuration prefix, service titles, MCP identity, and active documentation.
 - Keep historical plan filenames as historical records.
 - Do not add long-lived compatibility aliases.
 
+### Local beta gate: prove the product before the platform
+
+- Use the implemented immutable SQLite, loopback HTTP, and stdio MCP runtime. Docker, Supabase, PostgreSQL runtime selection, authentication, and remote delivery are outside the local-beta critical path.
+- Accept and activate one exact Book of Mormon source only through the existing digest, acquisition-record, fidelity, and maintainer-approval gates.
+- Parse and validate typed official-reference edges against that exact accepted source. Version the synthetic grammar if the source requires a different fail-closed contract.
+- Run the complete locked broad-question product-loop evaluation with every lane present in the accepted corpus. Citation-resolution and evidence-class errors must be zero.
+- Exercise the real local workflow repeatedly through HTTP and MCP, record material usability gaps, and confirm that the evidence trail is useful in actual maintainer study.
+- Resume the hosted platform critical path only after an explicit maintainer decision that this exit gate passed. Local beta completion does not itself authorize remote exposure or member access.
+
 ### Phase 1: PostgreSQL and source foundation
+
+Phase 1 U1-U3 are completed source-independent groundwork. U4-U7 and further Docker/Supabase/Auth work are paused until the local beta gate passes.
 
 - Carry forward the completed Supabase-to-Claude proof. Treat its wrong-resource result as an accepted compatibility limitation for the invite-only hobby service while preserving the behaviors that passed: discovery, dynamic client registration, PKCE, exact callback, explicit consent, asymmetric token validation, refresh, and current-member enforcement.
 - Keep the current local path available as a read-only parity reference through the alpha. Do not maintain two permanent application backends.
@@ -389,14 +402,13 @@ Note tools do not enter the Phase 2 alpha surface. They enter with the Phase 3 m
 - Map current canonical identities and accepted fixture behavior to PostgreSQL, prove contract parity, define the cutover point, and retain rollback to the prior local alpha until cutover acceptance.
 - Preserve complete staged builds, whole-version validation, and atomic activation.
 - Define the exact source acquisition and acceptance record for each English standard work.
-- Implement and validate the Phase 0 official-reference grammar against synthetic fixtures. Real-source edge acceptance remains bound to the exact accepted corpus in Phase 2.
+- Preserve the Phase 0 synthetic official-reference grammar and carry forward any versioned successor proven during the local beta against the exact accepted corpus.
 - With Supabase Auth retained, establish allowlist membership, a non-bypass RLS path, transactional email, and the passwordless OAuth consent flow. Re-run the bounded Claude regression in R63a before remote alpha.
 
-### Phase 2: Book of Mormon technical alpha
+### Phase 2: Book of Mormon remote technical alpha
 
-- Accept one exact Book of Mormon source only after the owner approves its digest and acquisition record.
-- Parse and validate its typed official-reference edges. Prove PostgreSQL ingestion, lexical search, official links, atomic tools, citations, and coverage behavior.
-- Re-run the complete H1 product-loop evaluation on the accepted corpus with all available source and official lanes. The Phase 2 thresholds, not the Phase 0 probe, control progression to member release.
+- Migrate or reproducibly rebuild the local-beta accepted corpus in PostgreSQL and prove parity, lexical search, official links, atomic tools, citations, historical resolvability, and coverage behavior before cutover.
+- Re-run the locked broad-question product-loop evaluation after PostgreSQL cutover and remote composition. Citation and evidence-class results may not regress from the local beta.
 - Run the first automatic enrichment and independent verification pipeline within an approved cost, candidate, time, and stopping budget.
 - Keep every derived edge experimental while the locked H2 and H3 evaluations, including the human edge sample, run.
 - Connect Claude through the evidence-only remote MCP surface and complete the broad-question evidence journey. Do not expose note tools.
@@ -471,8 +483,9 @@ Note tools do not enter the Phase 2 alpha surface. They enter with the Phase 3 m
 
 - AC16a. Phase 0 locks a small question set and compares the current atomic operations with combined `search_evidence` on only the lanes present in the selected test corpus. The report states every absent lane and cannot claim H1 success.
 - AC16b. Phase 0 has zero citation and evidence-class errors and finds no fatal contract problem that prevents a full accepted-corpus evaluation.
-- AC16c. Phase 2 locks the full broad-question set, reference pools, and host-output rubric before it reruns the atomic-tool comparison on the accepted corpus with typed official links. The rubric grades evidence coverage, exact citation support, evidence-class separation, material omissions, useful new connections, and stated coverage limits.
-- AC16d. As recommended initial Phase 2 thresholds, the atomic-tool path must pass the rubric on at least 80 percent of locked questions, equal or exceed the fixed workflow on at least 80 percent, and surface at least one additional judged-useful connection on at least 60 percent. Citation-resolution and evidence-class errors must remain zero.
+- AC16c. The local beta locks the full broad-question set, reference pools, and host-output rubric before it reruns the atomic-tool comparison on the accepted SQLite corpus with typed official links. The rubric grades evidence coverage, exact citation support, evidence-class separation, material omissions, useful new connections, and stated coverage limits.
+- AC16d. As recommended initial local-beta thresholds, the atomic-tool path must pass the rubric on at least 80 percent of locked questions, equal or exceed the fixed workflow on at least 80 percent, and surface at least one additional judged-useful connection on at least 60 percent. Citation-resolution and evidence-class errors must remain zero.
+- AC16e. The maintainer must complete repeated real local HTTP/MCP study flows, record material usability gaps, and explicitly approve resuming PostgreSQL/Auth and hosted-delivery work. Passing synthetic tests alone does not satisfy the local-beta exit gate.
 
 ### Pilot outcome
 
@@ -510,18 +523,18 @@ The pilot can use a simple owner-maintained result log. Passage does not need an
 
 1. Passage is the product name.
 2. The primary journey is a comprehensive topic survey in chat, not simple lookup.
-3. The Book of Mormon is a technical alpha. The complete English LDS scripture canon is required for the member-facing release.
+3. The Book of Mormon is first a single-maintainer local beta on SQLite. The complete English LDS scripture canon is required for the later member-facing release.
 4. English General Conference talks are the first content expansion after scripture. Each version covers every Church-supplied English talk PDF in its dated accepted source catalog and reports gaps.
 5. Claude or ChatGPT owns the live research loop. Passage does not run a separate conversational agent.
-6. Claude remote MCP is the first host. A private ChatGPT developer-mode beta follows. Public plugin submission is intended only after group validation and a separate public-delivery gate.
+6. Local HTTP and stdio MCP are the first beta delivery surfaces. Claude remote MCP is the first hosted client after the local-beta exit gate passes. A private ChatGPT developer-mode beta follows. Public plugin submission is intended only after group validation and a separate public-delivery gate.
 7. The owner accepts the unresolved source-use risk for an invite-only, noncommercial hosted service.
-8. PostgreSQL ingestion uses complete versioned staging and atomic activation. Accepted versions are immutable.
+8. The local beta uses immutable SQLite artifacts. Later PostgreSQL ingestion uses complete versioned staging and atomic activation. Accepted versions are immutable in both backends.
 9. Passage is English-only. The initial model does not support multilingual identity.
 10. A long-running enrichment pipeline creates durable model-derived relationships. Member-created edges are deferred.
 11. Relationship types use a small versioned vocabulary plus `other` with a free-form label.
 12. Derived edges use a two-tier graph and require a generator, independent verifier, deterministic citation checks, and a locked human sample before automatic default publication is enabled. All derived edges remain experimental until H2 and H3 pass.
 13. Embeddings may generate enrichment candidates. Direct semantic search remains gated by evaluation.
-14. The Phase 2 remote MCP surface is evidence-only and uses atomic tools. Note tools enter in Phase 3.
+14. The local beta proves the atomic evidence tools before the Phase 2 remote MCP surface. The remote surface remains evidence-only; note tools enter in Phase 3.
 15. Search returns the exact matched passage. Context requires a separate call.
 16. Candidate retrieval is recall-first within a hard citation-integrity gate. Recall never permits an unresolved citation or a mislabeled evidence class.
 17. Evaluation uses independent blinded LLM judges with human spot and dispute review.
@@ -530,16 +543,17 @@ The pilot can use a simple owner-maintained result log. Passage does not need an
 20. Passage stores citation-linked Markdown study notes in the Phase 3 member release.
 21. The normal new-note choice is group-visible. Every create request must state visibility explicitly, and only the author can edit, delete, or change visibility.
 22. Notes use a separate retrieval lane.
-23. Start with Supabase Free and hobby hosting. Upgrade to Pro when evidence requires it.
+23. Do not start hosted operation until the local-beta exit gate passes. When hosting begins, start with Supabase Free and hobby hosting and upgrade to Pro only when evidence requires it.
 24. Use daily encrypted off-provider backups and quarterly restore tests.
 25. Rename all active technical identifiers to Passage without long-lived compatibility aliases.
 26. The primary pilot outcome is discovery of useful new connections with valid citations.
+27. Complete and approve the local SQLite beta before resuming U4-U7 of the PostgreSQL/Auth foundation or other Docker/Supabase critical-path work.
 
 ## 14. Unresolved Questions and Hypotheses
 
 ### Open technical questions
 
-- O1. What exact grammar and acceptance evidence will convert official footnote text into typed internal and external reference edges? Phase 0 must resolve the grammar and synthetic contract. Phase 2 must validate it against the accepted Book of Mormon source before official traversal is release-eligible.
+- O1. What exact grammar and acceptance evidence will convert official footnote text into typed internal and external reference edges? Phase 0 resolved the synthetic contract. The local beta must validate it against the accepted Book of Mormon source before official traversal is beta-eligible.
 - O2. What exact PDFs, editions, digests, and acquisition records will define the accepted English standard works?
 - O3. What stable talk-span citation unit will General Conference use: paragraph, section, PDF page, or a combination?
 - O4. Which embedding model and chunk identities will generate enrichment candidates?
@@ -561,6 +575,7 @@ The pilot can use a simple owner-maintained result log. Passage does not need an
 - H4. Supabase Free capacity and hobby hosting are sufficient for the Book of Mormon alpha and initial small-group workload.
 - H5. The recommended evaluation thresholds are achievable without suppressing recall.
 - H6. Citation-linked notes improve study continuity or group learning enough to justify their ongoing write and recovery surface.
+- H7. The existing SQLite, loopback HTTP, and stdio MCP stack can deliver a useful local beta without Docker, PostgreSQL, authentication, or hosted infrastructure.
 
 ### Approval effects
 
@@ -583,4 +598,4 @@ Approval requires these repository documentation actions:
 
 ### Approval state
 
-The maintainer approved this specification on 2026-08-23 and revised the Supabase Auth risk decision on 2026-08-24. O1 blocks real official-edge acceptance. O2 blocks corpus acceptance. O5 blocks the first enrichment run. O11, O12, and the bounded R63a regression block remote alpha. O10 blocks any public ChatGPT submission. Other open technical questions belong to later architecture and implementation planning.
+The maintainer approved this specification on 2026-08-23, revised the Supabase Auth risk decision on 2026-08-24, and added the local-beta-first sequencing amendment on 2026-08-24. O1 blocks real official-edge acceptance. O2 blocks corpus acceptance. The local-beta exit gate blocks resuming U4-U7 and the hosted critical path. O5 blocks the first enrichment run. O11, O12, and the bounded R63a regression block remote alpha. O10 blocks any public ChatGPT submission. Other open technical questions belong to later architecture and implementation planning.

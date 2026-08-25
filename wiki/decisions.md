@@ -116,7 +116,7 @@ This is the authoritative record of confirmed Passage project decisions. When an
 - **Rationale:** The current canonical identity contract supports these forms without inventing private source syntax or inferring official relationships from prose.
 - **Failure rule:** Ambiguous, unsupported, invalid, duplicate, or partially parsed input creates no edge. External syntax remains unresolved until its source work is accepted and available.
 - **Evidence rule:** Every edge preserves its origin anchor, source attribution, grammar version, and ordered source spans through persistence and traversal.
-- **Authority boundary:** This decision is proven only with synthetic fixtures. It does not validate either private repair candidate or authorize real-source processing, acceptance, activation, or editorial-fidelity claims.
+- **Authority boundary:** This decision is proven only with synthetic fixtures. It does not validate either candidate snapshot or authorize candidate use, acceptance, activation, or editorial-fidelity claims.
 - **Pages updated:** [Official Reference Grammar](concepts/official-reference-grammar.md), [Project Overview](overview.md), and [Corpus Fidelity and Acceptance](concepts/corpus-fidelity-and-acceptance.md).
 
 ### 2026-08-23 - Phase 1 starts with the Supabase-to-Claude OAuth proof
@@ -155,11 +155,41 @@ This is the authoritative record of confirmed Passage project decisions. When an
 - **Authority boundary:** This decision permits planning and local source-independent implementation. It does not authorize local non-loopback exposure, hosted deployment, member invitations, transactional email, private-source processing, corpus acceptance, activation, or public submission.
 - **Pages updated:** [Project Overview](overview.md), [PostgreSQL Platform](concepts/postgresql-platform.md), [Study Group Access](concepts/study-group-access.md), and the [Passage Product Specification](../docs/specs/2026-08-23-passage-product-specification.md).
 
+### 2026-08-24 - Passage will complete a local SQLite beta before hosted platform work resumes
+
+- **Decision:** Make a usable, single-maintainer local beta the immediate product milestone. Run it on the implemented immutable SQLite, loopback HTTP, and stdio MCP stack. Docker, Supabase, PostgreSQL runtime work, authentication, and remote delivery are not required for this beta and remain paused until its exit gate passes.
+- **Rationale:** Passage needs to prove that an accepted corpus and the host-composed evidence workflow are useful in real local study before investing further in multi-user infrastructure.
+- **Local beta scope:** Accept one exact Book of Mormon source through the existing authority gates; validate typed official references; exercise lookup, context, lexical search, official traversal, HTTP/MCP parity, and the locked broad-question product-loop evaluation; record usability gaps from actual local use.
+- **Exit gate:** Resume the hosted platform critical path only after the local beta has a maintainer-accepted corpus, zero unresolved citation or evidence-class failures in its locked evaluation, and an explicit maintainer decision that the local workflow is useful enough to share remotely.
+- **Supersedes:** The execution order that made the remaining PostgreSQL/Auth foundation the next critical path before a real local product beta. It does not reverse PostgreSQL, Supabase Auth, or invite-only hosted access as possible later direction.
+- **Existing work:** Phase 1 U1-U3 remain completed, source-independent groundwork. U4-U7 of the PostgreSQL/Auth foundation plan are paused; the historical implementation and test evidence remain valid.
+- **Authority boundary:** This documentation decision does not itself authorize private-source processing, candidate acceptance, corpus activation, non-loopback exposure, hosted deployment, member invitations, or public submission.
+- **Pages updated:** [Project Overview](overview.md), [PostgreSQL Platform](concepts/postgresql-platform.md), [Study Group Access](concepts/study-group-access.md), [Content Roadmap](concepts/content-roadmap.md), [Official Reference Grammar](concepts/official-reference-grammar.md), and the [Passage Product Specification](../docs/specs/2026-08-23-passage-product-specification.md).
+
+### 2026-08-24 - Exact Book of Mormon candidate approved and activated locally
+
+- **Decision:** Accept candidate SHA-256 `1dfd7b927e9fe5f4987a5bb5a3c8d1a0398eec6004cd01f45e86d50096a1e6b4` as the exact Book of Mormon input for the local beta and activate its verified immutable SQLite artifact.
+- **Source record:** The maintainer manually downloaded and vouches for the Church's freely available English 2013 Book of Mormon PDF edition. Passage records the official Church PDF URL and the exact derived candidate digest; it does not require the original PDF bytes to be copied into this Linux checkout.
+- **Rationale:** The exact committed candidate, its digest manifest, complete 6,604-passage structure, 9,826 apparatus anchors, retained source spans, content hashes, and reconciled SQLite artifact provide a proportionate acceptance record for the single-maintainer local beta.
+- **Runtime identity:** Corpus `corpus-7ba9051125f848e1aed71c46` with retrieval configuration `baseline-5e9588f445459e3165de1278` is active under the configured private local root. The root path is local operational state and is not recorded as a portable repository default.
+- **Boundary:** This approval applies only to the exact Book of Mormon candidate and local SQLite use. It does not approve the New Testament candidate, claim that typed official-reference edges exist, authorize remote delivery, or resolve public-release permissions.
+- **Supersedes:** The Book of Mormon portion of the earlier unaccepted-candidate state and the requirement that this local beta retain the original PDF bytes or digest after the exact candidate and source record are approved. The commit-time candidate manifest remains historical lifecycle evidence.
+- **Pages updated:** [Project Overview](overview.md), [Corpus Fidelity and Acceptance](concepts/corpus-fidelity-and-acceptance.md), [Content Roadmap](concepts/content-roadmap.md), [Wiki Index](index.md), and [Scripture Corpus Candidates](../candidates/README.md).
+
+### 2026-08-24 - Whole scripture units remain typed and three exact official-reference repairs are approved
+
+- **Decision:** Represent an official citation to a whole chapter, chapter range, or Doctrine and Covenants section as one typed target. Do not expand it into one edge per verse.
+- **Approved repairs:** For exact source candidate SHA-256 `1dfd7b927e9fe5f4987a5bb5a3c8d1a0398eec6004cd01f45e86d50096a1e6b4`, correct the printed `Po. 42:2` target to `Ps. 42:2`; treat the explanatory note at `bofm/1-ne/21/24` as targeting `bofm/1-ne/21/25` and `JST Isa. 49:25`; and split the merged `k`/`l` note at `bofm/1-ne/19/10` into separate sequential anchors.
+- **Rationale:** A whole-unit target preserves the source's actual citation granularity and remains inspectable without fabricating a denser verse-level graph. The three source-specific repairs are maintainer-confirmed and remain isolated in a private profile bound to the exact source candidate digest.
+- **Resulting candidate:** Correction-profile digest `cb2b49d84c68b9f1ee8a1ffe92224c631c92277bc0e4f76c8c12c31169d03e7b` produced inactive, unaccepted successor SHA-256 `5207e9c1c003f12798053c667a997e8e0697495f8f4a9cafb2e112ef3aee7fa5` with 9,827 notes and 13,136 official edges. This identity supersedes the initial unaccepted derivation after canonical digest ordering was corrected. All reference-bearing notes parse; the active edge-free corpus remains unchanged.
+- **Authority boundary:** This decision authorizes the exact repairs and successor derivation only. The successor remains `review_required`; import, acceptance, and activation require a separate maintainer decision.
+- **Pages updated:** [Project Overview](overview.md), [Official Reference Grammar](concepts/official-reference-grammar.md), [Corpus Fidelity and Acceptance](concepts/corpus-fidelity-and-acceptance.md), and [Scripture Corpus Candidates](../candidates/README.md).
+
 ## Open Questions
 
 - Vector storage and semantic retrieval are not confirmed as default behavior. They require a measured retrieval evaluation.
-- Accepted-source validation evidence and any required successor to `official-reference-v1` remain undefined.
+- The exact official-edge successor still requires its separate digest review, acceptance, import, verification, and activation decision.
 - The generator, verifier, embedding model, prompts, cost ceiling, and edge-publication thresholds are not selected.
 - The hobby application host, transactional email provider, backup destination, and retention schedule are not selected.
-- The exact accepted editions and digests for each standard work remain unapproved.
+- The exact accepted editions and digests for the New Testament and later standard works remain unapproved.
 - General Conference talk-span citation units and dated source catalogs remain undefined.

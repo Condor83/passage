@@ -2,19 +2,22 @@ from __future__ import annotations
 
 import hashlib
 import json
-from typing import Any
+from typing import Any, Literal, cast
 
 from pydantic import Field
 
 from passage.domain.models import (
     ApparatusNote,
+    Identifier,
     Passage,
     ReferenceEdge,
+    ReferenceTarget,
+    SourceSpan,
     StrictModel,
 )
+from passage.domain.references import reference_target_key
 from passage.ingest.apparatus import (
     OFFICIAL_REFERENCE_GRAMMAR_VERSION,
-    reference_target_key,
     require_official_references,
 )
 from passage.ingest.base import ExtractionResult
@@ -22,8 +25,8 @@ from passage.ingest.validation import StructureManifest
 
 
 class NormalizedCorpus(StrictModel):
-    source_format: str
-    source_profile: str
+    source_format: Literal["epub", "pdf"]
+    source_profile: Identifier
     passages: list[Passage]
     notes: list[ApparatusNote] = Field(default_factory=list)
     edges: list[ReferenceEdge] = Field(default_factory=list)
@@ -66,50 +69,90 @@ def normalize_extraction(
             event.target,
             valid_internal_references=valid_internal_references,
         )
-        span_identity = _canonical_json(
-            [span.model_dump(mode="json") for span in event.source_spans]
-        ).decode("utf-8")
-        for target in parsed.targets:
-            target_key = reference_target_key(target)
-            edges.append(
-                ReferenceEdge(
-                    edge_id=_stable_id(
-                        event.origin_reference,
-                        event.origin_anchor,
-                        target_key,
-                        event.source_attribution,
-                        OFFICIAL_REFERENCE_GRAMMAR_VERSION,
-                        span_identity,
-                    ),
-                    origin_reference=event.origin_reference,
-                    origin_anchor=event.origin_anchor,
-                    target=target,
-                    source_attribution=event.source_attribution,
-                    grammar_version=OFFICIAL_REFERENCE_GRAMMAR_VERSION,
-                    source_spans=event.source_spans,
-                )
+        edges.extend(
+            build_reference_edges(
+                origin_reference=event.origin_reference,
+                origin_anchor=event.origin_anchor,
+                targets=parsed.targets,
+                source_attribution=event.source_attribution,
+                grammar_version=OFFICIAL_REFERENCE_GRAMMAR_VERSION,
+                source_spans=event.source_spans,
             )
-    records = {
-        "source_format": extraction.source_format,
-        "source_profile": extraction.profile,
-        "passages": [passage.model_dump(mode="json") for passage in passages],
-        "notes": [note.model_dump(mode="json") for note in notes],
-        "edges": [edge.model_dump(mode="json") for edge in edges],
-    }
-    digest = _sha256(_canonical_json(records))
-    return NormalizedCorpus(
-        source_format=extraction.source_format,
+        )
+    corpus = NormalizedCorpus(
+        source_format=cast(Literal["epub", "pdf"], extraction.source_format),
         source_profile=extraction.profile,
         passages=passages,
         notes=notes,
         edges=edges,
-        normalized_digest=digest,
+        normalized_digest="0" * 64,
     )
+    return with_recomputed_digest(corpus)
+
+
+def build_reference_edges(
+    *,
+    origin_reference: str,
+    origin_anchor: str,
+    targets: list[ReferenceTarget],
+    source_attribution: str,
+    grammar_version: str,
+    source_spans: list[SourceSpan],
+) -> list[ReferenceEdge]:
+    identity = canonical_json_bytes([span.model_dump(mode="json") for span in source_spans]).decode(
+        "utf-8"
+    )
+    return [
+        ReferenceEdge(
+            edge_id=_stable_id(
+                origin_reference,
+                origin_anchor,
+                reference_target_key(target),
+                source_attribution,
+                grammar_version,
+                identity,
+            ),
+            origin_reference=origin_reference,
+            origin_anchor=origin_anchor,
+            target=target,
+            source_attribution=source_attribution,
+            grammar_version=grammar_version,
+            source_spans=source_spans,
+        )
+        for target in targets
+    ]
+
+
+def with_recomputed_digest(
+    corpus: NormalizedCorpus,
+    *,
+    edges: list[ReferenceEdge] | None = None,
+) -> NormalizedCorpus:
+    updated = corpus.model_copy(update={"edges": corpus.edges if edges is None else edges})
+    records = {
+        "source_format": updated.source_format,
+        "source_profile": updated.source_profile,
+        "passages": [
+            passage.model_dump(mode="json")
+            for passage in sorted(
+                updated.passages, key=lambda item: (item.canonical_order, item.reference)
+            )
+        ],
+        "notes": [
+            note.model_dump(mode="json")
+            for note in sorted(updated.notes, key=lambda item: item.note_id)
+        ],
+        "edges": [
+            edge.model_dump(mode="json")
+            for edge in sorted(updated.edges, key=lambda item: item.edge_id)
+        ],
+    }
+    return updated.model_copy(update={"normalized_digest": _sha256(canonical_json_bytes(records))})
 
 
 def serialize_jsonl(corpus: NormalizedCorpus) -> bytes:
     lines: list[bytes] = [
-        _canonical_json(
+        canonical_json_bytes(
             {
                 "type": "corpus",
                 "source_format": corpus.source_format,
@@ -119,11 +162,11 @@ def serialize_jsonl(corpus: NormalizedCorpus) -> bytes:
         )
     ]
     for passage in sorted(corpus.passages, key=lambda item: (item.canonical_order, item.reference)):
-        lines.append(_canonical_json({"type": "passage", **passage.model_dump(mode="json")}))
+        lines.append(canonical_json_bytes({"type": "passage", **passage.model_dump(mode="json")}))
     for note in sorted(corpus.notes, key=lambda item: item.note_id):
-        lines.append(_canonical_json({"type": "note", **note.model_dump(mode="json")}))
+        lines.append(canonical_json_bytes({"type": "note", **note.model_dump(mode="json")}))
     for edge in sorted(corpus.edges, key=lambda item: item.edge_id):
-        lines.append(_canonical_json({"type": "edge", **edge.model_dump(mode="json")}))
+        lines.append(canonical_json_bytes({"type": "edge", **edge.model_dump(mode="json")}))
     return b"\n".join(lines) + b"\n"
 
 
@@ -137,7 +180,7 @@ def canonical_projection(corpus: NormalizedCorpus) -> bytes:
         }
         for passage in sorted(corpus.passages, key=lambda item: item.canonical_order)
     ]
-    return _canonical_json(projection)
+    return canonical_json_bytes(projection)
 
 
 def _stable_id(*parts: str) -> str:
@@ -148,7 +191,7 @@ def _sha256(payload: bytes) -> str:
     return hashlib.sha256(payload).hexdigest()
 
 
-def _canonical_json(value: Any) -> bytes:
+def canonical_json_bytes(value: Any) -> bytes:
     return json.dumps(
         value,
         ensure_ascii=False,

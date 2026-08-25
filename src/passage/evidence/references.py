@@ -6,11 +6,14 @@ from dataclasses import dataclass
 from passage.domain.identifiers import CanonicalReference
 from passage.domain.models import (
     Direction,
+    ExternalChapterReferenceTarget,
     ExternalReferenceTarget,
+    InternalChapterReferenceTarget,
     InternalReferenceTarget,
     ReferenceEdge,
     ReferenceTarget,
 )
+from passage.domain.references import reference_target_key
 
 
 @dataclass(frozen=True, slots=True)
@@ -55,7 +58,7 @@ def traverse(
             official_edges[edge.edge_id] = edge
             if external is not None:
                 if include_external:
-                    external_targets[_target_key(external)] = external
+                    external_targets[reference_target_key(external)] = external
                 continue
             if target_reference is None or target_reference in visited:
                 continue
@@ -83,16 +86,17 @@ def _neighbors(
         for edge in edges:
             if edge.origin_reference != reference:
                 continue
-            if isinstance(edge.target, ExternalReferenceTarget):
+            if isinstance(edge.target, (ExternalReferenceTarget, ExternalChapterReferenceTarget)):
                 yield edge, None, edge.target
+                continue
+            if isinstance(edge.target, InternalChapterReferenceTarget):
+                yield edge, None, None
                 continue
             for target_reference in _target_references(edge.target):
                 yield edge, target_reference, None
     if direction in (Direction.INBOUND, Direction.BOTH):
         for edge in edges:
-            if isinstance(edge.target, InternalReferenceTarget) and reference in _target_references(
-                edge.target
-            ):
+            if _internal_target_contains(edge.target, reference):
                 yield edge, edge.origin_reference, None
 
 
@@ -108,6 +112,11 @@ def _target_references(target: ReferenceTarget) -> tuple[str, ...]:
     return tuple(str(item) for item in reference.passages())
 
 
-def _target_key(target: ReferenceTarget) -> str:
-    suffix = f"-{target.end_verse}" if target.end_verse is not None else ""
-    return f"{target.work}/{target.book}/{target.chapter}/{target.verse}{suffix}"
+def _internal_target_contains(target: ReferenceTarget, reference: str) -> bool:
+    if isinstance(target, InternalReferenceTarget):
+        return reference in _target_references(target)
+    if not isinstance(target, InternalChapterReferenceTarget):
+        return False
+    parsed = CanonicalReference.parse(reference)
+    end_chapter = target.end_chapter or target.chapter
+    return target.book == parsed.book and target.chapter <= parsed.chapter <= end_chapter

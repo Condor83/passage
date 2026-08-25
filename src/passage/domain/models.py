@@ -267,8 +267,47 @@ class ExternalReferenceTarget(StrictModel):
         return self
 
 
+class InternalChapterReferenceTarget(StrictModel):
+    kind: Literal["internal_chapter"] = "internal_chapter"
+    work: Literal["bofm"] = "bofm"
+    book: str
+    chapter: int = Field(ge=1)
+    end_chapter: int | None = Field(default=None, ge=1)
+    unit: Literal["chapter"] = "chapter"
+    label: str | None = None
+
+    @model_validator(mode="after")
+    def validate_range(self) -> InternalChapterReferenceTarget:
+        if self.end_chapter is not None and self.end_chapter < self.chapter:
+            raise ValueError("range end must not precede its start")
+        return self
+
+
+class ExternalChapterReferenceTarget(StrictModel):
+    kind: Literal["external_chapter"] = "external_chapter"
+    work: Literal["bible", "dc", "pgp"]
+    book: Annotated[str, StringConstraints(pattern=r"^[a-z0-9-]+$")]
+    chapter: int = Field(ge=1)
+    end_chapter: int | None = Field(default=None, ge=1)
+    unit: Literal["chapter", "section"]
+    label: str | None = None
+    resolution: Literal["unresolved_external"] = "unresolved_external"
+
+    @model_validator(mode="after")
+    def validate_range_and_unit(self) -> ExternalChapterReferenceTarget:
+        if self.end_chapter is not None and self.end_chapter < self.chapter:
+            raise ValueError("range end must not precede its start")
+        expected_unit = "section" if self.work == "dc" else "chapter"
+        if self.unit != expected_unit:
+            raise ValueError(f"{self.work} whole-unit targets must use {expected_unit}")
+        return self
+
+
 ReferenceTarget = Annotated[
-    InternalReferenceTarget | ExternalReferenceTarget,
+    InternalReferenceTarget
+    | ExternalReferenceTarget
+    | InternalChapterReferenceTarget
+    | ExternalChapterReferenceTarget,
     Field(discriminator="kind"),
 ]
 

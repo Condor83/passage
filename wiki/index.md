@@ -20,7 +20,7 @@ tags: [index, navigation]
 - [Autonomous Build Readiness](../docs/plans/2026-08-23-autonomous-build-readiness.md) - Prepared worktree, agent roles, prompt outline, proof cadence, and hard stop conditions for the first build goal.
 - [Local Supabase](../docs/development/supabase-local.md) - Current local configuration, verified versions, and loopback stop condition.
 - [Supabase-to-Claude OAuth Compatibility Proof](../docs/plans/2026-08-23-supabase-claude-oauth-compatibility-proof.md) - Locked synthetic Phase 1 entry gate, evidence matrix, failure rule, and execution authority.
-- [Phase 1 PostgreSQL and Supabase Auth Foundation Plan](../docs/plans/2026-08-24-0634-feat-postgres-auth-foundation-plan.md) - Implementation-ready local, synthetic continuation under the accepted hobby-scale OAuth limitation.
+- [Phase 1 PostgreSQL and Supabase Auth Foundation Plan](../docs/plans/2026-08-24-0634-feat-postgres-auth-foundation-plan.md) - U1-U3 completed; U4-U7 paused until the local SQLite beta exit gate passes.
 
 ## Analyses
 
@@ -33,7 +33,7 @@ tags: [index, navigation]
 - [Corpus Fidelity and Acceptance](concepts/corpus-fidelity-and-acceptance.md) - Evidence requirements that separate a repair candidate from an accepted corpus.
 - [Official Reference Grammar](concepts/official-reference-grammar.md) - Versioned Phase 0 synthetic syntax, typed targets, failure codes, and evidence contract.
 - [Content Roadmap](concepts/content-roadmap.md) - Long-term expansion from the Book of Mormon to the LDS canon and Church-leader teachings.
-- [PostgreSQL Platform](concepts/postgresql-platform.md) - Supabase-first PostgreSQL direction, cutover boundary, Auth gate, and provider-exit rules.
+- [PostgreSQL Platform](concepts/postgresql-platform.md) - Deferred Supabase-first PostgreSQL direction, completed U1-U3 groundwork, local-beta sequencing, and later cutover rules.
 - [Retrieval and Concept Links](concepts/retrieval-and-concept-links.md) - Exact, lexical, semantic, and provenance-backed relationship layers.
 - [Study Group Access](concepts/study-group-access.md) - Claude-first remote MCP, owner-managed membership, and phased evidence and note surfaces.
 
@@ -43,7 +43,7 @@ No source summaries are stored yet. Raw scripture sources and private repair art
 
 ## Candidate Artifacts
 
-- [Scripture Corpus Candidates](../candidates/README.md) - Exact, maintainer-approved Book of Mormon and New Testament candidate snapshots. Both remain inactive, unaccepted, and `review_required`.
+- [Scripture Corpus Candidates](../candidates/README.md) - Exact Book of Mormon and New Testament candidate snapshots. The Book of Mormon digest is approved and active in the private local beta; the New Testament remains inactive and unaccepted.
 
 ## Entities
 

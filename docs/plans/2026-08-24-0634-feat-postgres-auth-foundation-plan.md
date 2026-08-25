@@ -5,11 +5,14 @@ date: 2026-08-24
 deepened: 2026-08-24
 artifact_contract: ce-unified-plan/v1
 artifact_readiness: implementation-ready
+execution_status: paused-after-u3
 product_contract_source: ce-plan-bootstrap
 execution: code
 ---
 
 # Phase 1 PostgreSQL and Supabase Auth Foundation - Plan
+
+> **Sequencing update (2026-08-24):** U1-U3 are complete and remain valid groundwork. U4-U7 are paused by the maintainer's local-beta-first decision. Passage will first prove a usable beta on immutable SQLite, loopback HTTP, and stdio MCP. Docker, Supabase, PostgreSQL runtime work, Auth, and hosted delivery resume only after the local-beta exit gate and a separate maintainer decision. The plan below is retained as the implementation contract for that later resumption.
 
 ## Goal Capsule
 

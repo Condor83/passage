@@ -20,7 +20,13 @@ from passage.eval.cases import load_cases
 from passage.eval.phase0 import Phase0ProbeRunner, load_phase0_probe_definition
 from passage.eval.runner import EvaluationRunner
 from passage.ingest.base import ExtractionLimits, ExtractionResult
+from passage.ingest.candidate import load_candidate
 from passage.ingest.normalize import NormalizedCorpus, normalize_extraction, serialize_jsonl
+from passage.ingest.official_edges import (
+    derive_official_edges,
+    load_official_reference_correction_profile,
+    publish_official_edge_derivation,
+)
 from passage.ingest.review import render_review_markdown
 from passage.ingest.validation import (
     StructureManifest,
@@ -72,6 +78,25 @@ def _parser() -> argparse.ArgumentParser:
     build.add_argument("--structure", type=Path)
     build.set_defaults(handler=_build)
 
+    import_candidate = corpus_commands.add_parser("import-candidate")
+    import_candidate.add_argument("--candidate", type=Path, required=True)
+    import_candidate.add_argument("--manifest", type=Path)
+    import_candidate.add_argument("--approved-candidate-sha256", required=True)
+    import_candidate.add_argument("--edition", required=True)
+    import_candidate.add_argument("--acquisition-url", required=True)
+    import_candidate.add_argument("--acquisition-date", type=date.fromisoformat, required=True)
+    import_candidate.add_argument("--language", default="eng")
+    _data_argument(import_candidate)
+    import_candidate.set_defaults(handler=_import_candidate)
+
+    derive_edges = corpus_commands.add_parser("derive-official-edges")
+    derive_edges.add_argument("--candidate", type=Path, required=True)
+    derive_edges.add_argument("--manifest", type=Path)
+    derive_edges.add_argument("--approved-candidate-sha256", required=True)
+    derive_edges.add_argument("--corrections", type=Path)
+    _data_argument(derive_edges)
+    derive_edges.set_defaults(handler=_derive_official_edges)
+
     verify = corpus_commands.add_parser("verify")
     _data_argument(verify)
     verify.add_argument("--corpus-version")
@@ -118,7 +143,11 @@ def _data_argument(parser: argparse.ArgumentParser) -> None:
 def _private_root(args: argparse.Namespace) -> Path:
     root = args.data_dir.expanduser().absolute()
     config = AppConfig(private_root=root)
-    return prepare_private_root(config, Path.cwd())
+    return prepare_private_root(config, _repository_root())
+
+
+def _repository_root() -> Path:
+    return Path(__file__).resolve().parents[2]
 
 
 def _inspect(args: argparse.Namespace) -> dict[str, Any]:
@@ -167,6 +196,105 @@ def _build(args: argparse.Namespace) -> dict[str, Any]:
         "artifact_digest": published.artifact_digest,
         "normalized_digest": corpus.normalized_digest,
         "derived_artifacts": derived,
+        "active": False,
+    }
+
+
+def _import_candidate(args: argparse.Namespace) -> dict[str, Any]:
+    root = _private_root(args)
+    candidate = args.candidate.expanduser().absolute()
+    manifest = args.manifest.expanduser().absolute() if args.manifest is not None else None
+    loaded = load_candidate(candidate, manifest)
+    if loaded.candidate_sha256 != args.approved_candidate_sha256:
+        raise ValueError("candidate does not match the explicitly approved digest")
+    approval = SourceApproval(
+        source_sha256=loaded.candidate_sha256,
+        acquisition_url=args.acquisition_url,
+        acquisition_date=args.acquisition_date,
+        edition=args.edition,
+        language=args.language,
+    )
+    recipe_fingerprint = _digest_json(
+        {
+            "candidate_manifest": loaded.manifest.model_dump(mode="json"),
+            "structure": loaded.structure.model_dump(mode="json"),
+            "normalizer": "passage-v1",
+            "candidate_importer": "passage-candidate-v1",
+        }
+    )
+    derived = _publish_review_artifacts(root, loaded.corpus)
+    with ControlStore(root) as control:
+        published = CorpusBuilder(root, control).build(
+            loaded.corpus,
+            approval,
+            recipe_fingerprint,
+        )
+    return {
+        "candidate": str(candidate),
+        "candidate_sha256": loaded.candidate_sha256,
+        "normalized_digest": loaded.corpus.normalized_digest,
+        "corpus_version": published.corpus_version,
+        "retrieval_config": published.retrieval_config,
+        "artifact_digest": published.artifact_digest,
+        "derived_artifacts": derived,
+        "accepted": True,
+        "active": False,
+    }
+
+
+def _derive_official_edges(args: argparse.Namespace) -> dict[str, Any]:
+    root = _private_root(args)
+    candidate = args.candidate.expanduser().absolute()
+    manifest = args.manifest.expanduser().absolute() if args.manifest is not None else None
+    loaded = load_candidate(candidate, manifest)
+    if loaded.candidate_sha256 != args.approved_candidate_sha256:
+        raise ValueError("candidate does not match the explicitly approved digest")
+    if loaded.corpus.source_format != "pdf":
+        raise ValueError("official-reference-v2 requires a PDF-derived candidate")
+    if loaded.manifest.scope != "book-of-mormon":
+        raise ValueError("official-reference-v2 supports only Book of Mormon candidates")
+    correction_profile = None
+    if args.corrections is not None:
+        corrections = args.corrections.expanduser().resolve(strict=True)
+        if corrections.is_relative_to(_repository_root().resolve()):
+            raise ValueError("official reference correction profiles must remain outside Git")
+        if not corrections.is_relative_to(root.resolve()):
+            raise ValueError(
+                "official reference correction profiles must remain under the private root"
+            )
+        correction_profile = load_official_reference_correction_profile(corrections)
+
+    derivation = derive_official_edges(
+        loaded.corpus,
+        loaded.structure,
+        source_candidate_sha256=loaded.candidate_sha256,
+        correction_profile=correction_profile,
+    )
+    published = publish_official_edge_derivation(
+        root,
+        derivation,
+        repository_root=_repository_root(),
+        scope="book-of-mormon",
+    )
+    return {
+        "source_candidate": str(candidate),
+        "source_candidate_sha256": loaded.candidate_sha256,
+        "grammar_version": derivation.report.grammar_version,
+        "correction_profile_digest": derivation.report.correction_profile_digest,
+        "parsed_note_count": derivation.report.parsed_note_count,
+        "no_reference_note_count": derivation.report.no_reference_note_count,
+        "blocking_note_count": derivation.report.blocking_note_count,
+        "internal_edge_count": derivation.report.internal_edge_count,
+        "external_edge_count": derivation.report.external_edge_count,
+        "edge_count": derivation.report.edge_count,
+        "successor_candidate_sha256": published.successor_candidate_sha256,
+        "report": str(published.report_path),
+        "edge_preview": str(published.edge_preview_path),
+        "candidate": str(published.candidate_path) if published.candidate_path else None,
+        "manifest": str(published.manifest_path) if published.manifest_path else None,
+        "complete": derivation.report.complete,
+        "ready_for_import": published.candidate_path is not None,
+        "accepted": False,
         "active": False,
     }
 

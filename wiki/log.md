@@ -198,3 +198,71 @@ Checked all 13 wiki pages for required frontmatter, local links, index coverage,
 ## [2026-08-24] verify | Phase 1 U3 source-independent gate
 
 Verified U3 through the complete source-independent gate: dependency sync succeeded, 149 files passed the format check, Ruff passed, mypy passed across 48 source files, and all 244 tests passed with the two known dependency warnings. The PostgreSQL fixture applied the generated migration to a fresh local database, kept all published ports on `127.0.0.1`, passed migration-history and database-advisor checks, and removed every Passage container and synthetic database volume after the session.
+
+## [2026-08-24] update | Local SQLite beta made the immediate product milestone
+
+Recorded the maintainer's decision to prove Passage locally before resuming hosted-platform work. The immediate beta now uses the implemented immutable SQLite, loopback HTTP, and stdio MCP stack and does not require Docker, Supabase, PostgreSQL runtime selection, authentication, or remote exposure. Phase 1 U1-U3 remain completed source-independent groundwork; U4-U7 are paused until an exact Book of Mormon source passes its separate acceptance and activation gates, typed official references are validated, the locked broad-question evaluation has zero unresolved citation or evidence-class failures, repeated local study flows expose no blocking usability problem, and the maintainer explicitly approves resuming the hosted critical path. No private source processing, corpus acceptance, activation, deployment, invitation, or public submission was authorized by this documentation update.
+
+## [2026-08-24] lint | Wiki health check after local-beta sequencing decision
+
+Checked all 13 wiki pages for required frontmatter, local links, index coverage, authoritative decision alignment, historical-versus-current Phase 1 language, and local-beta versus hosted scope. Found no missing frontmatter, broken local links, index gaps, or current-page contradiction. Historical analyses and operation-log entries retain their original Phase 2 and PostgreSQL sequencing context; current living pages and the amended specification make the local SQLite beta the immediate milestone and keep private-source, acceptance, activation, remote, invitation, and deployment authority gates closed.
+
+## [2026-08-24] sync | Mac candidate commit integrated into Linux main
+
+Fetched Origin and found one commit on each side of common base `85b3d6c`: Mac candidate commit `852f354` and Linux PostgreSQL-foundation commit `614b35f`. Rebased the Linux commit onto the Mac commit, preserving both candidate-policy and Phase 1 documentation; the rebased PostgreSQL commit is `e994ad0`. Restored the uncommitted local-beta documentation and the pre-existing EPUB test edit without staging them. Verified the Book of Mormon and New Testament candidate SHA-256 values against their committed manifests (`1dfd7b927e9fe5f4987a5bb5a3c8d1a0398eec6004cd01f45e86d50096a1e6b4` and `7b2c3cc1fca0652b123c4f74eb9aa05c19eb40d9ca41033097f0e86abd63ad15`). Both snapshots remain inactive, unaccepted, `review_required`, and unused by routine tests.
+
+## [2026-08-24] lint | Wiki and candidate health after cross-machine sync
+
+Validated all four candidate JSON/JSONL files as syntactically complete JSON streams, rechecked both candidate digests, and found no merge markers or whitespace errors. Checked all 13 wiki pages for required frontmatter, local links, index coverage, decision order, candidate-versus-source boundaries, and local-beta sequencing. Found no missing frontmatter, broken local links, index gaps, or current-page contradiction. The Linux branch now contains the Mac candidate commit and is one rebased PostgreSQL commit ahead of Origin; restored local documentation and the pre-existing EPUB test edit remain unstaged.
+
+## [2026-08-24] implement | Exact candidate import path added
+
+Added a strict JSONL candidate loader and `passage corpus import-candidate` command. The loader verifies the exact candidate SHA against its manifest, strict record schemas and grouping, canonical serialized bytes, manifest/header identity, counts, complete canonical structure, passage content hashes, source spans, and corpus validation before the existing immutable SQLite builder can register it. Import requires the exact approved candidate SHA and a short source record, produces private review artifacts, and leaves activation as a separate operation. Added focused unit and CLI integration coverage using only synthetic fixtures.
+
+## [2026-08-24] accept | Book of Mormon candidate approved and activated for local beta
+
+The maintainer stated that the scripture editions were manually downloaded from the Church's free public PDF downloads and vouched for this corpus. Loaded and validated exact Book of Mormon candidate SHA-256 `1dfd7b927e9fe5f4987a5bb5a3c8d1a0398eec6004cd01f45e86d50096a1e6b4`: 6,604 passages, 9,826 apparatus notes, zero typed edges, and complete canonical structure. Imported and reconciled immutable artifact `7ba9051125f848e1aed71c46e26cae2897631f6cd7453a4e59a0d98f0ef0af31`, independently verified it, and atomically activated corpus `corpus-7ba9051125f848e1aed71c46` with retrieval configuration `baseline-5e9588f445459e3165de1278` under the private local root. Metadata lookup passed. No Docker, PostgreSQL, remote exposure, or New Testament acceptance was involved.
+
+## [2026-08-24] review | Candidate import boundary hardened
+
+Reviewed the exact-candidate import path for correctness, project standards, testing, maintainability, and adversarial bypasses. Moved review-artifact publication ahead of corpus acceptance, rejected mismatched provenance-span kinds and duplicate or non-sequential official-footnote anchors, removed the production structure override so fixed scripture scopes always use the packaged complete canonical structure, and expanded synthetic tests for persistence, provenance, manifest identity, validation, and failed publication. The exact approved Book of Mormon candidate still passes all new gates. Unit and integration suites, focused candidate checks, Ruff, formatting, mypy, and whitespace checks passed. Current Python 3.14 transport tests still hang in the pre-existing HTTP/TestClient and real-transport paths, so those cases were reported separately rather than treated as importer failures.
+
+## [2026-08-24] implement | Accepted-source official-reference v2 derivation
+
+Added the fail-closed `official-reference-v2` grammar for the Church-PDF notation present in the approved Book of Mormon candidate. Added exact-candidate-bound derivation, provenance-backed stable edge construction, text-free blocker reports, private edge previews, and conditional successor publication. The command emits an inactive, unaccepted, `review_required` successor only after every reference-bearing note parses; it never imports or activates a corpus. Synthetic unit and CLI integration tests cover internal and external targets, topic-only notes, unsupported forms, report privacy, complete publication, and incomplete quarantine.
+
+## [2026-08-24] analyze | Exact Book of Mormon official-reference run quarantined
+
+Ran `official-reference-v2` exhaustively against approved candidate SHA-256 `1dfd7b927e9fe5f4987a5bb5a3c8d1a0398eec6004cd01f45e86d50096a1e6b4`. Of 9,826 official footnotes, 7,194 reference-bearing notes parsed and 2,624 contained no reference. The private preview contains 13,098 edges: 7,944 internal and 5,154 typed external. Eight notes failed closed across whole-section, whole-chapter or chapter-range, invalid-target, explanatory-JST, and merged-anchor cases. Passage wrote only the private text-free report and edge preview; it created no successor candidate and did not accept, activate, or alter the current active corpus.
+
+## [2026-08-24] lint | Wiki health after official-reference v2 analysis
+
+Checked all 13 wiki pages for required frontmatter, local links, and index coverage after recording the v2 implementation and exact-corpus result. Found no missing frontmatter, broken local links, or index gaps. The overview, fidelity boundary, official-reference concept, product specification, and candidate documentation agree that the current active corpus remains edge-free and that a separately reviewed successor is blocked on eight fail-closed notes.
+
+## [2026-08-24] correct | Whole-chapter references removed from no-reference class
+
+The simplification review found that whole-section and whole-chapter citations without a colon could be misclassified as non-reference notes. Hardened v2 so empty official-note text and recognized chapter- or section-only forms fail closed. The exact candidate rerun retained the same 7,194 parsed notes, 13,098 edges, edge counts, normalized digest, and successor-preview digest, but correctly moved 10 notes from `no_reference` to blockers: 2,614 notes now contain no reference and 18 notes block successor publication. Updated current living pages and the product status; the earlier log entries remain as the append-only record of the pre-hardening result.
+
+## [2026-08-24] review | Hobby-scale official-reference boundary review completed
+
+Right-sized the final review to material corpus-integrity, privacy, and lifecycle risks. Corrected repository-boundary validation so invoking the CLI from another current directory cannot permit derived artifacts inside the checkout; added and passed an outside-CWD regression test. The final exact-corpus run was idempotent at 7,194 parsed notes, 2,614 no-reference notes, 18 blockers, 13,098 preview edges, and successor-preview SHA-256 `3b3b3249f1f0a826d0fdae088d4cbb147e079155601330ce1653c72ebf7e82b8`. Formatting, Ruff, mypy across 50 source files, 133 focused unit and integration tests, whitespace checks, and the 13-page wiki health check passed. No successor candidate was created, accepted, or activated.
+
+## [2026-08-24] decide | Typed whole-unit targets and exact repairs approved
+
+Recorded the maintainer's decision to keep whole chapters, chapter ranges, and Doctrine and Covenants sections as typed official targets rather than expanding them into verse edges. Recorded the exact three approved repairs for source candidate `1dfd7b927e9fe5f4987a5bb5a3c8d1a0398eec6004cd01f45e86d50096a1e6b4`: `Po.` to `Ps.`, explicit 1 Nephi/JST targets, and the merged k/l anchor split. The rules live only in a private source- and note-digest-bound profile.
+
+## [2026-08-24] create | Complete official-reference successor derived
+
+Implemented typed internal and external whole-unit targets, JSON persistence and traversal behavior without verse expansion, and private digest-bound note replacement, splitting, and explicit-target overrides. The exact run produced correction-profile digest `cb2b49d84c68b9f1ee8a1ffe92224c631c92277bc0e4f76c8c12c31169d03e7b` and inactive, unaccepted, `review_required` successor SHA-256 `6cd8df42378c18b7b5eafdbac422c40bde9c88d9ae22b51a5ebe2e8fcb5d0342`. Its 9,827 notes classify as 7,213 reference-bearing and 2,614 no-reference, with zero blockers and 13,136 edges: 7,972 internal and 5,164 external. Strict loader reconciliation passed. The active edge-free corpus was not imported, replaced, or modified.
+
+## [2026-08-24] review | Typed-reference successor boundary hardened
+
+The final local review found and corrected five concrete defects: inbound traversal now recognizes typed internal chapter targets; correction profiles must remain under the configured private root; citation-shaped unknown abbreviations fail closed instead of passing as no-reference; normalized successor digests use canonical record ordering; and deterministic publication installs fully written files atomically so interrupted runs remain retryable. Added focused regressions for each boundary. The external cross-model route was blocked by the environment's data-egress policy, so no repository content left the machine; nine local review lenses and one independent validator batch completed.
+
+## [2026-08-24] create | Canonically reproducible successor regenerated
+
+Preserved the initial unaccepted successor under a private archive name, then reran the exact approved source and correction profile. The complete, idempotent result remains at 9,827 notes, 7,213 reference-bearing notes, 2,614 no-reference notes, zero blockers, and 13,136 edges: 7,972 internal and 5,164 external. Canonical normalized digest `db73a19fcb8e8b8b904dce79d536de4335a7dc418e66e67f25cb870a7feaa836` now survives strict serialization, reload, and recomputation. The current inactive, unaccepted, `review_required` successor SHA-256 is `5207e9c1c003f12798053c667a997e8e0697495f8f4a9cafb2e112ef3aee7fa5`; the active edge-free corpus remains `corpus-7ba9051125f848e1aed71c46` with retrieval configuration `baseline-5e9588f445459e3165de1278`.
+
+## [2026-08-24] verify | Typed-reference successor final gate
+
+The final 171-test unit and focused integration gate passed. Thirty-one MCP tests and twelve contract tests passed before the known Python 3.14 real-stdio and real-transport cases reached their bounded timeout; those pre-existing transport hangs produced no failure output and were not counted as passes. All 158 files passed the format check, Ruff passed, mypy passed across 51 source files, the Git whitespace check passed, and the 13-page wiki health check found no missing frontmatter, broken local links, index gaps, or current-state contradiction. The exact private successor reran idempotently, strict loading and normalized-digest recomputation passed, all publication files are mode `0600` under a `0700` directory, and the active corpus identity remained unchanged.

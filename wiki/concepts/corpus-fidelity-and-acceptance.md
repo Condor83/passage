@@ -2,7 +2,7 @@
 title: Corpus Fidelity and Acceptance
 type: concept
 created: 2026-08-23
-updated: 2026-08-23
+updated: 2026-08-24
 sources:
   - docs/plans/2026-08-16-001-feat-scripture-chat-plan.md
   - docs/specs/2026-08-23-passage-product-specification.md
@@ -20,7 +20,7 @@ A repair candidate is not an accepted corpus. Passage keeps extraction, validati
 
 An accepted corpus requires:
 
-- a maintainer-approved exact source digest and acquisition record;
+- maintainer-approved exact import bytes and a truthful acquisition or source record;
 - exact equality with the versioned text-free canonical structure manifest;
 - nonempty canonical text for every expected passage;
 - unique and sequential official apparatus anchors;
@@ -47,7 +47,13 @@ Failure at any step leaves the prior active state unchanged.
 
 ## Current Application
 
-The [Datalab PDF Apparatus Repair](../analyses/datalab-pdf-apparatus-repair.md) satisfies the current structural and anchor reconciliation checks for separate Book of Mormon and New Testament repair candidates. Exact snapshots are committed under `candidates/` with public digest manifests. Both remain inactive, unaccepted, and `review_required`. The Phase 0 synthetic grammar now defines typed cross-reference edges and fail-closed parsing. Neither candidate has been processed with that grammar. Accepted-source validation and independent editorial comparison remain open work.
+The [Datalab PDF Apparatus Repair](../analyses/datalab-pdf-apparatus-repair.md) satisfies the structural and anchor reconciliation checks for separate Book of Mormon and New Testament repair candidates. Exact snapshots are committed under `candidates/` with public digest manifests. On 2026-08-24 the maintainer vouched that the Book of Mormon input came from the Church's free public English 2013 PDF edition and approved exact candidate SHA-256 `1dfd7b927e9fe5f4987a5bb5a3c8d1a0398eec6004cd01f45e86d50096a1e6b4`. Passage imported, reconciled, verified, accepted, and activated the resulting immutable SQLite artifact locally. The New Testament candidate remains inactive, unaccepted, and `review_required`.
+
+The exact candidate SHA is the local-beta import identity. Its embedded normalized digest is retained as the repair-pipeline identity; because the historical serializer sorted note records after calculating that digest, the JSONL cannot reproduce it independently. Passage therefore verifies the manifest-to-header digest, the exact file SHA, canonical JSONL form, every passage content hash, counts, source spans, complete structure, SQLite rows and indexes, and the final artifact digest.
+
+The acceptance gate for the edge-free candidate is closed. The maintainer subsequently chose typed whole-unit reference targets and approved three exact, digest-bound repairs. `official-reference-v2` produced complete private successor SHA-256 `5207e9c1c003f12798053c667a997e8e0697495f8f4a9cafb2e112ef3aee7fa5` with 9,827 official notes and 13,136 provenance-backed typed edges. The strict candidate loader independently reconciled its manifest and canonical bytes, and its normalized digest is stable after serialization and reload.
+
+That successful derivation does not extend the earlier acceptance decision. The successor remains inactive, unaccepted, and `review_required`; the active corpus remains the earlier edge-free artifact. Import, verification, acceptance, and activation require a separate exact-digest decision.
 
 ## Related Pages
 
@@ -57,5 +63,4 @@ The [Datalab PDF Apparatus Repair](../analyses/datalab-pdf-apparatus-repair.md) 
 
 ## Open Questions
 
-- Which independent source or review method is sufficient to approve exact editorial fidelity?
-- What exact accepted-source validation proves that `official-reference-v1`, or a versioned successor, matches the repaired apparatus?
+- What proportionate exact-digest review is required before the complete successor is accepted and activated?

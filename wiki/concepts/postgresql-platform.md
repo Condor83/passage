@@ -22,11 +22,15 @@ tags: [postgresql, supabase, neon, pgvector, storage]
 
 Supabase Postgres and Supabase Auth remain Passage's first managed platform. The maintainer accepts Supabase Auth's failed wrong-resource binding for the invite-only hobby service without claiming strict RFC 8707 compliance. PostgreSQL becomes the primary application store only after the approved parity and cutover gates pass.
 
-The existing immutable SQLite implementation remains the working local baseline and rollback reference through the alpha. Phase 1 U1 provides a source-independent local Supabase harness on native Docker Engine with a pinned CLI invocation, a loopback-default bridge, automatic port-boundary rejection, secret-suppressed startup, and ephemeral synthetic teardown.
+The existing immutable SQLite implementation is now the product path through the local beta, not merely a rollback reference. Passage must prove an accepted local corpus and useful end-to-end study workflow before the PostgreSQL/Auth critical path resumes. Docker and Supabase are not required to run that beta.
+
+Phase 1 U1 provides a source-independent local Supabase harness on native Docker Engine with a pinned CLI invocation, a loopback-default bridge, automatic port-boundary rejection, secret-suppressed startup, and ephemeral synthetic teardown.
 
 Phase 1 U2 separates the evidence service from backend-specific storage through minimal control-state, request-scoped snapshot, repository-read, lexical-intent, and cleanup contracts. SQLite remains the only application repository and compiles FTS5 syntax inside its adapter.
 
 Phase 1 U3 implements the local PostgreSQL schema and connection foundation without selecting it as a runtime. The private `passage` schema has versioned evidence, complete immutable retrieval-snapshot bindings, lifecycle and accepted-row guards, PostgreSQL full-text search, separate least-privilege logins, forced RLS, and transaction-local request identity through separate bounded pools. Supabase Data API schemas cannot resolve it for anonymous, authenticated, or service-role clients. The importer, PostgreSQL repository, Auth verifier, hosted service, cutover, and real-corpus migration remain unimplemented.
+
+U1-U3 remain completed groundwork. U4-U7—PostgreSQL import, repository parity, token verification, and selectable runtime composition—are paused until the local-beta exit gate passes.
 
 ## Why PostgreSQL Fits
 
@@ -34,7 +38,7 @@ PostgreSQL can keep canonical content, source provenance, typed relationships, f
 
 Supabase supports pgvector and documents PostgreSQL hybrid search with `tsvector` and pgvector. Vector storage remains optional. No semantic lane becomes a default until a locked evaluation proves useful contribution without citation regression.
 
-## Initial Operating Model
+## Future Hosted Operating Model
 
 - Start with Supabase Free and a hobby or scale-to-zero Python application host.
 - Use the Passage application as the only client-facing data authority. MCP clients do not depend on Supabase Data API shapes, roles, or provider URLs.
@@ -48,6 +52,8 @@ Supabase supports pgvector and documents PostgreSQL hybrid search with `tsvector
 Supabase Auth is selected under a proportionate hobby-project threat model. In the live proof, Supabase accepted a deliberately wrong RFC 8707 resource and the proof-only audience hook still produced a Passage-usable token. P6 remains failed historical evidence. The maintainer accepts this limitation because it does not expose a member's device or chat-provider account credentials and because Passage remains invite-only and read-only at first.
 
 The completed [Supabase-to-Claude OAuth Compatibility Proof](../../docs/plans/2026-08-23-supabase-claude-oauth-compatibility-proof.md) unblocks local PostgreSQL and Auth-foundation work. Remote alpha still requires the proven positive flow, exact token validation, explicit consent, approved callback hosts, current-member enforcement on every call, transactional email, and a bounded Claude regression. Passage does not claim exact RFC 8707 resource binding.
+
+That work is permitted but no longer next in sequence. The local SQLite beta must pass first.
 
 Passwordless member access also requires custom transactional email. Supabase's default project mail service is not the group delivery path.
 
