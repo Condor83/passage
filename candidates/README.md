@@ -25,9 +25,12 @@ acceptance. The successor must not be imported or accepted.
 
 Neither committed candidate contains typed relationship edges. The
 `official-reference-v2` grammar remains implemented capability. A repaired
-private base and complete 13,136-edge successor now exist outside Git, but both
-remain inactive, unaccepted, and `review_required`. The New Testament candidate
-remains unaccepted and inactive.
+private base and complete 13,136-edge successor now exist outside Git. Exact
+successor SHA-256
+`35ed3713ee222c2778d58f3962c016ea2fef888bc0f8be4edb2b6aacf5641a4d`
+was accepted and verified as private corpus `corpus-eb076af14ec6fff84eb40cf0`
+on 2026-08-25, but it remains inactive. The New Testament candidate remains
+unaccepted and inactive.
 
 Raw source files, Datalab output, correction profiles, detailed repair reports,
 source paths, acquisition records, and credentials remain outside Git. Routine
@@ -35,8 +38,8 @@ tests must continue to use synthetic fixtures unless the maintainer separately
 authorizes use of an exact candidate digest.
 
 Runtime acceptance and activation live in the private control store rather than
-these commit-time manifests. The next Book of Mormon gate is a truthful
-raw-source acquisition record, a verified encrypted off-workstation backup, and
-maintainer approval of the new exact private successor digest. Import
-verification and activation remain separate. None of this authorizes remote
-delivery.
+these commit-time manifests. The next Book of Mormon gate is separate activation
+of the accepted repaired corpus. The maintainer waived off-workstation backup
+only as a pre-acceptance gate for this single-maintainer local-only beta and
+accepted rebuild risk; backup and recovery remain required before remote
+delivery or irreplaceable member data. None of this authorizes remote delivery.

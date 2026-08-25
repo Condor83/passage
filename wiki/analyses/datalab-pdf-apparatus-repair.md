@@ -110,15 +110,17 @@ The maintainer restored a matching private PDF and Datalab JSON pair. No survivi
 
 The private rebuild produced base candidate SHA-256 `f1d0abb72460121179ec944ee43ff3b569a2321265358dd66f20e39ee8b6aa66`: 6,604 passages, 9,826 notes, zero edges, and a 278-character terminal record with one source span on PDF page 554. All 6,603 nonterminal passage records match the quarantined candidate exactly. All 9,826 note IDs and text match; regenerated source-order fields differ while page and bounding-box evidence matches. All 6,604 passage texts reconcile exactly to their Datalab source blocks, every passage and note span maps to a source block, and all 10,280 unique PDF span regions contain nonempty overlay text.
 
-The result is private, inactive, unaccepted, and `review_required`. Writing and verifying it did not change control state.
+The base result remains a private, inactive, unaccepted repair artifact. Writing and verifying it did not change control state.
 
-## Why the Candidate Still Requires Review
+## Review and Acceptance Result
 
 The prior repair proved many internal PDF-to-parser reconciliation properties, but the missing terminal boundary shows why those properties did not establish whole-work fidelity. On 2026-08-25 the maintainer confirmed the defect, withdrew editorial authority from the affected Book of Mormon identities, and authorized repair and private rebuild.
 
 `official-reference-v2` remains grammar-capability resolved, including typed whole-unit targets and approved digest-bound reference repairs. Rebinding those three reviewed repairs to the new base after note-ID and note-text-hash verification produced successor SHA-256 `35ed3713ee222c2778d58f3962c016ea2fef888bc0f8be4edb2b6aacf5641a4d`: 9,827 notes, 7,213 parsed reference-bearing notes, 2,614 no-reference notes, zero blockers, and 13,136 edges. Strict loading passed.
 
-Acceptance still requires a truthful acquisition record bound to the restored raw inputs, a separate encrypted off-workstation backup with a verified restore path, and maintainer approval of the exact successor digest. Import and activation are separate later actions.
+On 2026-08-25 the maintainer accepted that exact successor without manual content review after the exhaustive automated reconciliation above. Import created inactive corpus `corpus-eb076af14ec6fff84eb40cf0`; post-import artifact, SQLite, foreign-key, record-count, and terminal-record verification passed. The active pointer remains on the quarantined old corpus pending a separate activation decision.
+
+The truthful acquisition record, exact-digest approval, import, and post-import verification are complete. The maintainer explicitly waived off-workstation backup only as a pre-acceptance gate for this single-maintainer local-only beta and accepted rebuild risk. Activation remains the next separate action; backup and recovery still gate remote delivery or irreplaceable member data.
 
 ## Reproduction
 

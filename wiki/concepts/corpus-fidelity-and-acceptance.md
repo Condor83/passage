@@ -58,7 +58,9 @@ The current checkout implements a digest-bound terminal-page cutoff that must ma
 
 The maintainer restored a matching private PDF and Datalab JSON pair, but no surviving report proves historical raw-byte identity and the original Datalab profile remains unavailable. Passage created a newly identified reconstructed profile and private base candidate SHA-256 `f1d0abb72460121179ec944ee43ff3b569a2321265358dd66f20e39ee8b6aa66`. The rebuilt terminal record contains 278 characters, one span, and PDF page 554; all nonterminal passage records and all note identities and text match the quarantined lineage. Whole-corpus source-block and nonempty-overlay checks passed.
 
-The rederived typed-edge successor is SHA-256 `35ed3713ee222c2778d58f3962c016ea2fef888bc0f8be4edb2b6aacf5641a4d`, with 9,827 notes, zero blockers, and 13,136 edges. It remains inactive, unaccepted, and `review_required`. Acceptance is blocked until a truthful acquisition record binds the restored raw identities, a separate encrypted off-workstation backup and restore path are verified, and the maintainer approves this exact successor digest. Import verification and activation remain separate. The New Testament candidate remains inactive, unaccepted, and `review_required`.
+The rederived typed-edge successor is SHA-256 `35ed3713ee222c2778d58f3962c016ea2fef888bc0f8be4edb2b6aacf5641a4d`, with 9,827 notes, zero blockers, and 13,136 edges. A private acquisition record binds the actual Version 1/24, printed 02/2026 publication identity, restored raw-input digests, reconstructed profile, base, edge profile, successor, and normalized identities. On 2026-08-25 the maintainer accepted the exact successor without manual content review because exhaustive automated reconciliation passed, and explicitly waived off-workstation backup as a pre-acceptance gate for this single-maintainer local-only beta while accepting rebuild risk.
+
+Import created accepted inactive corpus `corpus-eb076af14ec6fff84eb40cf0` with artifact SHA-256 `eb076af14ec6fff84eb40cf02e6371dc807512efde0f1ba2f78f5750eb227fb0` and baseline `baseline-27ce2c9404b2a0e0df20859b`. Post-import validation, SQLite integrity, foreign keys, record counts, and the corrected terminal record passed. The active pointer remains the quarantined old corpus. Activation is a separate maintainer decision. The backup waiver does not extend to remote delivery or irreplaceable member data. The New Testament candidate remains inactive, unaccepted, and `review_required`.
 
 ## Related Pages
 
@@ -68,4 +70,4 @@ The rederived typed-edge successor is SHA-256 `35ed3713ee222c2778d58f3962c016ea2
 
 ## Open Questions
 
-- Which encrypted off-workstation backup destination and restore procedure will satisfy the acceptance gate?
+- When should the accepted repaired Book of Mormon corpus be activated for the local beta?
