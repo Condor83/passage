@@ -2,7 +2,7 @@
 title: Content Roadmap
 type: concept
 created: 2026-08-23
-updated: 2026-08-24
+updated: 2026-08-25
 sources:
   - user-confirmed-conversation
   - wiki/decisions.md
@@ -24,7 +24,7 @@ The Book of Mormon remains the first validation scope. This sequence does not re
 
 The exact Book of Mormon candidate has now passed its digest, source-record, acceptance, and activation gates for local use. The local beta is complete only after local HTTP/MCP evidence flows resolve their citations and the locked broad-question evaluation has zero unresolved citation or evidence-class failures.
 
-The current Book of Mormon and New Testament repair candidate snapshots are version-controlled under `candidates/`. The Book of Mormon snapshot is accepted and active in the maintainer's private local SQLite runtime. The New Testament snapshot remains inactive, unaccepted, and `review_required`. Their official footnote text has not been converted into typed target edges.
+The current Book of Mormon and New Testament repair candidate snapshots are version-controlled under `candidates/`. The original edge-free Book of Mormon snapshot is accepted and active in the maintainer's private local SQLite runtime. Its official footnotes have been converted into a complete private typed-edge successor, but that exact successor remains inactive, unaccepted, and `review_required` pending a separate digest decision. The New Testament snapshot also remains inactive, unaccepted, and `review_required`; its official footnotes have not been converted into typed target edges.
 
 ## Shared Requirements
 

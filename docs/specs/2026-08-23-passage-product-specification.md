@@ -13,6 +13,8 @@ This is the approved product specification. Approval authorizes the documentatio
 
 **2026-08-24 sequencing amendment:** Passage must complete a single-maintainer local beta on the implemented immutable SQLite, loopback HTTP, and stdio MCP stack before the remaining PostgreSQL/Auth foundation or hosted-delivery critical path resumes. Completed Phase 1 U1-U3 groundwork remains recorded, but Docker and Supabase are not local-beta runtime requirements.
 
+**2026-08-25 local-beta status:** The Book of Mormon `official-reference-v2` grammar and exact repair profile now produce a complete typed-edge successor. That successor remains inactive, unaccepted, and `review_required`; a separate exact-digest approval still gates import, verification, acceptance, and activation.
+
 - **Confirmed** means the maintainer approved the direction during the product interview.
 - **Recommended** means an initial threshold or operating choice that the product must test before treating it as permanent.
 - **Hypothesis** means the product must test the claim before it relies on it.
@@ -412,7 +414,7 @@ Phase 1 U1-U3 are completed source-independent groundwork. U4-U7 and further Doc
 - Run the first automatic enrichment and independent verification pipeline within an approved cost, candidate, time, and stopping budget.
 - Keep every derived edge experimental while the locked H2 and H3 evaluations, including the human edge sample, run.
 - Connect Claude through the evidence-only remote MCP surface and complete the broad-question evidence journey. Do not expose note tools.
-- Keep both current repair candidates inactive until their separate acceptance gaps are resolved. Version control does not constitute acceptance.
+- Keep the New Testament candidate inactive until its separate acceptance gaps are resolved. Keep the complete Book of Mormon typed-edge successor inactive until its exact digest is separately approved, imported, verified, accepted, and activated. Version control and successful derivation do not constitute acceptance.
 
 ### Phase 3: Complete-canon member release
 
@@ -553,7 +555,7 @@ The pilot can use a simple owner-maintained result log. Passage does not need an
 
 ### Open technical questions
 
-- O1. What exact grammar and acceptance evidence will convert official footnote text into typed internal and external reference edges? Phase 0 resolved the synthetic contract. The local beta must validate it against the accepted Book of Mormon source before official traversal is beta-eligible.
+- O1. Resolved for the Book of Mormon local beta: `official-reference-v2` and the exact digest-bound repair profile convert every reference-bearing note into typed internal or external targets with zero blockers. Official traversal becomes active beta behavior only after the maintainer separately approves the exact successor digest and Passage imports, verifies, accepts, and activates it.
 - O2. What exact PDFs, editions, digests, and acquisition records will define the accepted English standard works?
 - O3. What stable talk-span citation unit will General Conference use: paragraph, section, PDF page, or a combination?
 - O4. Which embedding model and chunk identities will generate enrichment candidates?
@@ -598,4 +600,4 @@ Approval requires these repository documentation actions:
 
 ### Approval state
 
-The maintainer approved this specification on 2026-08-23, revised the Supabase Auth risk decision on 2026-08-24, and added the local-beta-first sequencing amendment on 2026-08-24. O1 blocks real official-edge acceptance. O2 blocks corpus acceptance. The local-beta exit gate blocks resuming U4-U7 and the hosted critical path. O5 blocks the first enrichment run. O11, O12, and the bounded R63a regression block remote alpha. O10 blocks any public ChatGPT submission. Other open technical questions belong to later architecture and implementation planning.
+The maintainer approved this specification on 2026-08-23, revised the Supabase Auth risk decision on 2026-08-24, and added the local-beta-first sequencing amendment on 2026-08-24. O1 is resolved for derivation against the current Book of Mormon source; a separate exact-successor-digest decision blocks import, acceptance, and activation of official edges. O2 still blocks acceptance of the New Testament and later standard works. The local-beta exit gate blocks resuming U4-U7 and the hosted critical path. O5 blocks the first enrichment run. O11, O12, and the bounded R63a regression block remote alpha. O10 blocks any public ChatGPT submission. Other open technical questions belong to later architecture and implementation planning.

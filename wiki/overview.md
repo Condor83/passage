@@ -2,7 +2,7 @@
 title: Project Overview
 type: overview
 created: 2026-08-23
-updated: 2026-08-24
+updated: 2026-08-25
 sources:
   - docs/plans/2026-08-16-001-feat-scripture-chat-plan.md
   - docs/specs/2026-08-23-passage-product-specification.md
@@ -35,7 +35,7 @@ The product returns inspectable evidence. It does not generate authoritative doc
 - Phase 1 U1 adds a source-independent local Supabase harness on native Docker Engine. A pinned CLI invocation, dedicated Docker bridge, and environment tests fail closed unless every published API, database, and mail port binds to `127.0.0.1`; the fixture suppresses secret-bearing output and removes its synthetic database volume after each session.
 - Phase 1 U2 extracts backend-neutral control, snapshot-session, repository-read, lexical-intent, and cleanup contracts. `EvidenceService` no longer imports SQLite types or compiles FTS5 syntax; the SQLite adapter owns native query compilation and domain-error translation while HTTP, MCP, CLI, evaluation, and the Phase 0 probe retain their existing behavior and SQLite composition. No PostgreSQL repository or runtime cutover exists yet.
 - Phase 1 U3 adds the imperative local PostgreSQL foundation in a non-exposed `passage` schema: versioned evidence and complete retrieval-snapshot tables, lifecycle and immutability guards, stored full-text search with a GIN index, separate non-bypass request and maintenance logins, forced RLS, explicit grants, and bounded synchronous Psycopg pools. Synthetic schema, role, policy, context-cleanup, and anon/authenticated/service-role Data API probes pass. No PostgreSQL importer, repository, Auth verifier, runtime selection, hosted service, or cutover exists yet.
-- Phase 1 U1-U3 remain completed source-independent groundwork, but U4-U7 are paused. The Book of Mormon acceptance and activation gate is now closed. The next work is to convert and validate typed official references, exercise the real local HTTP/MCP study flow, and run the full local product-loop evaluation.
+- Phase 1 U1-U3 remain completed source-independent groundwork, but U4-U7 are paused. The original edge-free Book of Mormon acceptance and activation gate is complete. The next gate is a separate exact-digest decision on the complete typed-reference successor; after that successor is imported, verified, accepted, and activated, the remaining local-beta work is to exercise the real HTTP/MCP study flow and run the full local product-loop evaluation.
 - The live [Supabase-to-Claude OAuth Compatibility Proof](../docs/plans/2026-08-23-supabase-claude-oauth-compatibility-proof.md) failed P6. Supabase issued a Passage-usable token after a client requested a deliberately wrong resource. Discovery, dynamic registration, exact callback consent, asymmetric validation, refresh, minimal MCP access, and current-member enforcement otherwise worked.
 - On 2026-08-24, the maintainer retained Supabase Auth for the invite-only hobby service and accepted the P6 behavior as a documented compatibility limitation. This unblocks local PostgreSQL and Auth-foundation planning and implementation. It does not authorize hosted deployment or claim strict RFC 8707 compliance.
 
