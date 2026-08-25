@@ -2,7 +2,7 @@
 title: Official Reference Grammar
 type: concept
 created: 2026-08-23
-updated: 2026-08-24
+updated: 2026-08-25
 sources:
   - docs/specs/2026-08-23-passage-product-specification.md
   - src/passage/ingest/apparatus.py
@@ -39,9 +39,9 @@ Any failure returns zero targets. A valid prefix never creates an edge when the 
 
 Each accepted edge records a discriminated internal or external target, grammar version, origin reference and anchor, source attribution, and ordered source spans. An EPUB edge span locates the unique reference-element start tag. Reconciliation checks its exact origin, anchor, target, and source-attribution attributes. Ambiguous or missing reference elements fail closed. Multiple targets reuse the exact originating span evidence and receive separate stable edge identities. Corpus schema v2 stores and exactly reconciles these fields. Traversal and combined evidence search return the official edge records used by their paths through the shared HTTP and MCP contract.
 
-## Accepted PDF Grammar
+## Book of Mormon PDF Grammar Capability
 
-`official-reference-v2` is the deterministic grammar for the maintainer-approved Book of Mormon PDF candidate. It recognizes the printed Church reference notation present in the repaired footnotes: canonical book abbreviations, semicolon-separated references with book carry-forward, comma-separated verse lists, verse ranges, whole chapters, chapter ranges, whole Doctrine and Covenants sections, selected parenthetical context, cross-work targets, and non-reference topic or explanatory suffixes. Internal Book of Mormon targets must resolve against the complete structure manifest. Bible, Doctrine and Covenants, and Pearl of Great Price targets remain explicitly typed external references. Every edge retains the originating footnote span and is attributed as an official footnote.
+`official-reference-v2` is the deterministic grammar developed for the Book of Mormon PDF notation. It recognizes canonical book abbreviations, semicolon-separated references with book carry-forward, comma-separated verse lists, verse ranges, whole chapters, chapter ranges, whole Doctrine and Covenants sections, selected parenthetical context, cross-work targets, and non-reference topic or explanatory suffixes. Internal Book of Mormon targets must resolve against the complete structure manifest. Bible, Doctrine and Covenants, and Pearl of Great Price targets remain explicitly typed external references. Every edge retains the originating footnote span and is attributed as an official footnote. This grammar capability remains valid even though the prior exact corpus used to prove it is now quarantined.
 
 Whole chapters, chapter ranges, and sections use distinct `internal_chapter` or `external_chapter` targets with an explicit `chapter` or `section` unit. Passage preserves one edge at the source's printed granularity and does not expand the target into one edge per verse. The originating edge remains visible during traversal; internal whole-unit targets do not fabricate passage-level traversal nodes.
 
@@ -49,24 +49,24 @@ The parser also classifies footnotes with no reference as `no_reference` / `offi
 
 The `corpus derive-official-edges` command binds derivation to an explicitly approved source-candidate SHA. Optional source-specific repairs come only from a private correction profile that binds the same SHA and the exact original text digest for each repaired note. It always writes a private, text-free report and edge preview. It writes an inactive, unaccepted, `review_required` successor candidate only when every reference-bearing note parses successfully. Derivation does not import or activate a corpus.
 
-## Exact Book of Mormon Result
+## Quarantined Exact Book of Mormon Run
 
-The maintainer chose typed whole-unit targets and approved the three remaining exact repairs for source candidate SHA-256 `1dfd7b927e9fe5f4987a5bb5a3c8d1a0398eec6004cd01f45e86d50096a1e6b4`: `Po.` to `Ps.`, explicit 1 Nephi/JST targets for the explanatory note, and a split of the merged k/l anchor. The private repair profile has SHA-256 `cb2b49d84c68b9f1ee8a1ffe92224c631c92277bc0e4f76c8c12c31169d03e7b`.
+The maintainer chose typed whole-unit targets and approved the three remaining exact reference repairs for source candidate SHA-256 `1dfd7b927e9fe5f4987a5bb5a3c8d1a0398eec6004cd01f45e86d50096a1e6b4`. Those grammar and reference-repair choices remain in force.
 
-The complete v2 derivation classified the repaired 9,827 official footnotes:
+The prior v2 derivation classified 9,827 official footnotes:
 
 - 7,213 reference-bearing notes parsed successfully;
 - 2,614 notes correctly contained no reference;
 - 13,136 provenance-backed edges were derived: 7,972 internal and 5,164 typed external; and
 - zero notes failed closed.
 
-Passage emitted inactive, unaccepted, `review_required` successor candidate SHA-256 `5207e9c1c003f12798053c667a997e8e0697495f8f4a9cafb2e112ef3aee7fa5`. Reloading it through the strict candidate loader reconciled its manifest, canonical JSONL bytes, 9,827 notes, 13,136 edges, structure, spans, and normalized digest; recomputing that digest after reload returns the same value. The existing active edge-free corpus is unchanged.
+Those parser counts resolve O1 as a grammar-capability question, but they no longer prove exact-corpus correctness. The base candidate's final canonical record contained 1,027,420 characters, 3,486 spans, and pages 554-795 because a missing terminal boundary admitted post-canon material. Base SHA-256 `1dfd7b927e9fe5f4987a5bb5a3c8d1a0398eec6004cd01f45e86d50096a1e6b4`, technically selected corpus `corpus-7ba9051125f848e1aed71c46`, and successor SHA-256 `5207e9c1c003f12798053c667a997e8e0697495f8f4a9cafb2e112ef3aee7fa5` are quarantined from evidence and evaluation. The successor must not be imported or accepted.
 
 ## Closed and Open Boundaries
 
 The current EPUB synthetic profile supplies already normalized `data-target` values. Phase 0 does not parse Datalab repair-note prose, private footnote text, or real source abbreviations. Unsupported source forms fail closed.
 
-The v2 grammar and approved repairs now produce a complete exact successor. Official traversal is not yet the active beta behavior because derivation authority is separate from acceptance and activation. The maintainer must review and approve the exact successor digest before Passage imports, verifies, and activates it in separate operations.
+The v2 grammar and approved reference repairs remain implemented capability, but the exact corpus proof must be re-established. The next gate is to restore the exact approved PDF, Marker JSON, and original Datalab profile, which are absent on this host; rebuild the source candidate privately with the digest-bound terminal cutoff and validation backstops; rebind or rederive the official edges; verify; and ask the maintainer to approve the new exact digest. Acceptance and activation remain separate operations.
 
 ## Related Pages
 

@@ -2,7 +2,7 @@
 title: Decision Log
 type: overview
 created: 2026-08-23
-updated: 2026-08-24
+updated: 2026-08-25
 sources:
   - user-confirmed-conversation
   - docs/specs/2026-08-23-passage-product-specification.md
@@ -185,10 +185,21 @@ This is the authoritative record of confirmed Passage project decisions. When an
 - **Authority boundary:** This decision authorizes the exact repairs and successor derivation only. The successor remains `review_required`; import, acceptance, and activation require a separate maintainer decision.
 - **Pages updated:** [Project Overview](overview.md), [Official Reference Grammar](concepts/official-reference-grammar.md), [Corpus Fidelity and Acceptance](concepts/corpus-fidelity-and-acceptance.md), and [Scripture Corpus Candidates](../candidates/README.md).
 
+### 2026-08-25 - Corrupted Book of Mormon corpus authority is withdrawn and repair is authorized
+
+- **Decision:** Withdraw editorial authority from Book of Mormon base candidate SHA-256 `1dfd7b927e9fe5f4987a5bb5a3c8d1a0398eec6004cd01f45e86d50096a1e6b4`, local corpus `corpus-7ba9051125f848e1aed71c46`, and typed successor SHA-256 `5207e9c1c003f12798053c667a997e8e0697495f8f4a9cafb2e112ef3aee7fa5`. Quarantine all three identities from evidence and evaluation. Do not import or accept the successor.
+- **Evidence:** The final canonical record contained 1,027,420 characters, 3,486 source spans, and provenance across PDF pages 554-795 because the parser had no terminal source boundary and appended post-canon material. This text-free diagnosis is sufficient to invalidate the earlier corpus-fidelity conclusion.
+- **Operational boundary:** The private control pointer may still technically select `corpus-7ba9051125f848e1aed71c46`. That pointer records local operational state only; it no longer conveys acceptance or editorial authority and must not be used for evidence or evaluation.
+- **Repair authority:** The maintainer confirmed the defect and authorized the repair and private rebuild workflow. The current checkout now implements a digest-bound terminal-page cutoff, Datalab-writer validation, scripture backstops of 10,000 characters, 64 source spans, and an eight-page PDF provenance window, plus candidate-import and published-artifact rejection. A digest-consistent legacy artifact already recorded as accepted fails closed before repository access. The source-independent gate passes 321 tests plus formatting, lint, and type checking. These safeguards do not establish that a repaired artifact exists.
+- **Next gate:** Restore the exact approved PDF, Marker JSON, and original Datalab profile, which are absent on this host; rebuild under the private root; rebind or rederive official-reference edges; verify the result; and present the new exact candidate digest for maintainer approval. Acceptance of that new digest and activation remain separate decisions.
+- **Preserved direction:** `official-reference-v2` remains grammar-capability resolved, including typed whole-unit targets and the three approved reference repairs. Its prior exact-corpus result is quarantined and must be rederived. New Testament, local-beta-first sequencing, PostgreSQL, Supabase Auth, hosted-delivery, and remote-authorization status do not change.
+- **Supersedes:** The editorial acceptance and evidence-use effects of [Exact Book of Mormon candidate approved and activated locally](#2026-08-24---exact-book-of-mormon-candidate-approved-and-activated-locally), while preserving its historical account of what the control store did. It also supersedes the prior successor's eligibility for exact-digest acceptance in [Whole scripture units remain typed and three exact official-reference repairs are approved](#2026-08-24---whole-scripture-units-remain-typed-and-three-exact-official-reference-repairs-are-approved), without reversing the grammar or approved reference-repair choices.
+- **Pages updated:** [Project Overview](overview.md), [Corpus Fidelity and Acceptance](concepts/corpus-fidelity-and-acceptance.md), [Official Reference Grammar](concepts/official-reference-grammar.md), [Content Roadmap](concepts/content-roadmap.md), [Datalab PDF Apparatus Repair](analyses/datalab-pdf-apparatus-repair.md), [Wiki Index](index.md), [Scripture Corpus Candidates](../candidates/README.md), and the [Passage Product Specification](../docs/specs/2026-08-23-passage-product-specification.md).
+
 ## Open Questions
 
 - Vector storage and semantic retrieval are not confirmed as default behavior. They require a measured retrieval evaluation.
-- The exact official-edge successor still requires its separate digest review, acceptance, import, verification, and activation decision.
+- The repaired Book of Mormon requires restoration of the exact approved private inputs, a private rebuild and official-edge rederivation, verification, and a new exact-digest approval decision; activation remains separate.
 - The generator, verifier, embedding model, prompts, cost ceiling, and edge-publication thresholds are not selected.
 - The hobby application host, transactional email provider, backup destination, and retention schedule are not selected.
 - The exact accepted editions and digests for the New Testament and later standard works remain unapproved.

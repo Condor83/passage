@@ -2,7 +2,7 @@
 title: Wiki Operations Log
 type: overview
 created: 2026-08-23
-updated: 2026-08-24
+updated: 2026-08-25
 sources: []
 tags: [log, operations, append-only]
 ---
@@ -270,3 +270,19 @@ The final 171-test unit and focused integration gate passed. Thirty-one MCP test
 ## [2026-08-25] sync | Typed-reference successor documentation status aligned
 
 Rechecked the pushed implementation, living wiki, candidate documentation, plans, and approved product specification. Corrected stale forward-looking language that still described Book of Mormon typed-reference conversion as pending or treated both candidate families as edge-free. The current pages now agree that the original edge-free Book of Mormon corpus remains active, the complete typed-edge successor remains inactive and `review_required` pending a separate exact-digest approval, the New Testament remains unaccepted without typed edges, and Docker/Supabase work stays paused until the local-beta exit gate passes.
+
+## [2026-08-25] diagnose | Book of Mormon terminal-boundary corruption confirmed and quarantined
+
+A text-free audit found that the final canonical Book of Mormon record contained 1,027,420 characters, 3,486 source spans, and PDF provenance across pages 554-795 because the parser had no terminal source boundary and appended post-canon material. The maintainer confirmed the defect, withdrew editorial authority from base candidate SHA-256 `1dfd7b927e9fe5f4987a5bb5a3c8d1a0398eec6004cd01f45e86d50096a1e6b4`, technically selected local corpus `corpus-7ba9051125f848e1aed71c46`, and typed successor SHA-256 `5207e9c1c003f12798053c667a997e8e0697495f8f4a9cafb2e112ef3aee7fa5`, and quarantined all three from evidence and evaluation. The control pointer may still technically select the old corpus, but it no longer conveys editorial authority. The maintainer authorized repair and private rebuild; acceptance of a new exact digest and activation remain separate decisions. New Testament, platform, and remote-delivery status did not change.
+
+## [2026-08-25] implement | Terminal fidelity safeguards added to current checkout
+
+The current checkout now supports a digest-bound terminal-page cutoff tied to the final canonical reference, validates normalized output before the Datalab writer creates repair files, and rejects scripture passages over 10,000 characters, 64 source spans, or an eight-page PDF provenance window. Focused regressions cover legitimate final-verse continuation, later-page exclusion, fail-closed boundary mismatches, writer rejection, and digest-consistent import rejection without control-state change. This records implemented safeguards only. The exact approved PDF, Marker JSON, and original Datalab profile are absent on this host, so no repaired private candidate, rederived edge set, full gate, new digest, acceptance, or activation is claimed.
+
+## [2026-08-25] review | Existing published corpus now fails closed at repository access
+
+Independent review found that import and writer checks alone did not enforce the quarantine against an already accepted SQLite artifact. Published-artifact validation now parses every persisted passage and applies the same whitespace, character, content-hash, source-span, and PDF-page-window rules before repository access. A regression constructs a digest-consistent oversized legacy artifact, records and activates it in synthetic control state, and confirms that repository opening raises `passage_text_budget_exceeded`. A follow-up review fixed SQLite read-only URI construction so valid private-root names containing URI delimiters remain usable. No real private control state or artifact was changed.
+
+## [2026-08-25] lint | Terminal-fidelity repair documentation and source-independent gate verified
+
+Verified all 13 wiki pages for required frontmatter, local-link integrity, and index coverage with zero findings. Reviewed current decision, overview, specification, candidate, fidelity, grammar, roadmap, and analysis claims for consistent quarantine and rebuild gates. Ruff formatting and lint, mypy across `src`, and the complete 321-test suite pass; two existing dependency warnings remain. No raw source text, source path, correction profile, acquisition detail, or credential entered Git.

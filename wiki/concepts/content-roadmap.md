@@ -22,9 +22,9 @@ Passage will grow through controlled content layers:
 
 The Book of Mormon remains the first validation scope. This sequence does not reduce the fidelity requirements for later sources.
 
-The exact Book of Mormon candidate has now passed its digest, source-record, acceptance, and activation gates for local use. The local beta is complete only after local HTTP/MCP evidence flows resolve their citations and the locked broad-question evaluation has zero unresolved citation or evidence-class failures.
+The prior Book of Mormon digest, source-record, acceptance, and activation conclusion was withdrawn after a terminal-boundary defect was confirmed. The local beta cannot resume evidence flows or the locked broad-question evaluation until a repaired candidate passes a new exact-digest decision and separate activation.
 
-The current Book of Mormon and New Testament repair candidate snapshots are version-controlled under `candidates/`. The original edge-free Book of Mormon snapshot is accepted and active in the maintainer's private local SQLite runtime. Its official footnotes have been converted into a complete private typed-edge successor, but that exact successor remains inactive, unaccepted, and `review_required` pending a separate digest decision. The New Testament snapshot also remains inactive, unaccepted, and `review_required`; its official footnotes have not been converted into typed target edges.
+The current Book of Mormon and New Testament repair candidate snapshots are version-controlled under `candidates/`. Book of Mormon base SHA-256 `1dfd7b927e9fe5f4987a5bb5a3c8d1a0398eec6004cd01f45e86d50096a1e6b4`, technically selected local corpus `corpus-7ba9051125f848e1aed71c46`, and typed-edge successor SHA-256 `5207e9c1c003f12798053c667a997e8e0697495f8f4a9cafb2e112ef3aee7fa5` are quarantined from evidence and evaluation. The next gate is to restore the absent exact private inputs and original Datalab profile, rebuild privately, rederive official edges, verify, and request approval of a new exact digest; activation remains separate. The New Testament snapshot remains inactive, unaccepted, and `review_required`, and its official footnotes have not been converted into typed target edges.
 
 ## Shared Requirements
 

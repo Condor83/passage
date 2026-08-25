@@ -13,7 +13,7 @@ This is the approved product specification. Approval authorizes the documentatio
 
 **2026-08-24 sequencing amendment:** Passage must complete a single-maintainer local beta on the implemented immutable SQLite, loopback HTTP, and stdio MCP stack before the remaining PostgreSQL/Auth foundation or hosted-delivery critical path resumes. Completed Phase 1 U1-U3 groundwork remains recorded, but Docker and Supabase are not local-beta runtime requirements.
 
-**2026-08-25 local-beta status:** The Book of Mormon `official-reference-v2` grammar and exact repair profile now produce a complete typed-edge successor. That successor remains inactive, unaccepted, and `review_required`; a separate exact-digest approval still gates import, verification, acceptance, and activation.
+**2026-08-25 local-beta status:** A terminal-boundary audit invalidated the prior Book of Mormon base candidate, technically selected SQLite corpus, and typed-edge successor. All three are quarantined from evidence and evaluation. The current checkout implements terminal and passage-size backstops, but no repaired artifact or completed gate is claimed. The next gate is to restore the exact approved private inputs, rebuild privately, rederive official edges, verify, and request approval of a new exact digest; activation remains separate.
 
 - **Confirmed** means the maintainer approved the direction during the product interview.
 - **Recommended** means an initial threshold or operating choice that the product must test before treating it as permanent.
@@ -180,7 +180,7 @@ General Conference is the first content family after scripture. Church manuals, 
 - R30. A failed replacement must leave the prior active version unchanged.
 - R30a. Conference-sized units are staged and validated ingestion batches. Acceptance composes them into one complete immutable corpus version that contains the full accumulated scripture and conference scope.
 
-The version-controlled repaired Book of Mormon candidate snapshot contains 6,604 passages and 9,826 footnote anchors. On 2026-08-24 the maintainer approved its exact digest and Church-public-PDF source record for the local beta; its verified immutable SQLite artifact is accepted and active locally. The maintainer later chose typed whole-chapter and whole-section targets and approved three exact source repairs. `official-reference-v2` then produced a complete private successor with 9,827 notes and 13,136 typed, provenance-backed edges. The successor remains inactive, unaccepted, and `review_required`; the active corpus remains the earlier edge-free artifact. The separate New Testament candidate snapshot contains 27 books, 260 chapters, 7,957 passages, and 10,091 footnote anchors and remains inactive, unaccepted, and `review_required` without typed edges.
+The version-controlled Book of Mormon snapshot contains all 6,604 canonical identities and 9,826 footnote anchors, but a 2026-08-25 audit found that its final canonical record contained 1,027,420 characters, 3,486 source spans, and pages 554-795 because the parser lacked a terminal source boundary. The maintainer withdrew editorial authority from base SHA-256 `1dfd7b927e9fe5f4987a5bb5a3c8d1a0398eec6004cd01f45e86d50096a1e6b4`, technically selected corpus `corpus-7ba9051125f848e1aed71c46`, and typed successor SHA-256 `5207e9c1c003f12798053c667a997e8e0697495f8f4a9cafb2e112ef3aee7fa5`. The control pointer may still technically select the old corpus, but editorial authority is withdrawn and all three identities are quarantined from evidence and evaluation. `official-reference-v2` remains grammar-capability resolved, including typed whole-unit targets, but its prior 9,827-note and 13,136-edge exact run must be rederived after a private rebuild. The separate New Testament candidate snapshot contains 27 books, 260 chapters, 7,957 passages, and 10,091 footnote anchors and remains inactive, unaccepted, and `review_required` without typed edges.
 
 ## 6. Retrieval and Concept-Link Architecture
 
@@ -388,7 +388,8 @@ Note tools do not enter the Phase 2 alpha surface. They enter with the Phase 3 m
 ### Local beta gate: prove the product before the platform
 
 - Use the implemented immutable SQLite, loopback HTTP, and stdio MCP runtime. Docker, Supabase, PostgreSQL runtime selection, authentication, and remote delivery are outside the local-beta critical path.
-- Accept and activate one exact Book of Mormon source only through the existing digest, acquisition-record, fidelity, and maintainer-approval gates.
+- Do not use the quarantined Book of Mormon base, technically selected corpus, or typed successor for evidence or evaluation. Restore the exact approved PDF, Marker JSON, and original Datalab profile outside Git; rebuild privately with the digest-bound terminal cutoff and validation backstops; rebind or rederive official edges; verify; and present the new exact digest for maintainer approval.
+- Accept one exact rebuilt Book of Mormon source only through the digest, acquisition-record, fidelity, and maintainer-approval gates. Activation is a separate later action.
 - Parse and validate typed official-reference edges against that exact accepted source. Version the synthetic grammar if the source requires a different fail-closed contract.
 - Run the complete locked broad-question product-loop evaluation with every lane present in the accepted corpus. Citation-resolution and evidence-class errors must be zero.
 - Exercise the real local workflow repeatedly through HTTP and MCP, record material usability gaps, and confirm that the evidence trail is useful in actual maintainer study.
@@ -414,7 +415,7 @@ Phase 1 U1-U3 are completed source-independent groundwork. U4-U7 and further Doc
 - Run the first automatic enrichment and independent verification pipeline within an approved cost, candidate, time, and stopping budget.
 - Keep every derived edge experimental while the locked H2 and H3 evaluations, including the human edge sample, run.
 - Connect Claude through the evidence-only remote MCP surface and complete the broad-question evidence journey. Do not expose note tools.
-- Keep the New Testament candidate inactive until its separate acceptance gaps are resolved. Keep the complete Book of Mormon typed-edge successor inactive until its exact digest is separately approved, imported, verified, accepted, and activated. Version control and successful derivation do not constitute acceptance.
+- Keep the New Testament candidate inactive until its separate acceptance gaps are resolved. Do not import or accept quarantined Book of Mormon successor SHA-256 `5207e9c1c003f12798053c667a997e8e0697495f8f4a9cafb2e112ef3aee7fa5`; a privately rebuilt and rederived replacement requires verification, new exact-digest approval, acceptance, and separate activation. Version control and successful derivation do not constitute acceptance.
 
 ### Phase 3: Complete-canon member release
 
@@ -451,7 +452,7 @@ Phase 1 U1-U3 are completed source-independent groundwork. U4-U7 and further Doc
 
 ### Corpus gates
 
-- AC1. Every expected passage in the selected accepted source set exists exactly once with nonempty text, stable order, source spans, digest, edition, and corpus identity.
+- AC1. Every expected passage in the selected accepted source set exists exactly once with nonempty text, stable order, source spans, digest, edition, and corpus identity. Source-specific terminal boundaries must be explicit and digest-bound when post-canon pages follow the canonical work; scripture passage text over 10,000 characters, more than 64 source spans, or a PDF provenance window over eight pages fails validation.
 - AC2. Every official reference resolves to an in-corpus target or a typed external target. No official link is fabricated from model output.
 - AC3. A failed staged build or activation leaves the prior active corpus, graph publication, and retrieval snapshot unchanged.
 - AC4. Every citation returned in contract, evaluation, and pilot tests resolves to the pinned accepted record.
@@ -504,7 +505,7 @@ The pilot can use a simple owner-maintained result log. Passage does not need an
 | Risk | Mitigation |
 |---|---|
 | Church content terms may not permit remote delivery | Record the unresolved risk, keep access invite-only and noncommercial, bound outputs, avoid bulk export, preserve attribution, and maintain a takedown and service-disable path. |
-| PDF extraction can preserve structural errors | Require exact source digest approval, structure manifests, source-span reconciliation, typed findings, and whole-version acceptance. |
+| PDF extraction can preserve structural errors or append post-canon pages to the final record | Require exact source digest approval, structure manifests, digest-bound terminal boundaries, source-span reconciliation, passage character/span/page-window backstops, writer validation, typed findings, and whole-version acceptance. |
 | Automatic concept edges can encode weak interpretations | Keep them derived, require cited evidence, use generator and blind verifier passes, publish through a versioned policy, and preserve an experimental tier. |
 | The derived graph does not improve research | Keep it experimental. Release only if the lexical and official-reference baseline passes the end-to-end survey gate. |
 | LLM evaluators can agree with their own biases | Separate generator and judge roles, blind the judge, bind model identities, compare models when needed, and keep human sample and dispute review. |
@@ -555,7 +556,7 @@ The pilot can use a simple owner-maintained result log. Passage does not need an
 
 ### Open technical questions
 
-- O1. Resolved for the Book of Mormon local beta: `official-reference-v2` and the exact digest-bound repair profile convert every reference-bearing note into typed internal or external targets with zero blockers. Official traversal becomes active beta behavior only after the maintainer separately approves the exact successor digest and Passage imports, verifies, accepts, and activates it.
+- O1. Resolved as a grammar capability: `official-reference-v2` converts the observed Book of Mormon reference notation into typed internal or external targets and supports approved digest-bound repairs and typed whole-unit targets. The prior exact-corpus proof is quarantined because its base corpus failed terminal fidelity. Official traversal becomes active beta behavior only after a private rebuild, official-edge rederivation, verification, new exact-digest approval, acceptance, and separate activation.
 - O2. What exact PDFs, editions, digests, and acquisition records will define the accepted English standard works?
 - O3. What stable talk-span citation unit will General Conference use: paragraph, section, PDF page, or a combination?
 - O4. Which embedding model and chunk identities will generate enrichment candidates?
@@ -600,4 +601,4 @@ Approval requires these repository documentation actions:
 
 ### Approval state
 
-The maintainer approved this specification on 2026-08-23, revised the Supabase Auth risk decision on 2026-08-24, and added the local-beta-first sequencing amendment on 2026-08-24. O1 is resolved for derivation against the current Book of Mormon source; a separate exact-successor-digest decision blocks import, acceptance, and activation of official edges. O2 still blocks acceptance of the New Testament and later standard works. The local-beta exit gate blocks resuming U4-U7 and the hosted critical path. O5 blocks the first enrichment run. O11, O12, and the bounded R63a regression block remote alpha. O10 blocks any public ChatGPT submission. Other open technical questions belong to later architecture and implementation planning.
+The maintainer approved this specification on 2026-08-23, revised the Supabase Auth risk decision on 2026-08-24, added the local-beta-first sequencing amendment on 2026-08-24, and on 2026-08-25 withdrew editorial authority from the corrupted Book of Mormon base, technically selected corpus, and typed successor while authorizing repair and private rebuild. O1 remains resolved as grammar capability, but exact-corpus proof is quarantined. Restoration of the exact approved private inputs, private rebuild, official-edge rederivation, verification, and a new exact-digest approval now block Book of Mormon acceptance; activation remains separate. O2 still blocks acceptance of the New Testament and later standard works. The local-beta exit gate blocks resuming U4-U7 and the hosted critical path. O5 blocks the first enrichment run. O11, O12, and the bounded R63a regression block remote alpha. O10 blocks any public ChatGPT submission. Other open technical questions belong to later architecture and implementation planning.

@@ -28,7 +28,7 @@ from passage.ingest.base import (
     ExtractionLimits,
     ExtractionResult,
 )
-from passage.ingest.validation import StructureManifest, ValidationFinding
+from passage.ingest.validation import StructureManifest, ValidationFinding, validate_corpus
 
 DATALAB_PROFILES = {
     "bofm": "church-book-of-mormon-datalab-marker-v1",
@@ -109,6 +109,11 @@ class DatalabApparatusVerseOverride(DatalabCorrectionAnchor):
     source_verse: int = Field(ge=1)
 
 
+class DatalabTerminalBoundary(StrictModel):
+    terminal_reference: str
+    first_excluded_pdf_page: int = Field(ge=1)
+
+
 class DatalabCorrectionProfile(StrictModel):
     """Private source-specific repairs bound to exact PDF and Marker JSON bytes."""
 
@@ -118,6 +123,7 @@ class DatalabCorrectionProfile(StrictModel):
     false_inline_anchors: list[DatalabCorrectionAnchor] = Field(default_factory=list)
     apparatus_verse_overrides: list[DatalabApparatusVerseOverride] = Field(default_factory=list)
     verified_continuation_anchors: list[DatalabCorrectionAnchor] = Field(default_factory=list)
+    terminal_boundary: DatalabTerminalBoundary | None = None
 
     @model_validator(mode="after")
     def reject_duplicate_rules(self) -> DatalabCorrectionProfile:
@@ -165,6 +171,7 @@ def write_datalab_repair(
         repository_root,
     )
     corpus = normalize_extraction(repaired.extraction, structure)
+    validate_corpus(corpus, structure)
     report_payload = {
         "status": "review_required",
         "active": False,
@@ -381,6 +388,10 @@ class _DatalabParser:
         self.raw_apparatus_blocks = 0
         self.raw_apparatus: list[_RawApparatus] = []
         self.source_order = 0
+        self.terminal_boundary = (
+            correction_profile.terminal_boundary if correction_profile is not None else None
+        )
+        self.terminal_boundary_encountered = False
         self.false_inline_anchors = {
             (rule.reference, rule.anchor)
             for rule in (
@@ -410,6 +421,32 @@ class _DatalabParser:
         )
 
     def consume_page(self, page_index: int, page: Any) -> None:
+        if (
+            self.terminal_boundary is not None
+            and page_index + 1 >= self.terminal_boundary.first_excluded_pdf_page
+        ):
+            if not self.terminal_boundary_encountered:
+                current_reference = (
+                    self._reference(self.current_verse)
+                    if self.current_verse is not None
+                    and self.book is not None
+                    and self.chapter is not None
+                    else None
+                )
+                if current_reference != self.terminal_boundary.terminal_reference:
+                    raise ExtractionError(
+                        "Datalab terminal boundary was reached before the declared "
+                        "terminal reference"
+                    )
+                self.terminal_boundary_encountered = True
+                self.findings.append(
+                    ValidationFinding(
+                        code="source_profile_correction",
+                        message=("digest-bound terminal source boundary excluded later PDF pages"),
+                        references=[self.terminal_boundary.terminal_reference],
+                    )
+                )
+            return
         if not isinstance(page, dict) or page.get("block_type") != "Page":
             raise ExtractionError("Datalab page tree is malformed")
         bbox = _bbox(page)
@@ -643,6 +680,8 @@ class _DatalabParser:
         recipe_fingerprint: str,
         correction_profile_digest: str | None,
     ) -> DatalabRepair:
+        if self.terminal_boundary is not None and not self.terminal_boundary_encountered:
+            raise ExtractionError("Datalab terminal boundary was not encountered")
         self._finalize_chapter()
         expected = self.structure.expected_references()
         actual = set(self.verses)
@@ -1447,7 +1486,15 @@ def _validate_correction_profile(
         return None
     if profile.pdf_sha256 != pdf_sha256 or profile.datalab_json_sha256 != datalab_json_sha256:
         raise ExtractionError("Datalab correction profile does not match source identities")
-    expected_references = set(structure.expected_references())
+    expected = structure.expected_references()
+    expected_references = set(expected)
+    if (
+        profile.terminal_boundary is not None
+        and profile.terminal_boundary.terminal_reference != expected[-1]
+    ):
+        raise ExtractionError(
+            "Datalab correction profile terminal reference does not match canonical structure"
+        )
     rules = (
         *profile.false_inline_anchors,
         *profile.apparatus_verse_overrides,

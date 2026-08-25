@@ -17,6 +17,7 @@ from passage.domain.models import (
     EpubSourceSpan,
     InternalChapterReferenceTarget,
     InternalReferenceTarget,
+    Passage,
     PdfSourceSpan,
     StrictModel,
 )
@@ -69,6 +70,11 @@ class CorpusValidationError(ValueError):
     def __init__(self, findings: list[ValidationFinding]) -> None:
         self.findings = findings
         super().__init__(f"corpus validation failed with {len(findings)} finding(s)")
+
+
+MAX_PASSAGE_CHARACTERS = 10_000
+MAX_PASSAGE_SOURCE_SPANS = 64
+MAX_PASSAGE_PDF_PAGE_WINDOW = 8
 
 
 def load_default_structure_manifest() -> StructureManifest:
@@ -124,23 +130,7 @@ def validate_corpus(corpus: NormalizedCorpus, structure: StructureManifest) -> N
                     references=[passage.reference],
                 )
             )
-        expected_hash = hashlib.sha256(passage.text.encode("utf-8")).hexdigest()
-        if passage.content_hash != expected_hash:
-            findings.append(
-                ValidationFinding(
-                    code="content_hash_mismatch",
-                    message="passage content hash does not match its text",
-                    references=[passage.reference],
-                )
-            )
-        if not passage.source_spans:
-            findings.append(
-                ValidationFinding(
-                    code="missing_source_span",
-                    message="passage has no retained source span",
-                    references=[passage.reference],
-                )
-            )
+        findings.extend(passage_integrity_findings(passage))
     actual_set = set(actual)
     for note in corpus.notes:
         if note.origin_reference not in actual_set or not note.source_spans:
@@ -223,6 +213,61 @@ def validate_corpus(corpus: NormalizedCorpus, structure: StructureManifest) -> N
                 )
     if findings:
         raise CorpusValidationError(findings)
+
+
+def passage_integrity_findings(passage: Passage) -> list[ValidationFinding]:
+    findings: list[ValidationFinding] = []
+    expected_hash = hashlib.sha256(passage.text.encode("utf-8")).hexdigest()
+    if not passage.text.strip():
+        findings.append(
+            ValidationFinding(
+                code="whitespace_only_passage",
+                message="passage text contains no non-whitespace characters",
+                references=[passage.reference],
+            )
+        )
+    if len(passage.text) > MAX_PASSAGE_CHARACTERS:
+        findings.append(
+            ValidationFinding(
+                code="passage_text_budget_exceeded",
+                message="passage text exceeds the scripture character budget",
+                references=[passage.reference],
+            )
+        )
+    if passage.content_hash != expected_hash:
+        findings.append(
+            ValidationFinding(
+                code="content_hash_mismatch",
+                message="passage content hash does not match its text",
+                references=[passage.reference],
+            )
+        )
+    if not passage.source_spans:
+        findings.append(
+            ValidationFinding(
+                code="missing_source_span",
+                message="passage has no retained source span",
+                references=[passage.reference],
+            )
+        )
+    if len(passage.source_spans) > MAX_PASSAGE_SOURCE_SPANS:
+        findings.append(
+            ValidationFinding(
+                code="passage_source_span_budget_exceeded",
+                message="passage exceeds the scripture source-span budget",
+                references=[passage.reference],
+            )
+        )
+    pdf_pages = [span.page for span in passage.source_spans if isinstance(span, PdfSourceSpan)]
+    if pdf_pages and max(pdf_pages) - min(pdf_pages) + 1 > MAX_PASSAGE_PDF_PAGE_WINDOW:
+        findings.append(
+            ValidationFinding(
+                code="passage_pdf_page_window_exceeded",
+                message="passage PDF provenance exceeds the scripture page window",
+                references=[passage.reference],
+            )
+        )
+    return findings
 
 
 def reconcile_source_spans(extraction: ExtractionResult) -> None:

@@ -2,14 +2,14 @@
 title: Wiki Index
 type: overview
 created: 2026-08-23
-updated: 2026-08-24
+updated: 2026-08-25
 sources: []
 tags: [index, navigation]
 ---
 
 # Passage Wiki Index
 
-> Last updated: 2026-08-24 | Indexed wiki pages: 12 | Sources ingested: 0
+> Last updated: 2026-08-25 | Indexed wiki pages: 13 | Sources ingested: 0
 
 ## Living Documents
 
@@ -43,7 +43,7 @@ No source summaries are stored yet. Raw scripture sources and private repair art
 
 ## Candidate Artifacts
 
-- [Scripture Corpus Candidates](../candidates/README.md) - Exact Book of Mormon and New Testament candidate snapshots. The Book of Mormon digest is approved and active in the private local beta; the New Testament remains inactive and unaccepted.
+- [Scripture Corpus Candidates](../candidates/README.md) - Exact Book of Mormon and New Testament candidate snapshots. The Book of Mormon base candidate, its technically selected local corpus, and its typed-edge successor are quarantined from evidence and evaluation pending a private rebuild and new exact-digest approval; the New Testament remains inactive and unaccepted.
 
 ## Entities
 

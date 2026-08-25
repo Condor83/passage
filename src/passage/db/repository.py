@@ -40,7 +40,7 @@ class CorpusRepository:
     ) -> None:
         self.corpus_version = corpus_version
         self.retrieval_config = retrieval_config
-        uri = f"file:{database_path.as_posix()}?mode=ro&immutable=1"
+        uri = f"{database_path.resolve().as_uri()}?mode=ro&immutable=1"
         self.connection = sqlite3.connect(uri, uri=True, check_same_thread=False)
         self.connection.row_factory = sqlite3.Row
         self.connection.execute("PRAGMA query_only = ON")

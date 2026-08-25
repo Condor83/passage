@@ -10,10 +10,15 @@ from passage.ingest.datalab import (
     DatalabApparatusVerseOverride,
     DatalabCorrectionAnchor,
     DatalabCorrectionProfile,
+    DatalabTerminalBoundary,
     repair_datalab_pdf,
     write_datalab_repair,
 )
-from passage.ingest.validation import StructureManifest, ValidationFinding
+from passage.ingest.validation import (
+    CorpusValidationError,
+    StructureManifest,
+    ValidationFinding,
+)
 
 
 def _write_pdf(path: Path, pages: int = 1) -> None:
@@ -151,6 +156,7 @@ def _correction_profile(
     false_inline_anchors: list[DatalabCorrectionAnchor] | None = None,
     apparatus_verse_overrides: list[DatalabApparatusVerseOverride] | None = None,
     verified_continuation_anchors: list[DatalabCorrectionAnchor] | None = None,
+    terminal_boundary: DatalabTerminalBoundary | None = None,
 ) -> DatalabCorrectionProfile:
     return DatalabCorrectionProfile(
         profile_id="synthetic-datalab-corrections-v1",
@@ -159,6 +165,7 @@ def _correction_profile(
         false_inline_anchors=false_inline_anchors or [],
         apparatus_verse_overrides=apparatus_verse_overrides or [],
         verified_continuation_anchors=verified_continuation_anchors or [],
+        terminal_boundary=terminal_boundary,
     )
 
 
@@ -300,6 +307,135 @@ def test_datalab_joins_a_page_split_verse(tmp_path: Path) -> None:
     assert not any(finding.code == "ambiguous_verse_one_boundary" for finding in repaired.findings)
 
 
+def test_terminal_boundary_preserves_final_verse_continuation_and_excludes_later_pages(
+    tmp_path: Path,
+) -> None:
+    pdf = tmp_path / "book.pdf"
+    source = tmp_path / "book.pdf.json"
+    _write_pdf(pdf, pages=3)
+    _write_datalab_pages(
+        source,
+        [
+            [
+                _block(
+                    "SectionHeader",
+                    "<h2>THE FIRST BOOK OF NEPHI</h2>",
+                    [200, 80, 800, 120],
+                ),
+                _block("SectionHeader", "<h3>CHAPTER 1</h3>", [180, 160, 420, 200]),
+                _block("Text", "<p><i>Summary.</i></p>", [50, 220, 480, 280]),
+                _block("Text", "<p>First verse.</p>", [50, 300, 480, 360]),
+                _block("Text", "<p>2 Final verse begins</p>", [50, 370, 480, 430]),
+            ],
+            [_block("Text", "<p>and legitimately continues.</p>", [50, 100, 480, 160])],
+            [
+                _block("Text", "<p>Excluded post-canon material.</p>", [50, 100, 480, 160]),
+                _block("Footnote", "<p>2a Excluded apparatus.</p>", [50, 1080, 300, 1140]),
+            ],
+        ],
+    )
+    structure = _manifest(2)
+    profile = _correction_profile(
+        pdf,
+        source,
+        terminal_boundary=DatalabTerminalBoundary(
+            terminal_reference="bofm/1-ne/1/2",
+            first_excluded_pdf_page=3,
+        ),
+    )
+
+    repaired = repair_datalab_pdf(source, pdf, ExtractionLimits(), structure, profile)
+
+    terminal = repaired.extraction.passages[-1]
+    assert terminal.text == "Final verse begins and legitimately continues."
+    assert [span.page for span in terminal.source_spans] == [1, 2]
+    assert repaired.raw_apparatus_blocks == 0
+    assert any(finding.code == "source_profile_correction" for finding in repaired.findings)
+
+
+def test_terminal_boundary_rejects_a_nonterminal_reference(tmp_path: Path) -> None:
+    pdf = tmp_path / "book.pdf"
+    source = tmp_path / "book.pdf.json"
+    _write_pdf(pdf, pages=2)
+    _write_datalab_pages(source, [[], []])
+    profile = _correction_profile(
+        pdf,
+        source,
+        terminal_boundary=DatalabTerminalBoundary(
+            terminal_reference="bofm/1-ne/1/1",
+            first_excluded_pdf_page=2,
+        ),
+    )
+
+    with pytest.raises(ExtractionError, match="terminal reference"):
+        repair_datalab_pdf(source, pdf, ExtractionLimits(), _manifest(2), profile)
+
+
+def test_terminal_boundary_fails_when_cutoff_is_reached_before_terminal_reference(
+    tmp_path: Path,
+) -> None:
+    pdf = tmp_path / "book.pdf"
+    source = tmp_path / "book.pdf.json"
+    _write_pdf(pdf, pages=2)
+    _write_datalab_pages(
+        source,
+        [
+            [
+                _block(
+                    "SectionHeader",
+                    "<h2>THE FIRST BOOK OF NEPHI</h2>",
+                    [200, 80, 800, 120],
+                ),
+                _block("SectionHeader", "<h3>CHAPTER 1</h3>", [180, 160, 420, 200]),
+                _block("Text", "<p><i>Summary.</i></p>", [50, 220, 480, 280]),
+                _block("Text", "<p>First verse.</p>", [50, 300, 480, 360]),
+                _block("Text", "<p>2 Second verse.</p>", [50, 370, 480, 430]),
+            ],
+            [],
+        ],
+    )
+    structure = _manifest(3)
+    profile = _correction_profile(
+        pdf,
+        source,
+        terminal_boundary=DatalabTerminalBoundary(
+            terminal_reference="bofm/1-ne/1/3",
+            first_excluded_pdf_page=2,
+        ),
+    )
+
+    with pytest.raises(ExtractionError, match="before the declared terminal reference"):
+        repair_datalab_pdf(source, pdf, ExtractionLimits(), structure, profile)
+
+
+def test_terminal_boundary_must_be_encountered(tmp_path: Path) -> None:
+    pdf = tmp_path / "book.pdf"
+    source = tmp_path / "book.pdf.json"
+    _write_pdf(pdf)
+    _write_datalab(
+        source,
+        [
+            _block("SectionHeader", "<h2>THE FIRST BOOK OF NEPHI</h2>", [200, 80, 800, 120]),
+            _block("SectionHeader", "<h3>CHAPTER 1</h3>", [180, 160, 420, 200]),
+            _block("Text", "<p><i>Summary.</i></p>", [50, 220, 480, 280]),
+            _block("Text", "<p>First verse.</p>", [50, 300, 480, 360]),
+            _block("Text", "<p>2 Final verse.</p>", [50, 370, 480, 430]),
+        ],
+    )
+    structure = _manifest(2)
+    profile = _correction_profile(
+        pdf,
+        source,
+        terminal_boundary=DatalabTerminalBoundary(
+            terminal_reference="bofm/1-ne/1/2",
+            first_excluded_pdf_page=2,
+        ),
+    )
+
+    with pytest.raises(ExtractionError, match="was not encountered"):
+        repair_datalab_pdf(source, pdf, ExtractionLimits(), structure, profile)
+
+
 def test_datalab_keeps_italic_text_after_verse_one_starts(tmp_path: Path) -> None:
     pdf = tmp_path / "book.pdf"
     source = tmp_path / "book.pdf.json"
@@ -425,6 +561,40 @@ def test_datalab_writes_an_inactive_private_candidate(tmp_path: Path) -> None:
             structure,
             repository_root=repository,
         )
+
+
+def test_datalab_writer_rejects_invalid_corpus_before_creating_repair_files(
+    tmp_path: Path,
+) -> None:
+    pdf = tmp_path / "book.pdf"
+    source = tmp_path / "book.pdf.json"
+    output = tmp_path / "private"
+    repository = tmp_path / "repository"
+    output.mkdir(mode=0o700)
+    repository.mkdir()
+    _write_pdf(pdf)
+    _write_datalab(
+        source,
+        [
+            _block("SectionHeader", "<h2>THE FIRST BOOK OF NEPHI</h2>", [200, 80, 800, 120]),
+            _block("SectionHeader", "<h3>CHAPTER 1</h3>", [180, 160, 420, 200]),
+            _block("Text", "<p><i>Summary.</i></p>", [50, 220, 480, 280]),
+            _block("Text", "<p>First verse.</p>", [50, 300, 480, 360]),
+            _block("Text", "<p>2 Second verse.</p>", [50, 370, 480, 430]),
+        ],
+    )
+    structure = _manifest(2)
+    repaired = repair_datalab_pdf(source, pdf, ExtractionLimits(), structure)
+    passages = list(repaired.extraction.passages)
+    passages[0] = passages[0].model_copy(update={"text": "x" * 10_001})
+    invalid = repaired.model_copy(
+        update={"extraction": repaired.extraction.model_copy(update={"passages": passages})}
+    )
+
+    with pytest.raises(CorpusValidationError):
+        write_datalab_repair(output, invalid, structure, repository_root=repository)
+
+    assert not (output / "repairs").exists()
 
 
 def test_datalab_recognizes_a_split_plain_text_summary(tmp_path: Path) -> None:

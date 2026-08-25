@@ -31,7 +31,10 @@ def _run(*arguments: str) -> tuple[subprocess.CompletedProcess[str], dict[str, A
 
 
 def _write_candidate(
-    tmp_path: Path, structure: StructureManifest | None = None
+    tmp_path: Path,
+    structure: StructureManifest | None = None,
+    *,
+    first_passage_text: str | None = None,
 ) -> tuple[Path, Path, str]:
     structure = structure or load_default_structure_manifest()
     extraction = ExtractionResult(
@@ -41,7 +44,11 @@ def _write_candidate(
         passages=[
             ExtractedPassage(
                 reference=reference,
-                text=f"Synthetic verse {index + 1}",
+                text=(
+                    first_passage_text
+                    if index == 0 and first_passage_text is not None
+                    else f"Synthetic verse {index + 1}"
+                ),
                 source_spans=[
                     EpubSourceSpan(
                         member="chapter.xhtml",
@@ -183,6 +190,41 @@ def test_cli_rejects_incomplete_candidate_for_fixed_scope(tmp_path: Path) -> Non
     assert payload["error"]["type"] == "CorpusValidationError"
     with ControlStore(root) as control:
         assert control.accepted_count() == 0
+
+
+def test_cli_rejects_digest_consistent_oversized_candidate_without_state_change(
+    tmp_path: Path,
+) -> None:
+    candidate, manifest, digest = _write_candidate(
+        tmp_path,
+        first_passage_text="x" * 10_001,
+    )
+    root = tmp_path / "private"
+
+    completed, payload = _run(
+        "corpus",
+        "import-candidate",
+        "--candidate",
+        str(candidate),
+        "--manifest",
+        str(manifest),
+        "--approved-candidate-sha256",
+        digest,
+        "--edition",
+        "synthetic candidate",
+        "--acquisition-url",
+        "https://example.test/candidate.jsonl",
+        "--acquisition-date",
+        "2026-08-24",
+        "--data-dir",
+        str(root),
+    )
+
+    assert completed.returncode == 1
+    assert payload["error"]["type"] == "CorpusValidationError"
+    with ControlStore(root) as control:
+        assert control.accepted_count() == 0
+        assert control.get_active() is None
 
 
 def test_import_does_not_accept_when_review_artifact_publication_fails(

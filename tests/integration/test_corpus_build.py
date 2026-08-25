@@ -1,9 +1,12 @@
 from datetime import date
 from pathlib import Path
 
+import pytest
+
 from passage.db.builder import CorpusBuilder
 from passage.db.control import ControlStore
 from passage.db.repository import CorpusRepository
+from passage.db.validation import CorpusDatabaseError
 from passage.domain.models import ExternalChapterReferenceTarget, SourceApproval
 from passage.ingest.normalize import normalize_extraction, with_recomputed_digest
 from tests.unit.ingest.test_validation import MANIFEST, extraction
@@ -53,6 +56,16 @@ def test_build_publishes_content_addressed_immutable_corpus(tmp_path: Path) -> N
             assert edge.source_spans == sample_corpus().edges[0].source_spans
 
 
+def test_repository_opens_artifact_below_uri_delimiters_in_private_root(tmp_path: Path) -> None:
+    root = tmp_path / "private?#root"
+    with ControlStore(root) as control:
+        published = CorpusBuilder(root, control).build(sample_corpus(), approval(), "b" * 64)
+        control.activate(published.corpus_version, published.retrieval_config)
+
+        with CorpusRepository.open(control) as repository:
+            assert repository.get_passage("bofm/1-ne/1/2").text == "Second verse"
+
+
 def test_equivalent_build_is_idempotent(tmp_path: Path) -> None:
     root = tmp_path / "private"
     with ControlStore(root) as control:
@@ -91,3 +104,23 @@ def test_sqlite_round_trips_a_typed_whole_section_target(tmp_path: Path) -> None
     assert target.kind == "external_chapter"
     assert target.unit == "section"
     assert target.chapter == 138
+
+
+def test_repository_rejects_digest_consistent_published_oversized_passage(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root = tmp_path / "private"
+    monkeypatch.setattr(
+        "passage.db.builder.validate_published_artifact",
+        lambda _directory: {},
+    )
+    with ControlStore(root) as control:
+        published = CorpusBuilder(root, control).build(
+            sample_corpus("x" * 10_001),
+            approval(),
+            "b" * 64,
+        )
+        control.activate(published.corpus_version, published.retrieval_config)
+        with pytest.raises(CorpusDatabaseError, match="passage_text_budget_exceeded"):
+            CorpusRepository.open(control)

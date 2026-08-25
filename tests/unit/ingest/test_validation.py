@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from passage.domain.models import EpubSourceSpan, InternalReferenceTarget
+from passage.domain.models import EpubSourceSpan, InternalReferenceTarget, PdfSourceSpan
 from passage.ingest.base import (
     ExtractedEdge,
     ExtractedPassage,
@@ -105,6 +105,107 @@ def test_validation_requires_exact_reference_set() -> None:
         validate_corpus(corpus, MANIFEST)
 
     assert "missing_passage" in {finding.code for finding in failure.value.findings}
+
+
+@pytest.mark.parametrize(
+    ("text", "expected_code"),
+    [
+        (" \n\t ", "whitespace_only_passage"),
+        ("x" * 10_001, "passage_text_budget_exceeded"),
+    ],
+)
+def test_validation_rejects_invalid_scripture_text(text: str, expected_code: str) -> None:
+    corpus = normalize_extraction(
+        extraction(
+            [
+                ("bofm/1-ne/1/1", text),
+                ("bofm/1-ne/1/2", "Second verse"),
+            ]
+        ),
+        MANIFEST,
+    )
+
+    with pytest.raises(CorpusValidationError) as failure:
+        validate_corpus(corpus, MANIFEST)
+
+    assert expected_code in {finding.code for finding in failure.value.findings}
+
+
+def test_validation_rejects_passage_source_span_budget() -> None:
+    corpus = normalize_extraction(
+        extraction(
+            [
+                ("bofm/1-ne/1/1", "First verse"),
+                ("bofm/1-ne/1/2", "Second verse"),
+            ]
+        ),
+        MANIFEST,
+    )
+    spans = [
+        EpubSourceSpan(member="chapter.xhtml", start=index, end=index + 1, order=index)
+        for index in range(65)
+    ]
+    passages = list(corpus.passages)
+    passages[0] = passages[0].model_copy(update={"source_spans": spans})
+    corpus = corpus.model_copy(update={"passages": passages})
+
+    with pytest.raises(CorpusValidationError) as failure:
+        validate_corpus(corpus, MANIFEST)
+
+    assert "passage_source_span_budget_exceeded" in {
+        finding.code for finding in failure.value.findings
+    }
+
+
+def test_validation_rejects_pdf_page_window_over_eight_pages() -> None:
+    corpus = normalize_extraction(
+        extraction(
+            [
+                ("bofm/1-ne/1/1", "First verse"),
+                ("bofm/1-ne/1/2", "Second verse"),
+            ]
+        ),
+        MANIFEST,
+    )
+    passages = list(corpus.passages)
+    passages[0] = passages[0].model_copy(
+        update={
+            "source_spans": [
+                PdfSourceSpan(page=1, bbox=(0, 0, 1, 1), order=0),
+                PdfSourceSpan(page=10, bbox=(0, 0, 1, 1), order=1),
+            ]
+        }
+    )
+    corpus = corpus.model_copy(update={"source_format": "pdf", "passages": passages})
+
+    with pytest.raises(CorpusValidationError) as failure:
+        validate_corpus(corpus, MANIFEST)
+
+    assert "passage_pdf_page_window_exceeded" in {
+        finding.code for finding in failure.value.findings
+    }
+
+
+def test_validation_accepts_adjacent_pdf_source_pages() -> None:
+    source = extraction(
+        [
+            ("bofm/1-ne/1/1", "First verse"),
+            ("bofm/1-ne/1/2", "Second verse"),
+        ]
+    ).model_copy(update={"source_format": "pdf"})
+    passages = list(source.passages)
+    passages[0] = passages[0].model_copy(
+        update={
+            "source_spans": [
+                PdfSourceSpan(page=8, bbox=(0, 0, 1, 1), order=0),
+                PdfSourceSpan(page=9, bbox=(0, 0, 1, 1), order=1),
+            ]
+        }
+    )
+    source = source.model_copy(update={"passages": passages})
+    corpus = normalize_extraction(source, MANIFEST)
+
+    validate_corpus(corpus, MANIFEST)
 
 
 def test_validation_rejects_duplicate_and_broken_local_edge() -> None:

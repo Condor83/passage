@@ -4,9 +4,18 @@ import hashlib
 import json
 import sqlite3
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from passage.ingest.normalize import NormalizedCorpus
+from pydantic import TypeAdapter, ValidationError
+
+from passage.domain.models import Passage, SourceSpan
+from passage.ingest.validation import passage_integrity_findings
+
+if TYPE_CHECKING:
+    from passage.ingest.normalize import NormalizedCorpus
+
+
+_SOURCE_SPANS_ADAPTER: TypeAdapter[list[SourceSpan]] = TypeAdapter(list[SourceSpan])
 
 
 class CorpusDatabaseError(ValueError):
@@ -123,7 +132,40 @@ def validate_published_artifact(directory: Path) -> dict[str, Any]:
         raise CorpusDatabaseError("published corpus artifact digest mismatch")
     if corpus_version != f"corpus-{expected_artifact[:24]}":
         raise CorpusDatabaseError("published corpus version mismatch")
+    _validate_published_passages(database_path)
     return manifest
+
+
+def _validate_published_passages(database_path: Path) -> None:
+    uri = f"{database_path.resolve().as_uri()}?mode=ro&immutable=1"
+    connection: sqlite3.Connection | None = None
+    try:
+        connection = sqlite3.connect(uri, uri=True)
+        connection.row_factory = sqlite3.Row
+        rows = connection.execute(
+            """SELECT reference, canonical_order, text, content_hash, source_spans_json
+               FROM passages ORDER BY canonical_order"""
+        ).fetchall()
+        findings = []
+        for row in rows:
+            passage = Passage(
+                reference=row["reference"],
+                canonical_order=row["canonical_order"],
+                text=row["text"],
+                content_hash=row["content_hash"],
+                source_spans=_SOURCE_SPANS_ADAPTER.validate_python(
+                    json.loads(row["source_spans_json"])
+                ),
+            )
+            findings.extend(passage_integrity_findings(passage))
+    except (json.JSONDecodeError, sqlite3.DatabaseError, ValidationError) as exc:
+        raise CorpusDatabaseError("published corpus passage records cannot be validated") from exc
+    finally:
+        if connection is not None:
+            connection.close()
+    if findings:
+        codes = ", ".join(sorted({finding.code for finding in findings}))
+        raise CorpusDatabaseError(f"published corpus passage integrity check failed: {codes}")
 
 
 def _json(value: Any) -> str:
